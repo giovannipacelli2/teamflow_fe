@@ -4,15 +4,17 @@ import './App.css';
 
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
-import interceptor from './interceptors/interceptor';
+import requestHeaderInterceptor from './interceptors/requestHeaderInterceptor';
+import responseInterceptor from './interceptors/responseInterceptor';
 
 // IMPORT PAGES
 import HomePage  from './pages/home/HomePage';
 import LoginPage  from './pages/login/LoginPage';
 import DashboardPage  from './pages/dashboard/DashboardPage';
+import { GenericResponse } from './interfaces/GenericResponse';
+import { Logged } from './api';
 
 import { AuthApi } from './api';
-import { AxiosError } from 'axios';
 
 const App : React.FC = () => {
 
@@ -21,27 +23,23 @@ const App : React.FC = () => {
   const checkAuth = async ()=>{
     let authReq = new AuthApi();
 
-    let res;
+    let res = await authReq.logged();
 
-    try{
-      let req = await authReq.logged();
+    let data = res.data as GenericResponse<Logged>;
 
-      res = req.data;
+    if (data.status >= 200 && data.status < 400){
+
       setIsAuth(true);
+    } else {
       
-    } catch(error){
-      if (error instanceof AxiosError){
-        res = error.response?.data;
-        setIsAuth(false);
-      }
+      setIsAuth(false);
     }
-
-    console.log(res);
   }
 
   useEffect(()=>{
 
-    interceptor();
+    requestHeaderInterceptor();
+    responseInterceptor();
     checkAuth();
   }, [])
 

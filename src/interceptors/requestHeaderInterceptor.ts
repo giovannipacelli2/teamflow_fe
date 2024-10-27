@@ -1,6 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
 
-const interceptor = () => {
+const requestHeaderInterceptor = () => {
   // Add a request interceptor
   axios.interceptors.request.use(
     function (config : InternalAxiosRequestConfig) {
@@ -19,4 +19,4 @@ const interceptor = () => {
   );
 };
 
-export default interceptor;
+export default requestHeaderInterceptor;
