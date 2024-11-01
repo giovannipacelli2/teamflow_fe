@@ -1,10 +1,6 @@
 import axios from 'axios';
+import { httpProcessedResponseType } from '../interfaces/GenericResponse';
 
-type responseType = {
-  data: unknown,
-  message: string,
-  status : number
-}
 
 const responseInterceptor = () => {
   // Add a request interceptor
@@ -15,7 +11,7 @@ const responseInterceptor = () => {
         return response
       }
       
-      let res : responseType = {
+      let res : httpProcessedResponseType = {
         data : response.data.data,
         message: response.data.message,
         status : Number(response.status)
@@ -28,7 +24,7 @@ const responseInterceptor = () => {
     },
     function (error) {
 
-      let res;
+      let res : httpProcessedResponseType;
       
       if (error.response){
         res = {

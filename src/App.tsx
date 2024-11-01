@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { AppProvider } from './context/context';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css';
 
@@ -45,19 +46,21 @@ const App : React.FC = () => {
 
   return (
     <div className="App">
-      <Router>
-        <Routes>
-          <Route path='/' element={<HomePage/>} ></Route>
-          <Route path='/login' element={<LoginPage/>} ></Route>
-          <Route element={<PrivateRoute isAuth={isAuth} />}>
+      <AppProvider>
+        <Router>
+          <Routes>
+            <Route path='/' element={<HomePage/>} ></Route>
+            <Route path='/login' element={<LoginPage/>} ></Route>
+            <Route element={<PrivateRoute isAuth={isAuth} />}>
 
-            <Route path="/dashboard" element={<DashboardPage />}>
-              <Route path="home" element={<HomePage />} />
+              <Route path="/dashboard" element={<DashboardPage />}>ß
+                <Route path="home" element={<HomePage />} />
+              </Route>
+
             </Route>
-
-          </Route>
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </AppProvider>
     </div>
   );
 }
