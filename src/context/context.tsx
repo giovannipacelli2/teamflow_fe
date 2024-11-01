@@ -5,28 +5,40 @@ import {
     todosReducer,
     todosActions,
     sharedTodosReducer,
-    sharedTodosActions
+    sharedTodosActions,
+    authReducer,
+    authActions,
 } from '../reducers/reducers';
 
-import { AccountResponse, TodoResponse } from "../api";
+import { AccountResponse, Auth, TodoResponse } from "../api";
 
 interface AppProviderProps {
     children: React.ReactNode;
   }
 
 export interface InitialStateType {
+    auth : Auth,
     account : AccountResponse,
     todos : TodoResponse[],
     sharedTodos : TodoResponse[]
 };
 
 export interface reducerActions {
+    authDispatch ?: authActions,
     accountDispatch ?: accountActions,
     todosDispatch ?: todosActions,
     sharedTodosDispatch ?: sharedTodosActions
 };
   
 const initialState : InitialStateType = {
+  auth: {
+    status : "",
+    accountId : "",
+    authorization : {
+      token: "",
+      type: ""
+    }
+  },
   account : {
     id: "",
     username: "",
@@ -50,6 +62,12 @@ const mainReducer = (
     state : InitialStateType,
     dispatchObj : reducerActions,
   ) => {
+        if (dispatchObj.authDispatch){
+            return {
+                ...state,
+                auth : authReducer(state.auth, dispatchObj.authDispatch)
+            }
+        }
         if (dispatchObj.accountDispatch){
             return {
                 ...state,

@@ -1,10 +1,37 @@
-import { AccountResponse, TodoBodyReq, TodoResponse } from "../api";
+import { AccountResponse, Auth, TodoBodyReq, TodoResponse } from "../api";
 import { ActionMap } from "../types/generics";
 
+/*--------------------------------------------------- AUTH --------------------------------------------------*/
+
+export enum AuthTypes {
+    UPDATE = 'update_auth'
+}
+
+type authPayload = {
+    [AuthTypes.UPDATE]: Auth
+}
+
+export type authActions = ActionMap<authPayload>[keyof ActionMap<authPayload>];
+
+export const authReducer = (
+    state: Auth,
+    action: authActions
+  ) => {
+    switch (action.type) {
+      case AuthTypes.UPDATE:
+        
+        return {
+            ...state,
+            ...action.payload
+        };
+      default:
+        return state;
+    }
+  };
 /*------------------------------------------------- ACCOUNT -------------------------------------------------*/
 
 export enum UserTypes {
-    UPDATE = 'update_accout'
+    UPDATE = 'update_account'
 }
 
 type accountPayload = {
