@@ -35,8 +35,8 @@ const initialState : InitialStateType = {
     status : "",
     accountId : "",
     authorization : {
-      token: "",
-      type: ""
+      token: process.env.REACT_APP_HEADER,
+      type: "Bearer"
     }
   },
   account : {

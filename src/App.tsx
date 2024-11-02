@@ -1,7 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import { AppProvider } from './context/context';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css';
+import { Logged } from './api';
+import { AuthApi } from './api';
+import { AppContext } from './context/context';
+import { useAuth } from './hooks/authHook'
 
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
@@ -13,35 +17,28 @@ import HomePage  from './pages/home/HomePage';
 import LoginPage  from './pages/login/LoginPage';
 import DashboardPage  from './pages/dashboard/DashboardPage';
 import { GenericResponse } from './interfaces/GenericResponse';
-import { Logged } from './api';
-
-import { AuthApi } from './api';
 
 const App : React.FC = () => {
 
+  const { state } = useContext(AppContext);
   const [isAuth, setIsAuth] = useState(false);
+  const { logged } = useAuth();
 
   const checkAuth = async ()=>{
-    let authReq = new AuthApi();
 
-    let res = await authReq.logged();
+    let res = await logged();
+    
+    setIsAuth(res);
 
-    let data = res.data as GenericResponse<Logged>;
-
-    if (data.status >= 200 && data.status < 400){
-
-      setIsAuth(true);
-    } else {
-      
-      setIsAuth(false);
-    }
   }
 
   useEffect(()=>{
 
-    requestHeaderInterceptor();
-    responseInterceptor();
-    checkAuth();
+    if (state.auth){
+      requestHeaderInterceptor(state.auth);
+      responseInterceptor();
+      checkAuth();
+    }
   }, [])
 
   return (
