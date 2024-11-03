@@ -1,10 +1,14 @@
 import React from 'react'
 import { AppContext } from "../../context/context";
 import { UserTypes } from '../../reducers/reducers';
+import { useAuth } from "../../hooks/authHook";
+import { useNavigate } from 'react-router-dom';
 
 const HomePage : React.FC = () => {
 
   const { state ,dispatch } = React.useContext(AppContext);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleClick = ()=>{
     dispatch({
@@ -16,7 +20,14 @@ const HomePage : React.FC = () => {
         }
       }
     })
+  }
 
+  const handleLogout = async ()=>{
+    let res = await logout();
+
+    if (res) {
+      navigate('/login');
+    }
   }
 
   return (
@@ -26,6 +37,7 @@ const HomePage : React.FC = () => {
       <span>Utente: {state.account.name + " " + state.account.surname}</span>
       <br />
       <button onClick={()=>{handleClick()}}>Cambia nome</button>
+      <button onClick={()=>{handleLogout()}}>Logout</button>
     </div>
   )
 }

@@ -4,11 +4,13 @@ import { ActionMap } from "../types/generics";
 /*--------------------------------------------------- AUTH --------------------------------------------------*/
 
 export enum AuthTypes {
-    UPDATE = 'update_auth'
+    UPDATE = 'update_auth',
+    RESET = 'reset_auth'
 }
 
 type authPayload = {
-    [AuthTypes.UPDATE]: Auth
+    [AuthTypes.UPDATE]: Auth,
+    [AuthTypes.RESET]: undefined
 }
 
 export type authActions = ActionMap<authPayload>[keyof ActionMap<authPayload>];
@@ -18,12 +20,24 @@ export const authReducer = (
     action: authActions
   ) => {
     switch (action.type) {
-      case AuthTypes.UPDATE:
+      case AuthTypes.UPDATE: {
+          return {
+              ...state,
+              ...action.payload
+          };
+      }
+
+      case AuthTypes.RESET: {
+          return {
+            status : "",
+            accountId : "",
+            authorization : {
+              token: "",
+              type: ""
+            }
+          };
+      }
         
-        return {
-            ...state,
-            ...action.payload
-        };
       default:
         return state;
     }
@@ -31,11 +45,13 @@ export const authReducer = (
 /*------------------------------------------------- ACCOUNT -------------------------------------------------*/
 
 export enum UserTypes {
-    UPDATE = 'update_account'
+    UPDATE = 'update_account',
+    RESET = 'reset_account'
 }
 
 type accountPayload = {
-    [UserTypes.UPDATE]: AccountResponse
+    [UserTypes.UPDATE]: AccountResponse,
+    [UserTypes.RESET]: undefined,
 }
 
 export type accountActions = ActionMap<accountPayload>[keyof ActionMap<accountPayload>];
@@ -45,12 +61,22 @@ export const accountReducer = (
     action: accountActions
   ) => {
     switch (action.type) {
-      case UserTypes.UPDATE:
+      case UserTypes.UPDATE:{
+          return {
+              ...state,
+              ...action.payload
+          };
+      }
+      case UserTypes.RESET:{
+          return {
+            id: "",
+            username: "",
+            name: "",
+            surname: "",
+            email: ""
+          };
+      }
         
-        return {
-            ...state,
-            ...action.payload
-        };
       default:
         return state;
     }
