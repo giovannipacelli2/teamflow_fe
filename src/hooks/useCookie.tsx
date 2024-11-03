@@ -7,7 +7,14 @@ export default function useCookie() {
     }
 
     const setCookie = (name: string, value: string) : boolean =>{
-        let res = Cookies.set(name, value);
+
+        let options : Cookies.CookieAttributes = {
+            domain: process.env.REACT_APP_COOKIE_DOMAIN,
+            path: process.env.REACT_APP_COOKIE_PATH,
+            expires : Number(process.env.REACT_APP_COOKIE_TIME)
+        }
+
+        let res = Cookies.set(name, value, options);
 
         return res === undefined ? false : true
     }
