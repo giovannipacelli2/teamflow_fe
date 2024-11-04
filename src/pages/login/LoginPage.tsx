@@ -2,6 +2,10 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/authHook';
 
+// MUI COMPONENTS
+//import Box from '@mui/material/Box';
+import { TextField, Box, useFormControl, FormControl } from '@mui/material';
+
 const LoginPage : React.FC = () => {
 
   const navigate = useNavigate();
@@ -22,21 +26,20 @@ const LoginPage : React.FC = () => {
   };
 
   return (
-    <div>
-      LoginPage works
-      <br /><br />
-      <button
-        onClick={()=>{navigate('/dashboard/home')}}
-      >
-        Vai alla dashboard (test)
-      </button>
-      <br />
-      <button
-        onClick={()=>handleLogin()}
-      >
-        Login
-      </button>
-    </div>
+    <>
+      <Box>
+      <form noValidate autoComplete="off">
+      <FormControl sx={{ width: '25ch' }}>
+        <TextField
+          required
+          id="outlined-required"
+          label="Required"
+          defaultValue="Hello World"
+        />
+      </FormControl>
+    </form>
+      </Box>
+    </>
   )
 }
 
