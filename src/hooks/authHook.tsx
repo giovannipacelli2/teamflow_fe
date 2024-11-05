@@ -55,7 +55,6 @@ export const useAuth = () => {
         let authReq = new AuthApi();
 
         let res = await authReq.logout();
-        console.log('risultato richiesta: ', res);
         let data = res.data as GenericResponse<unknown>;
 
         if (data.status >= 200 && data.status < 400){

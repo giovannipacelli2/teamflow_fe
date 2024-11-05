@@ -7,7 +7,7 @@ import useCookie from './hooks/useCookie';
 
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
-import requestHeaderInterceptor from './interceptors/requestHeaderInterceptor';
+import {removeHeaderInterceptor, requestHeaderInterceptor} from './interceptors/requestHeaderInterceptor';
 import responseInterceptor from './interceptors/responseInterceptor';
 
 // IMPORT PAGES
@@ -24,6 +24,7 @@ const App : React.FC = () => {
   const { state, dispatch } = useContext(AppContext);
   const { logged } = useAuth();
   const { getCookie } = useCookie();
+  const [currentInterceptor, setCurrentInterceptor] = useState<number>(0);
 
   const checkAuth = async ()=>{
 
@@ -61,18 +62,27 @@ const App : React.FC = () => {
         }
       });
     }
+
+    responseInterceptor();
     
   }, [])
 
   useEffect(()=>{
 
     if (state.auth.authorization?.token){
-      requestHeaderInterceptor(state.auth);
-      responseInterceptor();
+
+      removeHeaderInterceptor(currentInterceptor);
+      setCurrentInterceptor(requestHeaderInterceptor(state.auth));
+      
       checkAuth();
     }
 
   }, [state.auth.authorization?.token])
+
+  // DEBUG
+  useEffect(()=>{
+    console.log("DEBUG:", state);
+  }, [state])
 
   return (
     <div className="App">

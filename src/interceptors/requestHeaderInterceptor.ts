@@ -1,10 +1,10 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
 import { Auth } from '../api';
 
-const requestHeaderInterceptor = (auth : Auth) => {
+export const requestHeaderInterceptor = (auth : Auth) => {
   // Add a request interceptor
   
-  axios.interceptors.request.use(
+  return axios.interceptors.request.use(
     function (config : InternalAxiosRequestConfig) {
       
 
@@ -23,4 +23,6 @@ const requestHeaderInterceptor = (auth : Auth) => {
   );
 };
 
-export default requestHeaderInterceptor;
+export const removeHeaderInterceptor = (interceptor : number) =>{
+  axios.interceptors.request.eject(interceptor);
+}
