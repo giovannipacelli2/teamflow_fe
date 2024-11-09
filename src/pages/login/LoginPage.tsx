@@ -46,9 +46,9 @@ const LoginPage: React.FC = () => {
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
   const [form, setForm] = useState<loginBodyI>({
-    username: "admin",
-    password: "abc1234",
-    remember : false,
+    username: "",
+    password: "",
+    remember : true,
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -115,13 +115,12 @@ const LoginPage: React.FC = () => {
             }}
           >
           <FormControl>
-              <FormLabel htmlFor="username">Username</FormLabel>
+              <FormLabel htmlFor="username">Username/Email</FormLabel>
               <TextField
                 error={loginError}
                 id="username"
                 type="text"
                 name="username"
-                placeholder="your_username"
                 autoComplete="off"
                 autoFocus
                 required
@@ -141,7 +140,6 @@ const LoginPage: React.FC = () => {
                 id="password"
                 type="password"
                 name="password"
-                placeholder="********"
                 autoComplete="off"
                 autoFocus
                 required
