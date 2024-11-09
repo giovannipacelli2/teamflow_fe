@@ -5,6 +5,7 @@ import { loginBodyI, useAuth } from "../../hooks/authHook";
 // MUI COMPONENTS
 import { TextField, FormControl, Button, styled, FormLabel, Box, FormControlLabel, Checkbox } from "@mui/material";
 import MuiCard from '@mui/material/Card';
+import useLoading from "../../hooks/useLoading";
 
 const Card = styled(MuiCard)(({ theme }) => {
 
@@ -40,6 +41,8 @@ const LoginPage: React.FC = () => {
   }
 
   const navigate = useNavigate();
+  const {LoadingElem, setIsLoading} = useLoading();
+
   const { login } = useAuth();
 
   const [loginError, setLoginError] = useState(false);
@@ -75,6 +78,8 @@ const LoginPage: React.FC = () => {
 
     const { username, password, remember } = event.currentTarget;
 
+    setIsLoading(true);
+    
     let res = await login({
       username: username.value,
       password: password.value,
@@ -87,92 +92,96 @@ const LoginPage: React.FC = () => {
       setLoginError(true);
       setLoginErrorMessage('Credenziali errate');
     }
+    setIsLoading(false);
   };
 
   return (
-    <Box
-            component="main"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              height: '100dvh',
-              gap: 2,
-            }}
-    >
-      <Card variant="outlined">
-        <Box
-            component="form"
-            onSubmit={handleLogin}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
-          <FormControl>
-              <FormLabel htmlFor="username">Username/Email</FormLabel>
-              <TextField
-                error={loginError}
-                id="username"
-                type="text"
-                name="username"
-                autoComplete="off"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={loginError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'username' }}
-                value={form.username}
-                onChange={handleChange}
-              />
-          </FormControl>
-          <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                error={loginError}
-                helperText={loginErrorMessage}
-                id="password"
-                type="password"
-                name="password"
-                autoComplete="off"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={loginError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'password' }}
-                value={form.password}
-                onChange={handleChange}
-              />
-          </FormControl>
-          <FormControlLabel
-              control={
-                <Checkbox 
-                  color="primary"
-                  id="remember"
-                  name="remember"
+    <>
+      {LoadingElem}
+      <Box
+              component="main"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: '100dvh',
+                gap: 2,
+              }}
+      >
+        <Card variant="outlined">
+          <Box
+              component="form"
+              onSubmit={handleLogin}
+              noValidate
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                gap: 2,
+              }}
+            >
+            <FormControl>
+                <FormLabel htmlFor="username">Username/Email</FormLabel>
+                <TextField
+                  error={loginError}
+                  id="username"
+                  type="text"
+                  name="username"
+                  autoComplete="off"
+                  autoFocus
+                  required
+                  fullWidth
+                  variant="outlined"
+                  color={loginError ? 'error' : 'primary'}
+                  sx={{ ariaLabel: 'username' }}
+                  value={form.username}
                   onChange={handleChange}
-                  checked={form.remember}
                 />
-              }
-              label="Remember me"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-          >
-            Sign in
-          </Button>
-        </Box>
-      </Card>
-    </Box>
+            </FormControl>
+            <FormControl>
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <TextField
+                  error={loginError}
+                  helperText={loginErrorMessage}
+                  id="password"
+                  type="password"
+                  name="password"
+                  autoComplete="off"
+                  autoFocus
+                  required
+                  fullWidth
+                  variant="outlined"
+                  color={loginError ? 'error' : 'primary'}
+                  sx={{ ariaLabel: 'password' }}
+                  value={form.password}
+                  onChange={handleChange}
+                />
+            </FormControl>
+            <FormControlLabel
+                control={
+                  <Checkbox 
+                    color="primary"
+                    id="remember"
+                    name="remember"
+                    onChange={handleChange}
+                    checked={form.remember}
+                  />
+                }
+                label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+            >
+              Sign in
+            </Button>
+          </Box>
+        </Card>
+      </Box>
+    </>
   );
 };
 
