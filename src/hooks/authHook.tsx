@@ -7,10 +7,14 @@ import { AuthTypes, UserTypes } from '../reducers/reducers';
 import useCookie from "../hooks/useCookie"
 import { cookiesName } from '../enums/cookies';
 
+export interface loginBodyI extends LoginRequest {
+    remember : boolean
+};
+
 export const useAuth = () => {
 
-    const { state ,dispatch } = React.useContext(AppContext);
-    const { setCookie, deleteCookie } = useCookie();
+    const { dispatch } = React.useContext(AppContext);
+    const { setCookie, setSessionCookie, deleteCookie } = useCookie();
 
     const logged = async ()=>{
         
@@ -27,10 +31,18 @@ export const useAuth = () => {
         return false;
     }
 
-    const login = async (body : LoginRequest) : Promise<boolean> =>{
+    const login = async (body : loginBodyI) : Promise<boolean> =>{
+
+        const { username, password, remember } = body;
+
+        let b : LoginRequest = {
+            username,
+            password
+        }
+
         let authReq = new AuthApi();
 
-        let res = await authReq.login(body);
+        let res = await authReq.login(b);
 
         let data = res.data as GenericResponse<Auth>;
 
@@ -43,8 +55,15 @@ export const useAuth = () => {
                 }
             });
 
-            setCookie(cookiesName.TOKEN, data.data.authorization?.token ?? "");
-            setCookie(cookiesName.AUTH_TYPE, data.data.authorization?.type ?? "");
+            if (remember){
+                setCookie(cookiesName.TOKEN, data.data.authorization?.token ?? "");
+                setCookie(cookiesName.AUTH_TYPE, data.data.authorization?.type ?? "");
+            } else {
+                
+                setSessionCookie(cookiesName.TOKEN, data.data.authorization?.token ?? "");
+                setSessionCookie(cookiesName.AUTH_TYPE, data.data.authorization?.type ?? "");
+            }
+
 
             return true;
         }
