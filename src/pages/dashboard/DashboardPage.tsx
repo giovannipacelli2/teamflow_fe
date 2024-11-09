@@ -17,8 +17,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import StickyNote2Icon from '@mui/icons-material/StickyNote2';
+import CoPresentIcon from '@mui/icons-material/CoPresent';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -96,6 +96,17 @@ export default function DashboardPage() {
     justifyContent: 'flex-end',
   }));
 
+  const NavItems = [
+    {
+      label:"Le tue note",
+      icon : <StickyNote2Icon/>
+    },
+    {
+      label:"Note condivise",
+      icon : <CoPresentIcon/>
+    },
+  ];
+
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -151,29 +162,20 @@ export default function DashboardPage() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {NavItems.map((item, index) => (
+            <ListItem key={item.label} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {item.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={item.label} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+
         </List>
       </Drawer>
       <Main open={open}>
