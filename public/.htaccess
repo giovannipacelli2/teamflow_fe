@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Aggiungi uno slash alla fine se non c'è
+    #RewriteCond %{REQUEST_FILENAME} !-f
+    #RewriteCond %{REQUEST_URI} !(.*)/$
+    #RewriteRule ^(.*)$ $1/ [R=301,L]
+
+    # Se la richiesta corrisponde a un file o a una directory esistente, non fare nulla
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+    RewriteRule ^ - [L]
+
+    # Altrimenti, reindirizza tutto a index.html
+    RewriteRule ^ /index.html [L]
+
+</IfModule>
