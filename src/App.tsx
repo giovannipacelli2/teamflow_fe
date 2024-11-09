@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
-import './App.css';
+import './App.scss';
 import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
 import useCookie from './hooks/useCookie';
