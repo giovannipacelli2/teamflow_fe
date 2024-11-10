@@ -85,12 +85,16 @@ export const accountReducer = (
 /*-------------------------------------------------- TODOS --------------------------------------------------*/
 
 export enum TodosTypes {
+    SET = 'set_todos',
     CREATE = 'create_todo',
     UPDATE = 'update_todo',
     DELETE = 'delete_todo'
 }
 
 type todosPayload = {
+    [TodosTypes.SET]: {
+        body : TodoResponse[]
+    }
     [TodosTypes.CREATE]: {
         body : TodoBodyReq
     }
@@ -110,6 +114,12 @@ export const todosReducer = (
     action: todosActions
   ) => {
     switch (action.type) {
+
+        case TodosTypes.SET: {
+            return [
+                ...action.payload.body
+            ];
+        }
 
         case TodosTypes.CREATE: {
             return [
