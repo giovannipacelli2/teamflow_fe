@@ -20,30 +20,21 @@ import { cookiesName } from './enums/cookies';
 import Redirects from './routerConfig/Redirects';
 import RootPage from './pages/rootPage/RootPage';
 import SharedTodosPage from './pages/SharedTodos/SharedTodosPage';
+import useCrypto from './hooks/useCrypto';
+import useAccount from './hooks/useAccount';
 
 const App : React.FC = () => {
 
   const { state, dispatch } = useContext(AppContext);
   const { logged } = useAuth();
   const { getCookie } = useCookie();
+  const { decryptString } = useCrypto();
+  const { getOwnAccount } = useAccount();
   const [currentInterceptor, setCurrentInterceptor] = useState<number>(0);
 
   const checkAuth = async ()=>{
 
-    let res = await logged();
-    
-    if (res){
-
-      dispatch({
-        authDispatch: {
-            type: AuthTypes.UPDATE,
-            payload : {
-              status: "success"
-            }
-        }
-      });
-    }
-
+    await logged();
   }
 
   useEffect(()=>{
@@ -52,13 +43,17 @@ const App : React.FC = () => {
     let type = getCookie(cookiesName.AUTH_TYPE);
 
     if (token && type){
+
+      let decryptedToken = decryptString(token);
+      let decryptedTokenType = decryptString(type);
       
       dispatch({
         authDispatch: {
             type: AuthTypes.UPDATE,
             payload : {
               authorization: {
-                token, type
+                token : decryptedToken,
+                type : decryptedTokenType
               }
             }
         }
@@ -68,6 +63,15 @@ const App : React.FC = () => {
     responseInterceptor();
     
   }, [])
+
+  useEffect(()=>{
+
+    if (state.auth.accountId !== ""){
+
+      getOwnAccount();
+    }
+
+  }, [state.auth.accountId])
 
   useEffect(()=>{
 
@@ -83,7 +87,7 @@ const App : React.FC = () => {
 
   // DEBUG
   useEffect(()=>{
-    console.log("DEBUG:", state);
+    console.log("[DEBUG]:", state);
   }, [state])
 
   return (

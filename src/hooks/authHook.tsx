@@ -6,6 +6,7 @@ import { AppContext } from '../context/context';
 import { AuthTypes, UserTypes } from '../reducers/reducers';
 import useCookie from "../hooks/useCookie"
 import { cookiesName } from '../enums/cookies';
+import useCrypto from './useCrypto';
 
 export interface loginBodyI extends LoginRequest {
     remember : boolean
@@ -15,6 +16,7 @@ export const useAuth = () => {
 
     const { dispatch } = React.useContext(AppContext);
     const { setCookie, setSessionCookie, deleteCookie } = useCookie();
+    const { encryptString } = useCrypto();
 
     const logged = async ()=>{
         
@@ -25,6 +27,17 @@ export const useAuth = () => {
         let data = res.data as GenericResponse<Logged>;
 
         if (data.status >= 200 && data.status < 400){
+
+            dispatch({
+                authDispatch: {
+                    type: AuthTypes.UPDATE,
+                    payload : {
+                        accountId : data.data.account?.id,
+                        status: "success"
+                    }
+                }
+              });
+
             return true
         } 
         
@@ -55,13 +68,19 @@ export const useAuth = () => {
                 }
             });
 
+            let token = data.data.authorization?.token ?? "";
+            let tType = data.data.authorization?.type ?? "";
+
+            let encryptedToken = encryptString(token);
+            let encryptedTokenType = encryptString(tType);
+
             if (remember){
-                setCookie(cookiesName.TOKEN, data.data.authorization?.token ?? "");
-                setCookie(cookiesName.AUTH_TYPE, data.data.authorization?.type ?? "");
+                setCookie(cookiesName.TOKEN, encryptedToken);
+                setCookie(cookiesName.AUTH_TYPE, encryptedTokenType);
             } else {
                 
-                setSessionCookie(cookiesName.TOKEN, data.data.authorization?.token ?? "");
-                setSessionCookie(cookiesName.AUTH_TYPE, data.data.authorization?.type ?? "");
+                setSessionCookie(cookiesName.TOKEN, encryptedToken);
+                setSessionCookie(cookiesName.AUTH_TYPE, encryptedTokenType);
             }
 
 
@@ -81,7 +100,10 @@ export const useAuth = () => {
             dispatch({
                 authDispatch: {
                     type: AuthTypes.RESET
-                },
+                }
+            });
+
+            dispatch({
                 accountDispatch: {
                     type: UserTypes.RESET
                 }
