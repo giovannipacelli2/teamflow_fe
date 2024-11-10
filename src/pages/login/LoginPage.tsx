@@ -6,6 +6,7 @@ import { loginBodyI, useAuth } from "../../hooks/authHook";
 import { TextField, FormControl, Button, styled, FormLabel, Box, FormControlLabel, Checkbox } from "@mui/material";
 import MuiCard from '@mui/material/Card';
 import useLoading from "../../hooks/useLoading";
+import { Routes } from "../../routerConfig/routes";
 
 const Card = styled(MuiCard)(({ theme }) => {
 
@@ -87,7 +88,7 @@ const LoginPage: React.FC = () => {
     });
 
     if (res) {
-      navigate("/dashboard/home");
+      navigate(Routes.MY_TODOS);
     } else {
       setLoginError(true);
       setLoginErrorMessage('Credenziali errate');

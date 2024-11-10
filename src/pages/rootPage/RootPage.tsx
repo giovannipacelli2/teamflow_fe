@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { AppContext } from "../../context/context";
 import { useNavigate } from 'react-router-dom';
+import { Routes } from '../../routerConfig/routes';
 
 const RootPage : React.FC = () => {
 
@@ -9,13 +10,13 @@ const RootPage : React.FC = () => {
 
   useEffect(()=>{
     if (state.auth.status === ""){
-        navigate('/login');
+      navigate(Routes.LOGIN);
     }
   }, []);
 
   useEffect(()=>{
     if (state.auth.status === "success"){
-        navigate('/dashboard/home');
+      navigate(Routes.MY_TODOS);
     }
   }, [state.auth.status]);
 

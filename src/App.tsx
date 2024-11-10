@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.scss';
 import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
@@ -9,9 +9,10 @@ import useCookie from './hooks/useCookie';
 import PrivateRoute from './routerConfig/PrivateRoute';
 import {removeHeaderInterceptor, requestHeaderInterceptor} from './interceptors/requestHeaderInterceptor';
 import responseInterceptor from './interceptors/responseInterceptor';
+import { BaseRoutes } from './routerConfig/routes';
 
 // IMPORT PAGES
-import HomePage  from './pages/home/HomePage';
+import MyTodosPage  from './pages/home/MyTodosPage';
 import LoginPage  from './pages/login/LoginPage';
 import DashboardPage  from './pages/dashboard/DashboardPage';
 import { AuthTypes } from './reducers/reducers';
@@ -90,12 +91,12 @@ const App : React.FC = () => {
         <Router>
             <RootPage></RootPage>
           <Routes>
-            <Route path='/' element={<Redirects isAuth={state.auth.status==="success"} />}></Route>
-            <Route path='/login' element={<LoginPage/>} ></Route>
+            <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={state.auth.status==="success"} />}></Route>
+            <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
             <Route element={<PrivateRoute isAuth={state.auth.status==="success"} />}>
 
-              <Route path="/dashboard" element={<DashboardPage />}>
-                <Route path="home" element={<HomePage />} />
+              <Route path={BaseRoutes.DASHBOARD} element={<DashboardPage />}>
+                <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
               </Route>
 
             </Route>

@@ -4,7 +4,7 @@ import { UserTypes } from '../../reducers/reducers';
 import { useAuth } from "../../hooks/authHook";
 import { useNavigate } from 'react-router-dom';
 
-const HomePage : React.FC = () => {
+const MyTodosPage : React.FC = () => {
 
   const { state ,dispatch } = React.useContext(AppContext);
   const { logout } = useAuth();
@@ -32,7 +32,7 @@ const HomePage : React.FC = () => {
 
   return (
     <div>
-      HomePage works
+      MyTodosPage works
       <br />
       <span>Utente: {state.account.name + " " + state.account.surname}</span>
       <br />
@@ -42,4 +42,4 @@ const HomePage : React.FC = () => {
   )
 }
 
-export default HomePage
+export default MyTodosPage

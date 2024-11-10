@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -21,12 +21,15 @@ import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { Routes } from '../../routerConfig/routes';
 
 
 export default function DashboardPage() {
 
+  const [headerTitle, setHeaderTitle] = useState<string>("");
   const isMobile = useMediaQuery('(max-width:600px)');
   const [drawerWidth, setDrawerWidth] = useState('180');
+  const location = useLocation();
 
   useEffect(()=>{
     if (isMobile){
@@ -36,6 +39,12 @@ export default function DashboardPage() {
       setDrawerWidth('180');
     }
   }, [isMobile]);
+
+  useEffect(()=>{
+    if (location.pathname === Routes.MY_TODOS){
+      setHeaderTitle("Le tue note");
+    }
+  }, [location.pathname]);
   
   const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
@@ -138,7 +147,7 @@ export default function DashboardPage() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+            {headerTitle}
           </Typography>
         </Toolbar>
       </AppBar>

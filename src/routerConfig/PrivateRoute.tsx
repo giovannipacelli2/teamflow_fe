@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { BaseRoutes } from './routes';
 
 interface PrivateRouteProps {
     isAuth : boolean;
@@ -7,7 +8,7 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute : React.FC<PrivateRouteProps> = ({
-    isAuth, redirectPath = '/login'
+    isAuth, redirectPath = BaseRoutes.LOGIN
 }) => {
   return (
    isAuth ? <Outlet/> : <Navigate to={redirectPath} replace/>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { Routes } from './routes';
 
 interface RedirectsProps {
     isAuth : boolean;
@@ -9,8 +10,8 @@ interface RedirectsProps {
 
 const Redirects : React.FC<RedirectsProps> = ({
     isAuth,
-    redirectTrue = '/dashboard/home',
-    redirectFalse = '/login'
+    redirectTrue = Routes.MY_TODOS,
+    redirectFalse = Routes.LOGIN,
 }) => {
   return (
    isAuth ? <Navigate to={redirectTrue} replace/> : <Navigate to={redirectFalse} replace/>
