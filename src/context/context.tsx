@@ -2,15 +2,11 @@ import React, { createContext, useReducer, Dispatch, Reducer } from "react";
 import {
     accountReducer,
     accountActions,
-    todosReducer,
-    todosActions,
-    sharedTodosReducer,
-    sharedTodosActions,
     authReducer,
     authActions,
 } from '../reducers/reducers';
 
-import { AccountResponse, Auth, TodoResponse } from "../api";
+import { AccountResponse, Auth } from "../api";
 
 interface AppProviderProps {
     children: React.ReactNode;
@@ -19,15 +15,11 @@ interface AppProviderProps {
 export interface InitialStateType {
     auth : Auth,
     account : AccountResponse,
-    todos : TodoResponse[],
-    sharedTodos : TodoResponse[]
 };
 
 export interface reducerActions {
     authDispatch ?: authActions,
     accountDispatch ?: accountActions,
-    todosDispatch ?: todosActions,
-    sharedTodosDispatch ?: sharedTodosActions
 };
   
 const initialState : InitialStateType = {
@@ -46,8 +38,6 @@ const initialState : InitialStateType = {
     surname: "",
     email: ""
   },
-  todos : [],
-  sharedTodos : []
 };
 
 const AppContext = createContext<{
@@ -72,18 +62,6 @@ const mainReducer = (
             return {
                 ...state,
                 account : accountReducer(state.account, dispatchObj.accountDispatch)
-            }
-        }
-        if (dispatchObj.todosDispatch){
-            return {
-                ...state,
-                todos: todosReducer(state.todos, dispatchObj.todosDispatch)
-            }
-        }
-        if (dispatchObj.sharedTodosDispatch){
-            return {
-                ...state,
-                sharedTodos: sharedTodosReducer(state.sharedTodos, dispatchObj.sharedTodosDispatch)
             }
         }
         return state

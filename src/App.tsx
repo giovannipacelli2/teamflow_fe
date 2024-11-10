@@ -87,7 +87,7 @@ const App : React.FC = () => {
 
   // DEBUG
   useEffect(()=>{
-    console.log("[DEBUG]:", state);
+    console.log("[DEBUG]: global_state", state);
   }, [state])
 
   return (
