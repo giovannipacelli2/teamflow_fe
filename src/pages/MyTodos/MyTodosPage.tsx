@@ -1,36 +1,32 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { AppContext } from "../../context/context";
-import { TodosTypes, UserTypes } from '../../reducers/reducers';
+import { UserTypes } from '../../reducers/reducers';
 import { useNavigate } from 'react-router-dom';
 import useTodos from '../../hooks/useTodos';
+import { TodoResponse } from '../../api';
 
 const MyTodosPage : React.FC = () => {
 
   const { state ,dispatch } = React.useContext(AppContext);
   const navigate = useNavigate();
   const {getAllTodos} = useTodos();
-
-  /* useEffect(()=>{
-    return ()=>{
-      dispatch({
-        todosDispatch:{
-          type: TodosTypes.SET,
-          payload:{
-            body : []
-          }
-        }
-      });
-    };
-  }, [dispatch]); */
+  const [todos, setTodos] = useState<TodoResponse[]>([]);
 
   useEffect(()=>{
-    if (state.todos.length === 0 && state.account.id){
+    if (state.account.id){
       handleGetTodos();
     }
-  }, [state.todos]);
+  }, [state.account]);
+
+  useEffect(()=>{
+    if (todos.length>0){
+      console.log('[DEBUG]: todo_state', todos)
+    }
+  }, [todos]);
 
   const handleGetTodos = async ()=>{
-    await getAllTodos();
+    let res = await getAllTodos();
+    setTodos(res);
   }
 
   return (
