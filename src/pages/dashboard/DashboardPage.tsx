@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import { Outlet, useLocation } from 'react-router-dom'
+import "./DashboardPage.scss";
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -17,12 +18,22 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+
+// ICONS
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import CoPresentIcon from '@mui/icons-material/CoPresent';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Routes } from '../../routerConfig/routes';
+import useAuth from '../../hooks/authHook';
+import useLoading from '../../hooks/useLoading';
 
+interface NavLink {
+  label : string,
+  icon : JSX.Element,
+  link : string,
+}
 
 export default function DashboardPage() {
 
@@ -30,6 +41,9 @@ export default function DashboardPage() {
   const isMobile = useMediaQuery('(max-width:600px)');
   const [drawerWidth, setDrawerWidth] = useState('180');
   const location = useLocation();
+  const navigate = useNavigate();
+  const {logout} = useAuth();
+  const {LoadingElem, setIsLoading} = useLoading();
 
   useEffect(()=>{
     if (isMobile){
@@ -41,9 +55,21 @@ export default function DashboardPage() {
   }, [isMobile]);
 
   useEffect(()=>{
-    if (location.pathname === Routes.MY_TODOS){
-      setHeaderTitle("Le tue note");
+
+    switch(location.pathname){
+      case Routes.MY_TODOS : {
+        setHeaderTitle("Le tue note");
+        break;
+      }
+      case Routes.SHARED_TODOS: {
+        setHeaderTitle("Note condivise con te");
+        break;
+      }
+      default : {
+        setHeaderTitle("Todos");
+      }
     }
+
   }, [location.pathname]);
   
   const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -105,19 +131,21 @@ export default function DashboardPage() {
     justifyContent: 'flex-end',
   }));
 
-  const NavItems = [
+  const NavItems : NavLink[] = [
     {
       label:"Le tue note",
-      icon : <StickyNote2Icon/>
+      icon : <StickyNote2Icon/>,
+      link : Routes.MY_TODOS
     },
     {
       label:"Note condivise",
-      icon : <CoPresentIcon/>
+      icon : <CoPresentIcon/>,
+      link : Routes.SHARED_TODOS
     },
   ];
 
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -127,70 +155,109 @@ export default function DashboardPage() {
     setOpen(false);
   };
 
+  const callLogout = async () =>{
+
+    setIsLoading(true);    
+    await logout();
+    setIsLoading(false);
+
+  }
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={[
-              {
-                mr: 2,
-              },
-              /* open && { display: 'none' }, */
-            ]}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {headerTitle}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        sx={{
-          /* width: drawerWidth, */
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {NavItems.map((item, index) => (
-            <ListItem key={item.label} disablePadding>
-              <ListItemButton>
+    <>
+      {LoadingElem}
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={[
+                {
+                  mr: 2,
+                },
+                /* open && { display: 'none' }, */
+              ]}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              {headerTitle}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          sx={{
+            /* width: drawerWidth, */
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+            },
+          }}
+          variant="persistent"
+          anchor="left"
+          open={open}
+        >
+          <DrawerHeader>
+            <Typography 
+              variant="h6" component="div"
+              className="menu-title"
+              style={{
+                padding: theme.spacing(0, 1)
+              }}
+            >
+              Menu
+            </Typography>
+
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+            
+          </DrawerHeader>
+          <Divider />
+          <List>
+            {NavItems.map((item, index) => (
+              <ListItem key={item.label} disablePadding>
+                <ListItemButton
+                  onClick={()=>{
+                    navigate(item.link);
+                    setOpen(false);
+                  }}
+                >
+                  <ListItemIcon>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            <ListItem key="logout" disablePadding>
+              <ListItemButton
+                onClick={()=>{
+                  callLogout();
+                  setOpen(false);
+                }}
+              >
                 <ListItemIcon>
-                  {item.icon}
+                  <LogoutIcon style={{color:theme.palette.error.light}}/>
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText primary="Logout" />
               </ListItemButton>
             </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-
-        </List>
-      </Drawer>
-      <Main open={open}>
-        <DrawerHeader />
-        <Outlet/>
-      </Main>
-    </Box>
+          </List>
+        </Drawer>
+        <Main open={open}>
+          <DrawerHeader />
+          <Outlet/>
+        </Main>
+      </Box>
+    </>
   );
 }

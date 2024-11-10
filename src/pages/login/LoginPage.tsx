@@ -50,7 +50,7 @@ const LoginPage: React.FC = () => {
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
   const [form, setForm] = useState<loginBodyI>({
-    username: "",
+    username: "test@dev.com",
     password: "",
     remember : true,
   });

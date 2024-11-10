@@ -12,13 +12,14 @@ import responseInterceptor from './interceptors/responseInterceptor';
 import { BaseRoutes } from './routerConfig/routes';
 
 // IMPORT PAGES
-import MyTodosPage  from './pages/home/MyTodosPage';
+import MyTodosPage  from './pages/MyTodos/MyTodosPage';
 import LoginPage  from './pages/login/LoginPage';
 import DashboardPage  from './pages/dashboard/DashboardPage';
 import { AuthTypes } from './reducers/reducers';
 import { cookiesName } from './enums/cookies';
 import Redirects from './routerConfig/Redirects';
 import RootPage from './pages/rootPage/RootPage';
+import SharedTodosPage from './pages/SharedTodos/SharedTodosPage';
 
 const App : React.FC = () => {
 
@@ -97,6 +98,7 @@ const App : React.FC = () => {
 
               <Route path={BaseRoutes.DASHBOARD} element={<DashboardPage />}>
                 <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
+                <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
               </Route>
 
             </Route>
