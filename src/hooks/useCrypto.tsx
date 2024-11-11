@@ -1,11 +1,11 @@
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = "la-tua-chiave-segreta";
+const KEY = String(process.env.REACT_APP_CRYPTO_KEY);
 
 export default function useCrypto() {
   const encryptString = (text : string) => {
     try {
-      const encrypted = CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
+      const encrypted = CryptoJS.AES.encrypt(text, KEY).toString();
       return encrypted;
     } catch (error) {
       console.error("Errore durante la crittografia:", error);
@@ -15,7 +15,7 @@ export default function useCrypto() {
 
   const decryptString = (encryptedText : string) => {
     try {
-      const decrypted = CryptoJS.AES.decrypt(encryptedText, SECRET_KEY);
+      const decrypted = CryptoJS.AES.decrypt(encryptedText, KEY);
       return decrypted.toString(CryptoJS.enc.Utf8);
     } catch (error) {
       console.error("Errore durante la decrittografia:", error);
