@@ -4,6 +4,8 @@ import { UserTypes } from '../../reducers/reducers';
 import { useNavigate } from 'react-router-dom';
 import useTodos from '../../hooks/useTodos';
 import { TodoResponse } from '../../api';
+import ShareIcon from '@mui/icons-material/Share';
+import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
 
 const MyTodosPage : React.FC = () => {
 
@@ -30,9 +32,44 @@ const MyTodosPage : React.FC = () => {
   }
 
   return (
-    <div>
-      MyTodosPage works
-    </div>
+    <Stack
+      spacing={{ xs: 1, sm: 2 }}
+      direction="row"
+      useFlexGap
+      sx={{ flexWrap: 'wrap' }}
+    >
+      {
+        todos.map((todo, index)=>{
+          return (
+            <Card sx={
+                { maxWidth: 345,
+                display:"flex",
+                flexDirection:"column",
+                justifyContent:"space-between" 
+                }} 
+              key={index}
+            >
+              <CardActionArea onClick={()=>{console.log('premuto ' + todo.id)}}>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {todo.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    {todo.description}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+              <CardActions >
+                <Button size="small" color="primary">
+                  <ShareIcon></ShareIcon>
+                    condividi
+                  </Button>
+              </CardActions>
+            </Card>
+          );
+        })
+      }
+    </Stack>
   )
 }
 
