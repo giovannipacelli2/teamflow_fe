@@ -6,12 +6,12 @@ import { UserTypes } from '../reducers/reducers';
 
 export default function useAccount() {
 
-    const { state, dispatch } = useContext(AppContext);
+    const { authState, accountDispatch } = useContext(AppContext);
 
     const getOwnAccount = async () => {
         let accountApi = new AccountApi();
 
-        let accountId = String(state.auth.accountId);
+        let accountId = String(authState.accountId);
 
         if (!accountId) {
             console.log("[WARNING]:", "Get own account fail!");
@@ -24,12 +24,10 @@ export default function useAccount() {
 
         if (data.status >= 200 && data.status < 400){
 
-            dispatch({
-                accountDispatch:{
-                    type: UserTypes.UPDATE,
-                    payload:{
-                        ...data.data
-                    }
+            accountDispatch({
+                type: UserTypes.UPDATE,
+                payload:{
+                    ...data.data
                 }
             });
 

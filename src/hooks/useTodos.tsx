@@ -5,7 +5,7 @@ import { AppContext } from '../context/context';
 
 export default function useTodos() {
 
-    const { dispatch } = useContext(AppContext);
+    //const { dispatch } = useContext(AppContext);
 
     const getAllTodos = async () : Promise<TodoResponse[]> => {
         let todoApi = new TodoApi();

@@ -12,69 +12,53 @@ interface AppProviderProps {
     children: React.ReactNode;
   }
 
-export interface InitialStateType {
-    auth : Auth,
-    account : AccountResponse,
-};
+export interface initialAuthStateI extends Auth{} 
+export interface initialAccountStateI extends AccountResponse{} 
 
-export interface reducerActions {
-    authDispatch ?: authActions,
-    accountDispatch ?: accountActions,
-};
+
   
-const initialState : InitialStateType = {
-  auth: {
-    status : "",
-    accountId : "",
-    authorization : {
-      token: "",
-      type: ""
-    }
-  },
-  account : {
-    id: "",
-    username: "",
-    name: "",
-    surname: "",
-    email: ""
-  },
+const initialAuthState : initialAuthStateI = {
+  status : "",
+  accountId : "",
+  authorization : {
+    token: "",
+    type: ""
+  }
+
+};
+const initialAccountState : initialAccountStateI = {
+  id: "",
+  username: "",
+  name: "",
+  surname: "",
+  email: ""
 };
 
 const AppContext = createContext<{
-    state: InitialStateType;
-    dispatch: Dispatch<reducerActions>;
+    authState: initialAuthStateI;
+    accountState: initialAccountStateI;
+    authDispatch: Dispatch<authActions>;
+    accountDispatch: Dispatch<accountActions>;
     }>({
-        state: initialState,
-        dispatch: () => null,
+      authState: initialAuthState,
+      accountState: initialAccountState,
+      authDispatch: () => null,
+      accountDispatch: () => null,
     });
 
-const mainReducer = (
-    state : InitialStateType,
-    dispatchObj : reducerActions,
-  ) => {
-        if (dispatchObj.authDispatch){
-            return {
-                ...state,
-                auth : authReducer(state.auth, dispatchObj.authDispatch)
-            }
-        }
-        if (dispatchObj.accountDispatch){
-            return {
-                ...state,
-                account : accountReducer(state.account, dispatchObj.accountDispatch)
-            }
-        }
-        return state
-    };
 
 const AppProvider = ( {children}: AppProviderProps ) => {
-    const [state, dispatch] = useReducer<Reducer<InitialStateType, reducerActions>>(
-        mainReducer, 
-        initialState
+    const [authState, authDispatch] = useReducer<Reducer<initialAuthStateI, authActions>>(
+        authReducer, 
+        initialAuthState
+    );
+    const [accountState, accountDispatch] = useReducer<Reducer<initialAccountStateI, accountActions>>(
+        accountReducer, 
+        initialAccountState
     );
 
   return (
-    <AppContext.Provider value={{ state, dispatch }}>
+    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch }}>
       {children}
     </AppContext.Provider>
   );

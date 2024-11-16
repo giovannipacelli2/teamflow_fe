@@ -14,7 +14,7 @@ export interface loginBodyI extends LoginRequest {
 
 export const useAuth = () => {
 
-    const { dispatch } = React.useContext(AppContext);
+    const { authDispatch, accountDispatch } = React.useContext(AppContext);
     const { setCookie, setSessionCookie, deleteCookie } = useCookie();
     const { encryptString } = useCrypto();
 
@@ -28,13 +28,11 @@ export const useAuth = () => {
 
         if (data.status >= 200 && data.status < 400){
 
-            dispatch({
-                authDispatch: {
-                    type: AuthTypes.UPDATE,
-                    payload : {
-                        accountId : data.data.account?.id,
-                        status: "success"
-                    }
+            authDispatch({
+                type: AuthTypes.UPDATE,
+                payload : {
+                    accountId : data.data.account?.id,
+                    status: "success"
                 }
               });
 
@@ -61,11 +59,9 @@ export const useAuth = () => {
 
         if (res.status >= 200 && res.status < 400){
 
-            dispatch({
-                authDispatch: {
-                    type: AuthTypes.UPDATE,
-                    payload : data.data
-                }
+            authDispatch({
+                type: AuthTypes.UPDATE,
+                payload : data.data
             });
 
             let token = data.data.authorization?.token ?? "";
@@ -97,16 +93,12 @@ export const useAuth = () => {
 
         if (data.status >= 200 && data.status < 400){
 
-            dispatch({
-                authDispatch: {
-                    type: AuthTypes.RESET
-                }
+            authDispatch({
+                type: AuthTypes.RESET
             });
 
-            dispatch({
-                accountDispatch: {
-                    type: UserTypes.RESET
-                }
+            accountDispatch({
+                type: UserTypes.RESET
             });
 
             deleteCookie(cookiesName.TOKEN);

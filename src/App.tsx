@@ -25,7 +25,7 @@ import useAccount from './hooks/useAccount';
 
 const App : React.FC = () => {
 
-  const { state, dispatch } = useContext(AppContext);
+  const { authState, accountState, authDispatch, accountDispatch } = useContext(AppContext);
   const { logged } = useAuth();
   const { getCookie } = useCookie();
   const { decryptString } = useCrypto();
@@ -47,15 +47,13 @@ const App : React.FC = () => {
       let decryptedToken = decryptString(token);
       let decryptedTokenType = decryptString(type);
       
-      dispatch({
-        authDispatch: {
-            type: AuthTypes.UPDATE,
-            payload : {
-              authorization: {
-                token : decryptedToken,
-                type : decryptedTokenType
-              }
-            }
+      authDispatch({
+        type: AuthTypes.UPDATE,
+        payload : {
+          authorization: {
+            token : decryptedToken,
+            type : decryptedTokenType
+          }
         }
       });
     }
@@ -66,29 +64,34 @@ const App : React.FC = () => {
 
   useEffect(()=>{
 
-    if (state.auth.accountId !== ""){
+    if (authState.accountId !== ""){
 
       getOwnAccount();
     }
 
-  }, [state.auth.accountId])
+  }, [authState.accountId])
 
   useEffect(()=>{
 
-    if (state.auth.authorization?.token){
+    if (authState.authorization?.token){
 
       removeHeaderInterceptor(currentInterceptor);
-      setCurrentInterceptor(requestHeaderInterceptor(state.auth));
+      setCurrentInterceptor(requestHeaderInterceptor(authState));
       
       checkAuth();
     }
 
-  }, [state.auth.authorization?.token])
+  }, [authState.authorization?.token])
 
   // DEBUG
   useEffect(()=>{
-    console.log("[DEBUG]: global_state", state);
-  }, [state])
+    console.log("[DEBUG]: auth_state", authState);
+  }, [authState])
+
+  // DEBUG
+  useEffect(()=>{
+    console.log("[DEBUG]: account_state", accountState);
+  }, [accountState])
 
   return (
     <div className="App">
@@ -96,9 +99,9 @@ const App : React.FC = () => {
         <Router>
             <RootPage></RootPage>
           <Routes>
-            <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={state.auth.status==="success"} />}></Route>
+            <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
             <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
-            <Route element={<PrivateRoute isAuth={state.auth.status==="success"} />}>
+            <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
               <Route path={BaseRoutes.DASHBOARD} element={<DashboardPage />}>
                 <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />

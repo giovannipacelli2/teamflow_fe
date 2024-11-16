@@ -9,16 +9,16 @@ import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typograp
 
 const MyTodosPage : React.FC = () => {
 
-  const { state ,dispatch } = React.useContext(AppContext);
+  const { accountState ,accountDispatch } = React.useContext(AppContext);
   const navigate = useNavigate();
   const {getAllTodos} = useTodos();
   const [todos, setTodos] = useState<TodoResponse[]>([]);
 
   useEffect(()=>{
-    if (state.account.id){
+    if (accountState.id){
       handleGetTodos();
     }
-  }, [state.account]);
+  }, [accountState]);
 
   useEffect(()=>{
     if (todos.length>0){

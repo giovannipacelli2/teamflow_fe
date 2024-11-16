@@ -5,20 +5,20 @@ import { Routes } from '../../routerConfig/routes';
 
 const RootPage : React.FC = () => {
 
-  const { state } = React.useContext(AppContext);
+  const { authState } = React.useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(()=>{
-    if (state.auth.status === ""){
+    if (authState.status === ""){
       navigate(Routes.LOGIN);
     }
   }, []);
 
   useEffect(()=>{
-    if (state.auth.status === "success"){
+    if (authState.status === "success"){
       navigate(Routes.MY_TODOS);
     }
-  }, [state.auth.status]);
+  }, [authState.status]);
 
 
   return (
