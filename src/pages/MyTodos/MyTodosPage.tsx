@@ -1,35 +1,24 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import { AppContext } from "../../context/context";
-import { UserTypes } from '../../reducers/reducers';
-import { useNavigate } from 'react-router-dom';
-import useTodos from '../../hooks/useTodos';
-import { TodoResponse } from '../../api';
 import ShareIcon from '@mui/icons-material/Share';
 import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
+import {TodosContext} from '../../context/todosContext'
+import Empty from '../../components/Empty/Empty';
+import SkeletonComponent from '../../components/Skeleton/Skeleton';
 
 const MyTodosPage : React.FC = () => {
 
-  const { accountState ,accountDispatch } = React.useContext(AppContext);
-  const navigate = useNavigate();
-  const {getAllTodos} = useTodos();
-  const [todos, setTodos] = useState<TodoResponse[]>([]);
+  const { accountState } = useContext(AppContext);
+  const { todoState, getTodos, loading } = useContext(TodosContext);
 
   useEffect(()=>{
-    if (accountState.id){
-      handleGetTodos();
+    if (todoState.myTodos.length>0){
+      console.log('[DEBUG]: todo_state', todoState.myTodos)
     }
-  }, [accountState]);
-
+  }, [todoState.myTodos]);
   useEffect(()=>{
-    if (todos.length>0){
-      console.log('[DEBUG]: todo_state', todos)
-    }
-  }, [todos]);
-
-  const handleGetTodos = async ()=>{
-    let res = await getAllTodos();
-    setTodos(res);
-  }
+    console.log("loading", loading)
+  }, [loading]);
 
   return (
     <Stack
@@ -38,8 +27,9 @@ const MyTodosPage : React.FC = () => {
       useFlexGap
       sx={{ flexWrap: 'wrap' }}
     >
+      {loading && <SkeletonComponent/>}
       {
-        todos.map((todo, index)=>{
+        !loading && todoState.myTodos.map((todo, index)=>{
           return (
             <Card sx={
                 { maxWidth: 345,
@@ -68,6 +58,11 @@ const MyTodosPage : React.FC = () => {
             </Card>
           );
         })
+      }
+      {
+        (!loading && todoState.myTodos.length===0) && <>
+        <Empty text="Nessuna nota trovata"></Empty>
+      </>
       }
     </Stack>
   )

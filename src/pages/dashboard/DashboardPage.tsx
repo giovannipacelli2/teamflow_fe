@@ -1,6 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import "./DashboardPage.scss";
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { TodosContext } from '../../context/todosContext';
+import { AppContext } from '../../context/context';
+import { useLocation, useNavigate } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -35,7 +37,11 @@ interface NavLink {
   link : string,
 }
 
-export default function DashboardPage() {
+interface DashboardProps {
+  children ?: React.ReactNode;
+}
+
+export default function DashboardPage({children}: DashboardProps) {
 
   const [headerTitle, setHeaderTitle] = useState<string>("");
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -44,6 +50,15 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const {logout} = useAuth();
   const {LoadingElem, setIsLoading} = useLoading();
+
+  const {getTodos, getSharedTodos, setLoading} = useContext(TodosContext)
+  const {accountState} = useContext(AppContext)
+
+  useEffect(()=>{
+    if (accountState.id){
+      getData();
+    }
+  }, [accountState.id]);
 
   useEffect(()=>{
     if (isMobile){
@@ -71,6 +86,16 @@ export default function DashboardPage() {
     }
 
   }, [location.pathname]);
+
+  const getData = async ()=>{
+      setLoading(true);
+      await getTodos();
+      setLoading(false);
+
+      setLoading(true);
+      await getSharedTodos();
+      setLoading(false);
+  }
   
   const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
@@ -255,7 +280,7 @@ export default function DashboardPage() {
         </Drawer>
         <Main open={open}>
           <DrawerHeader />
-          <Outlet/>
+          {children ?? <></>}
         </Main>
       </Box>
     </>

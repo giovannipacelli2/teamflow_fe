@@ -1,9 +1,10 @@
 import React, {useEffect, useState, useContext} from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
 import './App.scss';
 import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
 import useCookie from './hooks/useCookie';
+import {TodosProvider} from './context/todosContext'
 
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
@@ -103,7 +104,13 @@ const App : React.FC = () => {
             <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
             <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
-              <Route path={BaseRoutes.DASHBOARD} element={<DashboardPage />}>
+              <Route path={BaseRoutes.DASHBOARD} element={
+                <TodosProvider>
+                  <DashboardPage>
+                    <Outlet/>
+                  </DashboardPage>
+                </TodosProvider>
+                }>
                 <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
                 <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
               </Route>

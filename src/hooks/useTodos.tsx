@@ -1,7 +1,6 @@
 import React, {useContext} from 'react'
 import { TodoApi, TodoResponse, TodosResponse } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
-import { AppContext } from '../context/context';
 
 export default function useTodos() {
 
@@ -24,5 +23,22 @@ export default function useTodos() {
         return [];
     };
 
-    return { getAllTodos };
+    const getAllSharedTodos = async () : Promise<TodoResponse[]> => {
+        let todoApi = new TodoApi();
+        
+        let res = await todoApi.getAllSharedTodos();
+
+        let data = res.data as GenericResponse<TodosResponse>;
+
+        if (data.status >= 200 && data.status < 400){
+
+            if (data.data.data){
+                return data.data.data;
+            }
+        } 
+        
+        return [];
+    };
+
+    return { getAllTodos, getAllSharedTodos };
 }
