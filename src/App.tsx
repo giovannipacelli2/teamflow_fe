@@ -5,6 +5,10 @@ import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
 import useCookie from './hooks/useCookie';
 import {TodosProvider} from './context/todosContext'
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
@@ -23,6 +27,8 @@ import RootPage from './pages/rootPage/RootPage';
 import SharedTodosPage from './pages/SharedTodos/SharedTodosPage';
 import useCrypto from './hooks/useCrypto';
 import useAccount from './hooks/useAccount';
+
+const queryClient = new QueryClient()
 
 const App : React.FC = () => {
 
@@ -96,7 +102,7 @@ const App : React.FC = () => {
 
   return (
     <div className="App">
-      
+      <QueryClientProvider client={queryClient}>
         <Router>
             <RootPage></RootPage>
           <Routes>
@@ -118,6 +124,7 @@ const App : React.FC = () => {
             </Route>
           </Routes>
         </Router>
+      </QueryClientProvider>
     </div>
   );
 }

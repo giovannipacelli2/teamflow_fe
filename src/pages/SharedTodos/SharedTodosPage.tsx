@@ -11,6 +11,7 @@ import SkeletonComponent from '../../components/Skeleton/Skeleton';
 const SharedTodosPage : React.FC = () => {
   const { accountState } = useContext(AppContext);
   const { todoState, getSharedTodos, loading } = useContext(TodosContext);
+  const [firstLoading, setFirstLoading] = useState(true);
 
   useEffect(()=>{
     if (todoState.sharedTodos.length>0){
@@ -25,9 +26,9 @@ const SharedTodosPage : React.FC = () => {
       useFlexGap
       sx={{ flexWrap: 'wrap' }}
     >
+      {loading && <SkeletonComponent/>}
       {
-        loading ? <SkeletonComponent/> :
-        todoState.sharedTodos.map((todo, index)=>{
+        !loading && todoState.sharedTodos.map((todo, index)=>{
           return (
             <Card sx={
                 { maxWidth: 345,
@@ -58,7 +59,7 @@ const SharedTodosPage : React.FC = () => {
         })
       }
       {
-        (!loading && todoState.sharedTodos.length===0) && <>
+        (!loading &&  todoState.sharedTodos.length===0) && <>
           <Empty text="Nessuna nota trovata"></Empty>
         </>
       }

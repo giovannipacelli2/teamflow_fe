@@ -10,15 +10,13 @@ const MyTodosPage : React.FC = () => {
 
   const { accountState } = useContext(AppContext);
   const { todoState, getTodos, loading } = useContext(TodosContext);
+  const [firstLoading, setFirstLoading] = useState(true);
 
   useEffect(()=>{
     if (todoState.myTodos.length>0){
       console.log('[DEBUG]: todo_state', todoState.myTodos)
     }
   }, [todoState.myTodos]);
-  useEffect(()=>{
-    console.log("loading", loading)
-  }, [loading]);
 
   return (
     <Stack
