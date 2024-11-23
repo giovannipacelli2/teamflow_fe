@@ -1,14 +1,16 @@
-import React, {useEffect, useState, useContext} from 'react'
-import { AppContext } from "../../context/context";
+import React, {useEffect, useContext, useState} from 'react'
 import ShareIcon from '@mui/icons-material/Share';
 import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
 import {TodosContext} from '../../context/todosContext'
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
+import useModal from '../../components/Modal/Modal';
 
 const MyTodosPage : React.FC = () => {
 
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
+  const {handleOpen, ModalComponent} = useModal();
+  const [currentTodo, setCurrentTodo] = useState('');
 
   useEffect(()=>{
     if (todoState.myTodos.length>0){
@@ -23,6 +25,10 @@ const MyTodosPage : React.FC = () => {
       useFlexGap
       sx={{ flexWrap: 'wrap' }}
     >
+      <ModalComponent>
+        <br/>
+        <p>ID todo: {currentTodo}</p>
+      </ModalComponent>
       {todosLoading && <SkeletonComponent/>}
       {
         !todosLoading && todoState.myTodos.map((todo, index)=>{
@@ -35,7 +41,10 @@ const MyTodosPage : React.FC = () => {
                 }} 
               key={index}
             >
-              <CardActionArea onClick={()=>{console.log('premuto ' + todo.id)}}>
+              <CardActionArea onClick={()=>{
+                  handleOpen();
+                  setCurrentTodo(String(todo.id));
+                }}>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {todo.title}
