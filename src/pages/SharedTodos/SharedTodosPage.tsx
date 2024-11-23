@@ -9,9 +9,8 @@ import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
 
 const SharedTodosPage : React.FC = () => {
-  const { accountState } = useContext(AppContext);
+/*   const { accountState } = useContext(AppContext);
   const { todoState, getSharedTodos, loading } = useContext(TodosContext);
-  const [firstLoading, setFirstLoading] = useState(true);
 
   useEffect(()=>{
     if (todoState.sharedTodos.length>0){
@@ -64,7 +63,8 @@ const SharedTodosPage : React.FC = () => {
         </>
       }
     </Stack>
-  )
+  ) */
+ return(<>sharedTodos</>)
 }
 
 export default SharedTodosPage

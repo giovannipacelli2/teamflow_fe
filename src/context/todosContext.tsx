@@ -1,7 +1,9 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import useTodos from '../hooks/useTodos'
 
-import { TodoResponse } from "../api";
+import { GetAllTodos200Response, TodoResponse } from "../api";
+import { UseQueryResult } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 
 interface AppProviderProps {
     children: React.ReactNode;
@@ -20,36 +22,45 @@ const initialState : initialTodoStateI = {
   sharedTodos: [],
 };
 
-const TodosContext = createContext<{
+/* const TodosContext = createContext<{
   todoState: initialTodoStateI,
-  getTodos : ()=>Promise<any>,
+  //getAllTodos : UseQueryResult<AxiosResponse<GetAllTodos200Response, any>, Error>,
   getSharedTodos : ()=>Promise<any>,
-  loading : boolean,
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     }>({
       todoState: initialState,
-      getTodos : async ()=> {},
       getSharedTodos : async ()=> {},
-      loading: false,
-      setLoading : ()=> {},
+    }); */
+const TodosContext = createContext({
+      todoState: initialState,
+      todosLoading: false,
+      todosError: false,
+      getSharedTodos : async ()=> {},
     });
 
 
 const TodosProvider = ( {children}: AppProviderProps ) => {
     const [todoState, setTodoState] = useState<initialTodoStateI>(initialState);
-    const [loading, setLoading] = useState<boolean>(false);
 
     const { getAllTodos, getAllSharedTodos } = useTodos();
+    const { data:todosData, isLoading:todosLoading, isError:todosError} = getAllTodos;
 
-    const getTodos = async () =>{
-      let res = await getAllTodos();
-      setTodoState((prevState)=>{
-        return {
-          ...prevState,
-          myTodos : res
-        }
-      });
-    }
+
+    useEffect(()=>{
+
+      let res = todosData?.data.data?.data ?? [];
+
+      if (res){
+        let state : TodoResponse[] = [...res];
+
+        setTodoState((prevState)=>{
+          return {
+            ...prevState,
+            myTodos : state
+          }
+        });
+      }
+
+    },[todosData]);
 
     const getSharedTodos = async () =>{
       let res = await getAllSharedTodos();
@@ -62,7 +73,7 @@ const TodosProvider = ( {children}: AppProviderProps ) => {
     }
 
   return (
-    <TodosContext.Provider value={{ todoState, getTodos, getSharedTodos, loading, setLoading }}>
+    <TodosContext.Provider value={{ todoState, todosLoading, todosError, getSharedTodos}}>
       {children}
     </TodosContext.Provider>
   );

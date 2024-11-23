@@ -51,14 +51,8 @@ export default function DashboardPage({children}: DashboardProps) {
   const {logout} = useAuth();
   const {LoadingElem, setIsLoading} = useLoading();
 
-  const {getTodos, getSharedTodos, setLoading} = useContext(TodosContext)
   const {accountState} = useContext(AppContext)
 
-  useEffect(()=>{
-    if (accountState.id){
-      getData();
-    }
-  }, [accountState.id]);
 
   useEffect(()=>{
     if (isMobile){
@@ -86,16 +80,6 @@ export default function DashboardPage({children}: DashboardProps) {
     }
 
   }, [location.pathname]);
-
-  const getData = async ()=>{
-      setLoading(true);
-      await getTodos();
-      setLoading(false);
-
-      setLoading(true);
-      await getSharedTodos();
-      setLoading(false);
-  }
   
   const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;

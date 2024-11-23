@@ -8,9 +8,7 @@ import SkeletonComponent from '../../components/Skeleton/Skeleton';
 
 const MyTodosPage : React.FC = () => {
 
-  const { accountState } = useContext(AppContext);
-  const { todoState, getTodos, loading } = useContext(TodosContext);
-  const [firstLoading, setFirstLoading] = useState(true);
+  const { todoState, todosLoading, todosError } = useContext(TodosContext);
 
   useEffect(()=>{
     if (todoState.myTodos.length>0){
@@ -25,9 +23,9 @@ const MyTodosPage : React.FC = () => {
       useFlexGap
       sx={{ flexWrap: 'wrap' }}
     >
-      {loading && <SkeletonComponent/>}
+      {todosLoading && <SkeletonComponent/>}
       {
-        !loading && todoState.myTodos.map((todo, index)=>{
+        !todosLoading && todoState.myTodos.map((todo, index)=>{
           return (
             <Card sx={
                 { maxWidth: 345,
@@ -58,8 +56,13 @@ const MyTodosPage : React.FC = () => {
         })
       }
       {
-        (!loading && todoState.myTodos.length===0) && <>
+        (!todosLoading && todosError && todoState.myTodos.length===0) && <>
         <Empty text="Nessuna nota trovata"></Empty>
+      </>
+      }
+      {
+        (!todosError && todoState.myTodos.length===0) && <>
+        <Empty text="Errore nel recupero delle note"></Empty>
       </>
       }
     </Stack>
