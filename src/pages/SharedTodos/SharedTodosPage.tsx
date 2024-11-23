@@ -57,12 +57,12 @@ const SharedTodosPage : React.FC = () => {
         })
       }
       {
-        (!sharedTodosLoading && sharedTodosError && todoState.sharedTodos.length===0) && <>
+        (!sharedTodosLoading && !sharedTodosError && todoState.sharedTodos.length===0) && <>
           <Empty text="Nessuna nota condivisa trovata"></Empty>
         </>
       }
       {
-        (!sharedTodosLoading && todoState.sharedTodos.length===0) && <>
+        (sharedTodosError ) && <>
           <Empty text="Errore nel recupero delle note condivise"></Empty>
         </>
       }

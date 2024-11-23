@@ -56,12 +56,12 @@ const MyTodosPage : React.FC = () => {
         })
       }
       {
-        (!todosLoading && todosError && todoState.myTodos.length===0) && <>
+        (!todosLoading && !todosError && todoState.myTodos.length===0) && <>
         <Empty text="Nessuna nota trovata"></Empty>
       </>
       }
       {
-        (!todosError && todoState.myTodos.length===0) && <>
+        (todosError) && <>
         <Empty text="Errore nel recupero delle note"></Empty>
       </>
       }

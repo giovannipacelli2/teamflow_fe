@@ -78,11 +78,9 @@ const TodosProvider = ( {children}: AppProviderProps ) => {
           }
         });
       }
-
     },[sharedTodosData]);
 
     const resetState = ()=>{
-      console.log('effetuo il reset')
       setTodoState(initialState);
     }
 
