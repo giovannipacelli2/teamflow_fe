@@ -15,23 +15,13 @@ export default function useTodos() {
             return todoApi.getAllTodos()
         }
       })
-
-    const getAllSharedTodos = async () : Promise<TodoResponse[]> => {
-        let todoApi = new TodoApi();
-        
-        let res = await todoApi.getAllSharedTodos();
-
-        let data = res.data as GenericResponse<TodosResponse>;
-
-        if (data.status >= 200 && data.status < 400){
-
-            if (data.data.data){
-                return data.data.data;
-            }
-        } 
-        
-        return [];
-    };
+    const getAllSharedTodos = useQuery({
+        queryKey: ['sharedTodos'],
+        queryFn: ()=>{
+            let todoApi = new TodoApi();
+            return todoApi.getAllSharedTodos()
+        }
+      })
 
     return { getAllTodos, getAllSharedTodos };
 }

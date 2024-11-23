@@ -31,10 +31,12 @@ const initialState : initialTodoStateI = {
       getSharedTodos : async ()=> {},
     }); */
 const TodosContext = createContext({
+      resetState : ()=>{},
       todoState: initialState,
       todosLoading: false,
       todosError: false,
-      getSharedTodos : async ()=> {},
+      sharedTodosLoading: false,
+      sharedTodosError: false,
     });
 
 
@@ -43,7 +45,7 @@ const TodosProvider = ( {children}: AppProviderProps ) => {
 
     const { getAllTodos, getAllSharedTodos } = useTodos();
     const { data:todosData, isLoading:todosLoading, isError:todosError} = getAllTodos;
-
+    const { data:sharedTodosData, isLoading:sharedTodosLoading, isError:sharedTodosError} = getAllSharedTodos;
 
     useEffect(()=>{
 
@@ -62,18 +64,31 @@ const TodosProvider = ( {children}: AppProviderProps ) => {
 
     },[todosData]);
 
-    const getSharedTodos = async () =>{
-      let res = await getAllSharedTodos();
-      setTodoState((prevState)=>{
-        return {
-          ...prevState,
-          sharedTodos : res
-        }
-      });
+    useEffect(()=>{
+
+      let res = sharedTodosData?.data.data?.data ?? [];
+
+      if (res){
+        let state : TodoResponse[] = [...res];
+
+        setTodoState((prevState)=>{
+          return {
+            ...prevState,
+            sharedTodos : state
+          }
+        });
+      }
+
+    },[sharedTodosData]);
+
+    const resetState = ()=>{
+      console.log('effetuo il reset')
+      setTodoState(initialState);
     }
 
+
   return (
-    <TodosContext.Provider value={{ todoState, todosLoading, todosError, getSharedTodos}}>
+    <TodosContext.Provider value={{ resetState, todoState, todosLoading, todosError, sharedTodosLoading, sharedTodosError}}>
       {children}
     </TodosContext.Provider>
   );

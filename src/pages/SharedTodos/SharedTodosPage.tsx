@@ -9,12 +9,11 @@ import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
 
 const SharedTodosPage : React.FC = () => {
-/*   const { accountState } = useContext(AppContext);
-  const { todoState, getSharedTodos, loading } = useContext(TodosContext);
+  const { todoState, sharedTodosLoading, sharedTodosError } = useContext(TodosContext);
 
   useEffect(()=>{
     if (todoState.sharedTodos.length>0){
-      console.log('[DEBUG]: todo_state', todoState.sharedTodos)
+      console.log('[DEBUG]: shared_todo_state', todoState.sharedTodos)
     }
   }, [todoState.sharedTodos]);
 
@@ -25,9 +24,9 @@ const SharedTodosPage : React.FC = () => {
       useFlexGap
       sx={{ flexWrap: 'wrap' }}
     >
-      {loading && <SkeletonComponent/>}
+      {sharedTodosLoading && <SkeletonComponent/>}
       {
-        !loading && todoState.sharedTodos.map((todo, index)=>{
+        !sharedTodosLoading && todoState.sharedTodos.map((todo, index)=>{
           return (
             <Card sx={
                 { maxWidth: 345,
@@ -58,13 +57,18 @@ const SharedTodosPage : React.FC = () => {
         })
       }
       {
-        (!loading &&  todoState.sharedTodos.length===0) && <>
-          <Empty text="Nessuna nota trovata"></Empty>
+        (!sharedTodosLoading && sharedTodosError && todoState.sharedTodos.length===0) && <>
+          <Empty text="Nessuna nota condivisa trovata"></Empty>
+        </>
+      }
+      {
+        (!sharedTodosLoading && todoState.sharedTodos.length===0) && <>
+          <Empty text="Errore nel recupero delle note condivise"></Empty>
         </>
       }
     </Stack>
-  ) */
- return(<>sharedTodos</>)
+  )
+
 }
 
 export default SharedTodosPage

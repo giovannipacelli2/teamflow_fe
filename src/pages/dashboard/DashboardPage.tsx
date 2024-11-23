@@ -20,6 +20,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import {
+  QueryClient,
+  useQueryClient
+} from '@tanstack/react-query'
 
 // ICONS
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
@@ -52,6 +56,8 @@ export default function DashboardPage({children}: DashboardProps) {
   const {LoadingElem, setIsLoading} = useLoading();
 
   const {accountState} = useContext(AppContext)
+  const {resetState} = useContext(TodosContext)
+  const queryClient = useQueryClient();
 
 
   useEffect(()=>{
@@ -167,8 +173,13 @@ export default function DashboardPage({children}: DashboardProps) {
   const callLogout = async () =>{
 
     setIsLoading(true);    
-    await logout();
+    let loggedOut = await logout();
     setIsLoading(false);
+
+    if (loggedOut){
+      resetState();
+      queryClient.clear();
+    }
 
   }
 
