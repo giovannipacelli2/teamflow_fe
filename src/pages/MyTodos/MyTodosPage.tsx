@@ -1,22 +1,52 @@
-import React, {useEffect, useContext, useState} from 'react'
+import React, {useEffect, useContext, useState, ChangeEvent} from 'react'
 import ShareIcon from '@mui/icons-material/Share';
-import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
+import { Button, Card, CardActionArea, CardActions, CardContent, FormControl, FormLabel, Stack, TextField, Typography } from '@mui/material';
 import {TodosContext} from '../../context/todosContext'
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
 import useModal from '../../components/Modal/Modal';
+import { TodoResponse } from '../../api';
+import TodoForm from '../../components/Forms/TodoForm/TodoForm';
+
+export interface editFormI {
+  title : string,
+  description : string,
+  note : string,
+}
+const defaultEditForm : editFormI = {
+  title : '',
+  description : '',
+  note : '',
+}
 
 const MyTodosPage : React.FC = () => {
 
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
   const {handleOpen, ModalComponent} = useModal();
-  const [currentTodo, setCurrentTodo] = useState('');
+  const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
+
+  const [editForm, setEditForm] = useState(defaultEditForm);
+
+  const handleChangeEdit = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
+
+    const name = event.target.name;
+    const value = event.target.value;
+   
+    setEditForm((prevState) => {
+      return {
+        ...prevState,
+        [name]: value,
+      };
+    });
+  }
 
   useEffect(()=>{
     if (todoState.myTodos.length>0){
       console.log('[DEBUG]: todo_state', todoState.myTodos)
     }
   }, [todoState.myTodos]);
+
+  const onEdit = ()=>{console.log('confirmed')}
 
   return (
     <Stack
@@ -25,10 +55,13 @@ const MyTodosPage : React.FC = () => {
       useFlexGap
       sx={{ flexWrap: 'wrap' }}
     >
-      <ModalComponent>
-        <br/>
-        <p>ID todo: {currentTodo}</p>
+      <ModalComponent 
+        title={'Modifica nota'}
+        onConfirm={onEdit}
+      >
+        <TodoForm todo={currentTodo} editForm={editForm} handleChange={handleChangeEdit}/>
       </ModalComponent>
+
       {todosLoading && <SkeletonComponent/>}
       {
         !todosLoading && todoState.myTodos.map((todo, index)=>{
@@ -43,7 +76,7 @@ const MyTodosPage : React.FC = () => {
             >
               <CardActionArea onClick={()=>{
                   handleOpen();
-                  setCurrentTodo(String(todo.id));
+                  setCurrentTodo(todo);
                 }}>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
