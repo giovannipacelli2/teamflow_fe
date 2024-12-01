@@ -113,8 +113,8 @@ const App : React.FC = () => {
               <Route path={BaseRoutes.DASHBOARD} element={
                 <TodosProvider>
                   <DashboardPage>
-                    <Outlet/>
                   </DashboardPage>
+                  <Outlet/>
                 </TodosProvider>
                 }>
                 <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />

@@ -1,44 +1,28 @@
-import React, {useEffect, useContext, useState, ChangeEvent} from 'react'
+import React, {useEffect, useContext, useState} from 'react'
 import ShareIcon from '@mui/icons-material/Share';
-import { Button, Card, CardActionArea, CardActions, CardContent, FormControl, FormLabel, Stack, TextField, Typography } from '@mui/material';
+import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography, useTheme } from '@mui/material';
 import {TodosContext} from '../../context/todosContext'
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
 import useModal from '../../components/Modal/Modal';
 import { TodoResponse } from '../../api';
-import TodoForm from '../../components/Forms/TodoForm/TodoForm';
+import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
+import { FieldValues } from 'react-hook-form';
 
 export interface editFormI {
   title : string,
   description : string,
   note : string,
 }
-const defaultEditForm : editFormI = {
-  title : '',
-  description : '',
-  note : '',
-}
+
 
 const MyTodosPage : React.FC = () => {
 
+  const theme = useTheme();
+  
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
-  const {handleOpen, ModalComponent} = useModal();
+  const {handleOpen, ModalComponent} = useModalEditNote();
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
-
-  const [editForm, setEditForm] = useState(defaultEditForm);
-
-  const handleChangeEdit = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
-
-    const name = event.target.name;
-    const value = event.target.value;
-   
-    setEditForm((prevState) => {
-      return {
-        ...prevState,
-        [name]: value,
-      };
-    });
-  }
 
   useEffect(()=>{
     if (todoState.myTodos.length>0){
@@ -46,52 +30,64 @@ const MyTodosPage : React.FC = () => {
     }
   }, [todoState.myTodos]);
 
-  const onEdit = ()=>{console.log('confirmed')}
+  const onEdit = React.useCallback((event: FieldValues)=>{console.log(event)},[])
 
   return (
     <Stack
-      spacing={{ xs: 1, sm: 2 }}
-      direction="row"
-      useFlexGap
-      sx={{ flexWrap: 'wrap' }}
+      spacing={{ xs: 2, sm: 3 }}
+      direction={{ xs: 'column', sm: 'row' }}
+      justifyContent={{ xs: 'flex-start', sm: 'flex-start' }}
+      alignItems={{ xs: 'center', sm: 'center' }}
+      sx={{ 
+        flexWrap: 'wrap', 
+        rowGap: { sm: '2em' },
+      }}
     >
       <ModalComponent 
         title={'Modifica nota'}
         onConfirm={onEdit}
+        defaults={{
+          title: String(currentTodo.title),
+          description: String(currentTodo.description),
+          note: String(currentTodo.note),
+        }}
       >
-        <TodoForm todo={currentTodo} editForm={editForm} handleChange={handleChangeEdit}/>
       </ModalComponent>
 
       {todosLoading && <SkeletonComponent/>}
       {
-        !todosLoading && todoState.myTodos.map((todo, index)=>{
+        !todosLoading && todoState.myTodos.map((todo)=>{
           return (
-            <Card sx={
-                { maxWidth: 345,
-                display:"flex",
-                flexDirection:"column",
-                justifyContent:"space-between" 
-                }} 
-              key={index}
+            <Card
+              sx={{
+                maxWidth: 345,
+                width: {xs:'90%', sm:'auto'},
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+              key={todo.id}
             >
-              <CardActionArea onClick={()=>{
+              <CardActionArea
+                onClick={() => {
                   handleOpen();
                   setCurrentTodo(todo);
-                }}>
+                }}
+              >
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {todo.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
                     {todo.description}
                   </Typography>
                 </CardContent>
               </CardActionArea>
-              <CardActions >
+              <CardActions>
                 <Button size="small" color="primary">
                   <ShareIcon></ShareIcon>
-                    condividi
-                  </Button>
+                  condividi
+                </Button>
               </CardActions>
             </Card>
           );

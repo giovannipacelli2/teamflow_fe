@@ -45,7 +45,7 @@ interface DashboardProps {
   children ?: React.ReactNode;
 }
 
-export default function DashboardPage({children}: DashboardProps) {
+const DashboardPage = React.memo(({children}: DashboardProps) => {
 
   const [headerTitle, setHeaderTitle] = useState<string>("");
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -58,7 +58,6 @@ export default function DashboardPage({children}: DashboardProps) {
   const {accountState} = useContext(AppContext)
   const {resetState} = useContext(TodosContext)
   const queryClient = useQueryClient();
-
 
   useEffect(()=>{
     if (isMobile){
@@ -280,4 +279,6 @@ export default function DashboardPage({children}: DashboardProps) {
       </Box>
     </>
   );
-}
+})
+
+export default DashboardPage;

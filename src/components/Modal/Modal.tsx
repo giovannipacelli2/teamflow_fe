@@ -76,7 +76,7 @@ function useModal () {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const ModalComponent = (props: ModalProps)=>{
+    const ModalComponent = React.memo((props: ModalProps)=>{
 
       props = {
         ...props,
@@ -119,7 +119,7 @@ function useModal () {
               </Modal>
             </div>
           );
-    }
+    })
   
     return {ModalComponent, open, handleOpen, handleClose}
   }
