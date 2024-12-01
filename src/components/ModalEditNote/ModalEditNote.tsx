@@ -131,7 +131,7 @@ function useModalEditNote () {
         return (
             <div>
               <Modal
-                disableAutoFocus={true}
+                disableAutoFocus={false}
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"

@@ -30,7 +30,9 @@ const MyTodosPage : React.FC = () => {
     }
   }, [todoState.myTodos]);
 
-  const onEdit = React.useCallback((event: FieldValues)=>{console.log(event)},[])
+  const onEdit = React.useCallback((event: FieldValues)=>{
+    console.log(event)
+  },[])
 
   return (
     <Stack
