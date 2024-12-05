@@ -8,6 +8,8 @@ import useModal from '../../components/Modal/Modal';
 import { TodoResponse } from '../../api';
 import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
 import { FieldValues } from 'react-hook-form';
+import useTodos from '../../hooks/useTodos';
+import { updateTodoI } from '../../interfaces/TodosInterfaces';
 
 export interface editFormI {
   title : string,
@@ -24,15 +26,30 @@ const MyTodosPage : React.FC = () => {
   const {handleOpen, ModalComponent} = useModalEditNote();
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
 
+  const {updateTodo} = useTodos();
+
   useEffect(()=>{
     if (todoState.myTodos.length>0){
       console.log('[DEBUG]: todo_state', todoState.myTodos)
     }
   }, [todoState.myTodos]);
 
+
   const onEdit = React.useCallback((event: FieldValues)=>{
-    console.log(event)
-  },[])
+
+    if (currentTodo.id){
+      let body : updateTodoI = {
+        todoId : String(currentTodo.id),
+        body : event
+      }
+
+      updateTodo.mutate(body);
+      if(updateTodo.isSuccess){
+        setCurrentTodo({});
+      }
+    }
+    
+  },[currentTodo])
 
   return (
     <Stack
@@ -63,7 +80,7 @@ const MyTodosPage : React.FC = () => {
             <Card
               sx={{
                 maxWidth: 345,
-                width: {xs:'90%', sm:'auto'},
+                width: {xs:'90%', sm:'300'},
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",

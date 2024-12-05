@@ -85,7 +85,7 @@ function useModalEditNote () {
   const formStyle = {
     border: '1px solid red',
   }
-
+     
     const [open, setOpen] = React.useState(false);
     const handleOpen = useCallback(() => setOpen(true), []);
     const handleClose = useCallback(() => setOpen(false), []);

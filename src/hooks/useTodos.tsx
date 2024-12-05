@@ -1,8 +1,9 @@
 import React, {useContext} from 'react'
-import { TodoApi, TodoResponse, TodosResponse } from '../api';
+import { TodoApi, TodoBodyReq, TodoResponse, TodosResponse } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateTodoI } from '../interfaces/TodosInterfaces';
 
 export default function useTodos() {
 
@@ -23,5 +24,17 @@ export default function useTodos() {
         }
       })
 
-    return { getAllTodos, getAllSharedTodos };
+    const updateTodo = useMutation({
+      mutationFn: (bodyReq:updateTodoI) => {
+        let todoApi = new TodoApi();
+
+        const {todoId, body} = bodyReq;
+        return todoApi.updateTodo(todoId, body);
+      },
+      onSuccess:()=>{
+        getAllTodos.refetch();
+      }
+    })
+
+    return { getAllTodos, getAllSharedTodos, updateTodo };
 }
