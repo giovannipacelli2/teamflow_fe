@@ -3,7 +3,8 @@ import { TodoApi, TodoBodyReq, TodoResponse, TodosResponse } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { updateTodoI } from '../interfaces/TodosInterfaces';
+import { deleteTodoI, updateTodoI } from '../interfaces/TodosInterfaces';
+import { filter, sortBy } from 'lodash';
 
 export default function useTodos() {
 
@@ -13,7 +14,7 @@ export default function useTodos() {
         queryKey: ['todos'],
         queryFn: ()=>{
             let todoApi = new TodoApi();
-            return todoApi.getAllTodos()
+            return todoApi.getAllTodos(50,1,'created_at', 'desc')
         }
       })
     const getAllSharedTodos = useQuery({
@@ -23,6 +24,17 @@ export default function useTodos() {
             return todoApi.getAllSharedTodos()
         }
       })
+
+    const createTodo = useMutation({
+      mutationFn: (bodyReq:TodoBodyReq) => {
+        let todoApi = new TodoApi();
+
+        return todoApi.createTodo(bodyReq);
+      },
+      onSuccess:()=>{
+        getAllTodos.refetch();
+      }
+    })
 
     const updateTodo = useMutation({
       mutationFn: (bodyReq:updateTodoI) => {
@@ -36,5 +48,17 @@ export default function useTodos() {
       }
     })
 
-    return { getAllTodos, getAllSharedTodos, updateTodo };
+    const deleteTodo = useMutation({
+      mutationFn: (bodyReq:deleteTodoI) => {
+        let todoApi = new TodoApi();
+
+        const {todoId} = bodyReq;
+        return todoApi.deleteTodo(todoId);
+      },
+      onSuccess:()=>{
+        getAllTodos.refetch();
+      }
+    })
+
+    return { getAllTodos, getAllSharedTodos, createTodo, updateTodo, deleteTodo };
 }
