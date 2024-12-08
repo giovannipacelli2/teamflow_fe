@@ -64,7 +64,8 @@ const MyTodosPage : React.FC = () => {
     if (authState.accountId){
       let body : TodoBodyReq = {
         title: event.title,
-        description: event.description
+        description: event.description,
+        note: event.note
       }
 
       createTodo.mutate(body);
