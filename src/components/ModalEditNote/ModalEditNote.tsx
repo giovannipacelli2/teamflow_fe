@@ -68,10 +68,7 @@ function useModalEditNote () {
     alignItems:'flex-start',
     justifyContent:'flex-start',
     gap:'0.5em',
-    minHeight: '300px',
-    [theme.breakpoints.up('sm')]: {
-      minHeight: '300px',
-    },
+    height: '100%',
   }
   const buttonContaier = {
     ...elemStyle,
@@ -143,63 +140,67 @@ function useModalEditNote () {
                     </Typography>
                   </Box>
                   <Box sx={bodyContaier}>
-                  <form 
-                    className='modalForm'
-                    onSubmit={handleSubmit((e)=>handleConfirm(e))}
-                  >
-                    <FormControl>
-                      <FormLabel htmlFor="title">Titolo</FormLabel>
-                      <Controller
-                        name="title"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            type="text"
-                            fullWidth
-                            variant="outlined"
+                    <form 
+                      className='modalForm'
+                      onSubmit={handleSubmit((e)=>handleConfirm(e))}
+                    >
+                      <Box 
+                        className='modalFormControl hide-scrollbar-back'
+                      >
+                        <FormControl>
+                          <FormLabel htmlFor="title">Titolo</FormLabel>
+                          <Controller
+                            name="title"
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: true }}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                type="text"
+                                fullWidth
+                                variant="outlined"
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel htmlFor="description">Descrizione</FormLabel>
-                      <Controller
-                        name="description"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                          <Textarea
-                            {...field}
-                            sx={{width:"100%", fontSize:'1em'}}
-                            minRows={3}
+                        </FormControl>
+                        <FormControl>
+                          <FormLabel htmlFor="description">Descrizione</FormLabel>
+                          <Controller
+                            name="description"
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: true }}
+                            render={({ field }) => (
+                              <Textarea
+                                {...field}
+                                sx={{width:"100%", fontSize:'1em'}}
+                                minRows={3}
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel htmlFor="note">Note</FormLabel>
-                      <Controller
-                        name="note"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: false }}
-                        render={({ field }) => (
-                          <Textarea
-                            {...field}
-                            sx={{width:"100%", fontSize:'1em'}}
-                            minRows={6}
+                        </FormControl>
+                        <FormControl>
+                          <FormLabel htmlFor="note">Note</FormLabel>
+                          <Controller
+                            name="note"
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: false }}
+                            render={({ field }) => (
+                              <Textarea
+                                {...field}
+                                sx={{width:"100%", fontSize:'1em'}}
+                                minRows={6}
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </FormControl>
-                    { props.diplayFooter && <Box sx={buttonContaier}>
-                        <Button type='submit'>{props.confirmText}</Button>
-                    </Box>}
-                  </form>
+                        </FormControl>
+                      </Box>
+                      { props.diplayFooter && <Box sx={buttonContaier}>
+                          <Button type='submit'>{props.confirmText}</Button>
+                      </Box>}
+                    </form>
                   </Box>
                 </Box>
               </Modal>
