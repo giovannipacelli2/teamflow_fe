@@ -40,6 +40,8 @@ import type { GetAllAccounts200Response } from '../models';
 // @ts-ignore
 import type { GetAllAccounts401Response } from '../models';
 // @ts-ignore
+import type { GetAllUsernames200Response } from '../models';
+// @ts-ignore
 import type { UpdateAccount200Response } from '../models';
 // @ts-ignore
 import type { UpdateAccount400Response } from '../models';
@@ -271,6 +273,70 @@ export const AccountApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Get all accounts usernames
+         * @param {number} [limit] Limit of elements
+         * @param {number} [page] Current page
+         * @param {string} [sortBy] sort by element
+         * @param {string} [sortValue] sorting type
+         * @param {string} [filterBy] fields to filter
+         * @param {string} [filterValue] Values to filter
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllUsernames: async (limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/accounts/username/all`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (sortBy !== undefined) {
+                localVarQueryParameter['sortBy'] = sortBy;
+            }
+
+            if (sortValue !== undefined) {
+                localVarQueryParameter['sortValue'] = sortValue;
+            }
+
+            if (filterBy !== undefined) {
+                localVarQueryParameter['filterBy'] = filterBy;
+            }
+
+            if (filterValue !== undefined) {
+                localVarQueryParameter['filterValue'] = filterValue;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Update a specific account
          * @param {string} accountId model id
          * @param {AccountBodyReq} accountBodyReq JSON with account data
@@ -395,6 +461,24 @@ export const AccountApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get all accounts usernames
+         * @param {number} [limit] Limit of elements
+         * @param {number} [page] Current page
+         * @param {string} [sortBy] sort by element
+         * @param {string} [sortValue] sorting type
+         * @param {string} [filterBy] fields to filter
+         * @param {string} [filterValue] Values to filter
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllUsernames(limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllUsernames200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllUsernames(limit, page, sortBy, sortValue, filterBy, filterValue, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AccountApi.getAllUsernames']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Update a specific account
          * @param {string} accountId model id
          * @param {AccountBodyReq} accountBodyReq JSON with account data
@@ -471,6 +555,21 @@ export const AccountApiFactory = function (configuration?: Configuration, basePa
          */
         getAllAccounts(limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAllAccounts200Response> {
             return localVarFp.getAllAccounts(limit, page, sortBy, sortValue, filterBy, filterValue, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all accounts usernames
+         * @param {number} [limit] Limit of elements
+         * @param {number} [page] Current page
+         * @param {string} [sortBy] sort by element
+         * @param {string} [sortValue] sorting type
+         * @param {string} [filterBy] fields to filter
+         * @param {string} [filterValue] Values to filter
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllUsernames(limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAllUsernames200Response> {
+            return localVarFp.getAllUsernames(limit, page, sortBy, sortValue, filterBy, filterValue, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -556,6 +655,23 @@ export class AccountApi extends BaseAPI {
      */
     public getAllAccounts(limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, options?: RawAxiosRequestConfig) {
         return AccountApiFp(this.configuration).getAllAccounts(limit, page, sortBy, sortValue, filterBy, filterValue, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all accounts usernames
+     * @param {number} [limit] Limit of elements
+     * @param {number} [page] Current page
+     * @param {string} [sortBy] sort by element
+     * @param {string} [sortValue] sorting type
+     * @param {string} [filterBy] fields to filter
+     * @param {string} [filterValue] Values to filter
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountApi
+     */
+    public getAllUsernames(limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, options?: RawAxiosRequestConfig) {
+        return AccountApiFp(this.configuration).getAllUsernames(limit, page, sortBy, sortValue, filterBy, filterValue, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

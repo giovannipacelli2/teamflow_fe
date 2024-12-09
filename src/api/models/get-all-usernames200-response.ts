@@ -15,24 +15,24 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { AccountsResponse } from './accounts-response';
+import type { AccountsUsernames } from './accounts-usernames';
 
 /**
  * 
  * @export
- * @interface GetAllAccounts200Response
+ * @interface GetAllUsernames200Response
  */
-export interface GetAllAccounts200Response {
+export interface GetAllUsernames200Response {
     /**
      * 
-     * @type {Array<AccountsResponse>}
-     * @memberof GetAllAccounts200Response
+     * @type {Array<AccountsUsernames>}
+     * @memberof GetAllUsernames200Response
      */
-    'data'?: Array<AccountsResponse>;
+    'data'?: Array<AccountsUsernames>;
     /**
      * 
      * @type {string}
-     * @memberof GetAllAccounts200Response
+     * @memberof GetAllUsernames200Response
      */
     'message'?: string;
 }

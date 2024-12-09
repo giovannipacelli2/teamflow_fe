@@ -13,27 +13,24 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { AccountsResponse } from './accounts-response';
 
 /**
  * 
  * @export
- * @interface GetAllAccounts200Response
+ * @interface AccountsUsernames
  */
-export interface GetAllAccounts200Response {
-    /**
-     * 
-     * @type {Array<AccountsResponse>}
-     * @memberof GetAllAccounts200Response
-     */
-    'data'?: Array<AccountsResponse>;
+export interface AccountsUsernames {
     /**
      * 
      * @type {string}
-     * @memberof GetAllAccounts200Response
+     * @memberof AccountsUsernames
      */
-    'message'?: string;
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccountsUsernames
+     */
+    'username'?: string;
 }
 

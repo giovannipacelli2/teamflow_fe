@@ -1,10 +1,8 @@
-import React, {useContext} from 'react'
-import { TodoApi, TodoBodyReq, TodoResponse, TodosResponse } from '../api';
-import { GenericResponse } from '../interfaces/GenericResponse';
+
+import { TodoApi, TodoBodyReq } from '../api';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteTodoI, updateTodoI } from '../interfaces/TodosInterfaces';
-import { filter, sortBy } from 'lodash';
 
 export default function useTodos() {
 
@@ -16,14 +14,15 @@ export default function useTodos() {
             let todoApi = new TodoApi();
             return todoApi.getAllTodos(50,1,'created_at', 'desc')
         }
-      })
+    })
+
     const getAllSharedTodos = useQuery({
         queryKey: ['sharedTodos'],
         queryFn: ()=>{
             let todoApi = new TodoApi();
             return todoApi.getAllSharedTodos()
         }
-      })
+    })
 
     const createTodo = useMutation({
       mutationFn: (bodyReq:TodoBodyReq) => {

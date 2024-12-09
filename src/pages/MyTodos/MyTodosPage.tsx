@@ -7,12 +7,12 @@ import {TodosContext} from '../../context/todosContext'
 import {AppContext} from '../../context/context'
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
-import useModal from '../../components/Modal/Modal';
 import { TodoBodyReq, TodoResponse } from '../../api';
 import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
 import { FieldValues } from 'react-hook-form';
 import useTodos from '../../hooks/useTodos';
 import { deleteTodoI, updateTodoI } from '../../interfaces/TodosInterfaces';
+import useModalShareNote from '../../components/ModalShareNote/ModalShareNote';
 
 export interface editFormI {
   title : string,
@@ -28,6 +28,7 @@ const MyTodosPage : React.FC = () => {
   //modals
   const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
   const {handleOpen:openCreate, ModalComponent:ModalCreate} = useModalEditNote();
+  const {handleOpen:openShare, ModalComponent:ModalShare} = useModalShareNote();
 
 
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
@@ -157,7 +158,9 @@ const MyTodosPage : React.FC = () => {
                     justifyContent:'space-between'
                   }}
                 >
-                  <Button size="small" color="primary">
+                  <Button size="small" color="primary"
+                    onClick={openShare}
+                  >
                     <ShareIcon></ShareIcon>
                     condividi
                   </Button>
@@ -199,6 +202,11 @@ const MyTodosPage : React.FC = () => {
         onConfirm={onCreate}
       >
       </ModalCreate>
+      <ModalShare 
+        title={'Condividi nota'}
+        //onConfirm={onCreate}
+      >
+      </ModalShare>
     </Stack>
   )
 }

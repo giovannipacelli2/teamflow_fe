@@ -28,15 +28,13 @@ import SharedTodosPage from './pages/SharedTodos/SharedTodosPage';
 import useCrypto from './hooks/useCrypto';
 import useAccount from './hooks/useAccount';
 
-const queryClient = new QueryClient()
-
 const App : React.FC = () => {
 
   const { authState, accountState, authDispatch, accountDispatch } = useContext(AppContext);
   const { logged } = useAuth();
   const { getCookie } = useCookie();
   const { decryptString } = useCrypto();
-  const { getOwnAccount } = useAccount();
+  const { getOwnAccount, getUsernames } = useAccount();
   const [currentInterceptor, setCurrentInterceptor] = useState<number>(0);
 
   const checkAuth = async ()=>{
@@ -74,6 +72,7 @@ const App : React.FC = () => {
     if (authState.accountId !== ""){
 
       getOwnAccount();
+      getUsernames();
     }
 
   }, [authState.accountId])
@@ -102,29 +101,27 @@ const App : React.FC = () => {
 
   return (
     <div className="App">
-      <QueryClientProvider client={queryClient}>
-        <Router>
-            <RootPage></RootPage>
-          <Routes>
-            <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
-            <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
-            <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
+      <Router>
+          <RootPage></RootPage>
+        <Routes>
+          <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
+          <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
+          <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
-              <Route path={BaseRoutes.DASHBOARD} element={
-                <TodosProvider>
-                  <DashboardPage>
-                  </DashboardPage>
-                  <Outlet/>
-                </TodosProvider>
-                }>
-                <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
-                <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
-              </Route>
-
+            <Route path={BaseRoutes.DASHBOARD} element={
+              <TodosProvider>
+                <DashboardPage>
+                </DashboardPage>
+                <Outlet/>
+              </TodosProvider>
+              }>
+              <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
+              <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
             </Route>
-          </Routes>
-        </Router>
-      </QueryClientProvider>
+
+          </Route>
+        </Routes>
+      </Router>
     </div>
   );
 }

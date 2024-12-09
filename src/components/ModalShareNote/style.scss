@@ -1,0 +1,17 @@
+.modalForm{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 1.5em;
+    justify-content: space-between;
+
+}
+.modalFormControl{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 20em;
+    //overflow-y: scroll;
+    gap: 1.5em;
+}

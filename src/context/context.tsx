@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, Dispatch, Reducer } from "react";
+import React, { createContext, useReducer, Dispatch, Reducer, useEffect, useState } from "react";
 import {
     accountReducer,
     accountActions,
@@ -6,7 +6,7 @@ import {
     authActions,
 } from '../reducers/reducers';
 
-import { AccountResponse, Auth } from "../api";
+import { AccountResponse, AccountsUsernames, Auth, GetAllUsernames200Response } from "../api";
 
 interface AppProviderProps {
     children: React.ReactNode;
@@ -14,8 +14,6 @@ interface AppProviderProps {
 
 export interface initialAuthStateI extends Auth{} 
 export interface initialAccountStateI extends AccountResponse{} 
-
-
   
 const initialAuthState : initialAuthStateI = {
   status : "",
@@ -39,11 +37,15 @@ const AppContext = createContext<{
     accountState: initialAccountStateI;
     authDispatch: Dispatch<authActions>;
     accountDispatch: Dispatch<accountActions>;
+    usernames: AccountsUsernames[];
+    setUsernames : React.Dispatch<React.SetStateAction<AccountsUsernames[]>>;
     }>({
       authState: initialAuthState,
       accountState: initialAccountState,
       authDispatch: () => null,
       accountDispatch: () => null,
+      usernames : [],
+      setUsernames: ()=>{}
     });
 
 
@@ -57,8 +59,10 @@ const AppProvider = ( {children}: AppProviderProps ) => {
         initialAccountState
     );
 
+    const [usernames, setUsernames] = useState<AccountsUsernames[]>([]);
+
   return (
-    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch }}>
+    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch, usernames, setUsernames }}>
       {children}
     </AppContext.Provider>
   );
