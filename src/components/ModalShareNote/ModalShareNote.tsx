@@ -6,40 +6,25 @@ import { useForm, Controller, FieldValues } from 'react-hook-form';
 import "./style.scss";
 import Autocomplete from '@mui/material/Autocomplete';
 import { AppContext } from '../../context/context';
-
-interface InputI {
-  label?: string,
-  id?: string,
-}
+import { useQuery } from '@tanstack/react-query';
+import useTodos from '../../hooks/useTodos';
 
 interface ModalProps {
     children?: React.ReactNode;
+    id ?: string
     title ?: string,
     diplayFooter ?: boolean,
     confirmText ?: string,
     onConfirm ?: (event: FieldValues)=>void,
-    defaults ?: {
-      accounts: InputI
-    }
   }
 
 const defaultProps : ModalProps= {
-    children : <></>,
-    title : 'Text',
-    diplayFooter : true,
-    confirmText : 'Conferma',
-    onConfirm : (event: FieldValues)=>{},
-    defaults: {
-      accounts:{
-        label:'',
-        id:''
-      }
-    }
-}
-
-const defaultAccount = {
-    id:'c0b52077-6404-427f-9766-d04b31ab4bd8',
-    label:'angeligu'
+  children: <></>,
+  id: '',
+  title: 'Text',
+  diplayFooter: true,
+  confirmText: 'Conferma',
+  onConfirm: (event: FieldValues) => { },
 }
 
 function useModalShareNote () {
@@ -99,22 +84,48 @@ function useModalShareNote () {
 
     const ModalComponent = React.memo((props: ModalProps)=>{
 
+      const { getAllTodoAccounts } = useTodos();
+
       props = {
         ...props,
         children : props.children ?? defaultProps.children,
+        id : props.id ?? defaultProps.id,
         title : props.title ?? defaultProps.title,
         diplayFooter : props.diplayFooter ?? defaultProps.diplayFooter,
         confirmText : props.confirmText ?? defaultProps.confirmText,
-        defaults : props.defaults ?? defaultProps.defaults,
         onConfirm : props.onConfirm ?? defaultProps.onConfirm,
       }
 
+      const { data : allAccounts, refetch, status } = useQuery({
+        queryKey:['getTodoAccounts'],
+        queryFn: ()=>getAllTodoAccounts({queryKey:[String(props.id)]}),
+        enabled : false
+      })
+
       useEffect(()=>{
-        //setValue('accounts', props.defaults?.accounts);
-        setValue('accounts', defaultAccount);
-      },[
-        props.defaults
-      ])
+        if (props.id){
+          refetch()
+        }
+      }, [props.id, refetch]);
+
+      useEffect(()=>{
+        if(status === 'success'){
+
+          let accountList = allAccounts.data.data;
+
+          if(accountList){
+
+            if (accountList.length>0){
+
+              setValue('accounts',{
+                id:accountList[0].id,
+                label:accountList[0].username
+              });
+            }
+          } 
+        }
+      }, [allAccounts]);
+
 
       const handleConfirm = useCallback((event: FieldValues)=>{
         console.log(event);

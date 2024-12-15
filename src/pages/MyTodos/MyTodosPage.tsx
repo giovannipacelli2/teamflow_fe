@@ -35,14 +35,11 @@ const MyTodosPage : React.FC = () => {
   const { authState } = useContext(AppContext);
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
 
-  const {createTodo, updateTodo, deleteTodo} = useTodos();
+  const {getAllTodos, createTodo, updateTodo, deleteTodo} = useTodos();
 
   useEffect(()=>{
-    if (todoState.myTodos.length>0){
-      console.log('[DEBUG]: todo_state', todoState.myTodos)
-    }
-  }, [todoState.myTodos]);
-
+    getAllTodos.refetch();
+  },[]);
 
   const onEdit = React.useCallback((event: FieldValues)=>{
 
@@ -159,7 +156,10 @@ const MyTodosPage : React.FC = () => {
                   }}
                 >
                   <Button size="small" color="primary"
-                    onClick={openShare}
+                    onClick={()=>{
+                      openShare();
+                      setCurrentTodo(todo);
+                    }}
                   >
                     <ShareIcon></ShareIcon>
                     condividi
@@ -204,6 +204,7 @@ const MyTodosPage : React.FC = () => {
       </ModalCreate>
       <ModalShare 
         title={'Condividi nota'}
+        id={currentTodo.id}
         //onConfirm={onCreate}
       >
       </ModalShare>

@@ -89,16 +89,6 @@ const App : React.FC = () => {
 
   }, [authState.authorization?.token])
 
-  // DEBUG
-  useEffect(()=>{
-    console.log("[DEBUG]: auth_state", authState);
-  }, [authState])
-
-  // DEBUG
-  useEffect(()=>{
-    console.log("[DEBUG]: account_state", accountState);
-  }, [accountState])
-
   return (
     <div className="App">
       <Router>

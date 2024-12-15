@@ -22,14 +22,6 @@ const initialState : initialTodoStateI = {
   sharedTodos: [],
 };
 
-/* const TodosContext = createContext<{
-  todoState: initialTodoStateI,
-  //getAllTodos : UseQueryResult<AxiosResponse<GetAllTodos200Response, any>, Error>,
-  getSharedTodos : ()=>Promise<any>,
-    }>({
-      todoState: initialState,
-      getSharedTodos : async ()=> {},
-    }); */
 const TodosContext = createContext({
       resetState : ()=>{},
       todoState: initialState,

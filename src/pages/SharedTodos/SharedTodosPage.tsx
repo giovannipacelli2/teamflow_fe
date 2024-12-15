@@ -7,9 +7,15 @@ import {TodosContext} from '../../context/todosContext'
 // Components
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
+import useTodos from '../../hooks/useTodos';
 
 const SharedTodosPage : React.FC = () => {
   const { todoState, sharedTodosLoading, sharedTodosError } = useContext(TodosContext);
+  const { getAllSharedTodos } = useTodos();
+
+  useEffect(()=>{
+    getAllSharedTodos.refetch();
+  }, []);
 
   useEffect(()=>{
     if (todoState.sharedTodos.length>0){

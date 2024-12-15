@@ -30,11 +30,13 @@ import type { DeleteAccount500Response } from '../models';
 // @ts-ignore
 import type { GetAllAccounts401Response } from '../models';
 // @ts-ignore
+import type { GetAllTodoAccounts200Response } from '../models';
+// @ts-ignore
+import type { GetAllTodoAccounts404Response } from '../models';
+// @ts-ignore
 import type { GetAllTodos200Response } from '../models';
 // @ts-ignore
 import type { GetTodo200Response } from '../models';
-// @ts-ignore
-import type { GetTodo404Response } from '../models';
 // @ts-ignore
 import type { ShareTodoRequest } from '../models';
 // @ts-ignore
@@ -193,6 +195,44 @@ export const TodoApiAxiosParamCreator = function (configuration?: Configuration)
             if (end !== undefined) {
                 localVarQueryParameter['end'] = end;
             }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get all accounts of a specific todo
+         * @summary Get all todo accounts
+         * @param {string} todoId todo id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllTodoAccounts: async (todoId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'todoId' is not null or undefined
+            assertParamExists('getAllTodoAccounts', 'todoId', todoId)
+            const localVarPath = `/api/todo/{todoId}/accounts/all`
+                .replace(`{${"todoId"}}`, encodeURIComponent(String(todoId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -462,6 +502,19 @@ export const TodoApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Get all accounts of a specific todo
+         * @summary Get all todo accounts
+         * @param {string} todoId todo id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllTodoAccounts(todoId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllTodoAccounts200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTodoAccounts(todoId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TodoApi.getAllTodoAccounts']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 
          * @summary Get all todos data
          * @param {number} [limit] Limit of elements
@@ -570,6 +623,16 @@ export const TodoApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.getAllSharedTodos(limit, page, sortBy, sortValue, filterBy, filterValue, start, end, options).then((request) => request(axios, basePath));
         },
         /**
+         * Get all accounts of a specific todo
+         * @summary Get all todo accounts
+         * @param {string} todoId todo id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllTodoAccounts(todoId: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAllTodoAccounts200Response> {
+            return localVarFp.getAllTodoAccounts(todoId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary Get all todos data
          * @param {number} [limit] Limit of elements
@@ -669,6 +732,18 @@ export class TodoApi extends BaseAPI {
      */
     public getAllSharedTodos(limit?: number, page?: number, sortBy?: string, sortValue?: string, filterBy?: string, filterValue?: string, start?: string, end?: string, options?: RawAxiosRequestConfig) {
         return TodoApiFp(this.configuration).getAllSharedTodos(limit, page, sortBy, sortValue, filterBy, filterValue, start, end, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all accounts of a specific todo
+     * @summary Get all todo accounts
+     * @param {string} todoId todo id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TodoApi
+     */
+    public getAllTodoAccounts(todoId: string, options?: RawAxiosRequestConfig) {
+        return TodoApiFp(this.configuration).getAllTodoAccounts(todoId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

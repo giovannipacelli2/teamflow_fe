@@ -13,7 +13,8 @@ export default function useTodos() {
         queryFn: ()=>{
             let todoApi = new TodoApi();
             return todoApi.getAllTodos(50,1,'created_at', 'desc')
-        }
+        },
+        enabled:false
     })
 
     const getAllSharedTodos = useQuery({
@@ -21,8 +22,17 @@ export default function useTodos() {
         queryFn: ()=>{
             let todoApi = new TodoApi();
             return todoApi.getAllSharedTodos()
-        }
+        },
+        enabled:false
     })
+
+    const getAllTodoAccounts = ({queryKey}: {queryKey:string[]})=>{
+
+          const [todoId] = queryKey
+
+          let todoApi = new TodoApi();
+          return todoApi.getAllTodoAccounts(todoId)
+    }
 
     const createTodo = useMutation({
       mutationFn: (bodyReq:TodoBodyReq) => {
@@ -59,5 +69,5 @@ export default function useTodos() {
       }
     })
 
-    return { getAllTodos, getAllSharedTodos, createTodo, updateTodo, deleteTodo };
+    return { getAllTodos, getAllSharedTodos, createTodo, updateTodo, deleteTodo, getAllTodoAccounts };
 }
