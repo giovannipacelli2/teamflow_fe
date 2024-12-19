@@ -6,7 +6,7 @@ import { useForm, Controller, FieldValues } from 'react-hook-form';
 import "./style.scss";
 import Autocomplete from '@mui/material/Autocomplete';
 import { AppContext } from '../../context/context';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useTodos from '../../hooks/useTodos';
 
 interface ModalProps {
@@ -77,10 +77,21 @@ function useModalShareNote () {
   }
     const { usernames } = useContext(AppContext);
     const [open, setOpen] = React.useState(false);
-    const handleOpen = useCallback(() => setOpen(true), []);
-    const handleClose = useCallback(() => setOpen(false), []);
 
     const { control, handleSubmit, setValue } = useForm();
+
+    const resetForm = ()=>{
+
+      setValue('accounts',{
+        label:'',
+        id:''
+      });
+    }
+
+    const handleOpen = useCallback(() => setOpen(true), []);
+    const handleClose = useCallback(() => {
+      setOpen(false)
+    }, []);
 
     const ModalComponent = React.memo((props: ModalProps)=>{
 
@@ -101,30 +112,38 @@ function useModalShareNote () {
         queryFn: ()=>getAllTodoAccounts({queryKey:[String(props.id)]}),
         enabled : false
       })
+      const queryClient = useQueryClient();
 
       useEffect(()=>{
-        if (props.id){
+        if (props.id && open){
           refetch()
         }
       }, [props.id, refetch]);
 
+      // reset all states
+      useEffect(()=>{
+        return()=>{
+          resetForm();
+          queryClient.setQueryData(['getTodoAccounts'], null);
+        }
+      }, []);
+
       useEffect(()=>{
         if(status === 'success'){
-
-          let accountList = allAccounts.data.data;
+          let accountList = allAccounts?.data.data;
 
           if(accountList){
 
-            if (accountList.length>0){
+            if (accountList.length>0 && open){
 
               setValue('accounts',{
                 id:accountList[0].id,
                 label:accountList[0].username
               });
-            }
+            } 
           } 
         }
-      }, [allAccounts]);
+      }, [allAccounts?.data, open]);
 
 
       const handleConfirm = useCallback((event: FieldValues)=>{
@@ -133,17 +152,7 @@ function useModalShareNote () {
 
         props.onConfirm && props.onConfirm(event);
 
-        resetForm();
-
       }, [props, props.onConfirm]);
-
-      const resetForm = ()=>{
-        setValue('accounts',{
-          label:'',
-          id:''
-        });
-      }
-
 
         return (
             <div>
