@@ -165,6 +165,19 @@ function useModalShareNote () {
 
       }, [props, props.onConfirm]);
 
+      const deleteAssociation = useCallback((event: FieldValues)=>{
+
+        let bodyReq : shareTodoI = {
+                todoId : String(props.id),
+                body : {
+                  accounts: []
+                }
+        }
+  
+        shareTodo.mutate(bodyReq);
+
+      }, [props, props.onConfirm]);
+
         return (
             <div>
               <Modal
@@ -215,6 +228,12 @@ function useModalShareNote () {
                             
                             />
                         </FormControl>
+                        <Box>
+                          <Button
+                            onClick={deleteAssociation}
+                            color='error'
+                          >Elimina Condivisione</Button>
+                        </Box>
                       </Box>
                       { props.diplayFooter && <Box sx={buttonContaier}>
                           <Button type='submit'>{props.confirmText}</Button>
