@@ -8,6 +8,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AppContext } from '../../context/context';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useTodos from '../../hooks/useTodos';
+import { shareTodoI } from '../../interfaces/TodosInterfaces';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -95,7 +96,7 @@ function useModalShareNote () {
 
     const ModalComponent = React.memo((props: ModalProps)=>{
 
-      const { getAllTodoAccounts } = useTodos();
+      const { getAllTodoAccounts, shareTodo } = useTodos();
 
       props = {
         ...props,
@@ -147,7 +148,17 @@ function useModalShareNote () {
 
 
       const handleConfirm = useCallback((event: FieldValues)=>{
-        console.log(event);
+        //console.log(event);
+
+        let bodyReq : shareTodoI = {
+                todoId : String(props.id),
+                body : {
+                  accounts: [event.accounts.id]
+                }
+        }
+  
+        shareTodo.mutate(bodyReq);
+
         handleClose();
 
         props.onConfirm && props.onConfirm(event);

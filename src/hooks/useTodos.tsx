@@ -2,7 +2,7 @@
 import { TodoApi, TodoBodyReq } from '../api';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { deleteTodoI, updateTodoI } from '../interfaces/TodosInterfaces';
+import { deleteTodoI, shareTodoI, updateTodoI } from '../interfaces/TodosInterfaces';
 
 export default function useTodos() {
 
@@ -57,6 +57,18 @@ export default function useTodos() {
       }
     })
 
+    const shareTodo = useMutation({
+      mutationFn: (bodyReq:shareTodoI) => {
+        let todoApi = new TodoApi();
+
+        const {todoId, body} = bodyReq;
+        return todoApi.shareTodo(todoId, body);
+      },
+      onSuccess:()=>{
+        getAllTodos.refetch();
+      }
+    })
+
     const deleteTodo = useMutation({
       mutationFn: (bodyReq:deleteTodoI) => {
         let todoApi = new TodoApi();
@@ -69,5 +81,5 @@ export default function useTodos() {
       }
     })
 
-    return { getAllTodos, getAllSharedTodos, createTodo, updateTodo, deleteTodo, getAllTodoAccounts };
+    return { getAllTodos, getAllSharedTodos, createTodo, updateTodo, deleteTodo, getAllTodoAccounts, shareTodo };
 }
