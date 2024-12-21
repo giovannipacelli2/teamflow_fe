@@ -302,7 +302,7 @@ const MyTodosPage : React.FC = () => {
       <AlertComponent 
         activated={alertElem}
         onClose={closeAlert}
-        duration={2000}
+        duration={2500}
         title={alertType.title}
         subtitle={alertType.subtitle}
         type={alertType.type}

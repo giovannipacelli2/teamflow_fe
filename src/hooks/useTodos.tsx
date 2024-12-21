@@ -6,7 +6,7 @@ import { deleteTodoI, shareTodoI, updateTodoI } from '../interfaces/TodosInterfa
 
 export default function useTodos() {
 
-    const queryClient = useQueryClient()
+    //const queryClient = useQueryClient()
     
     const getAllTodos = useQuery({
         queryKey: ['todos'],
@@ -21,7 +21,7 @@ export default function useTodos() {
         queryKey: ['sharedTodos'],
         queryFn: ()=>{
             let todoApi = new TodoApi();
-            return todoApi.getAllSharedTodos()
+            return todoApi.getAllSharedTodos(50,1,'created_at', 'desc')
         },
         enabled:false
     })
@@ -54,6 +54,7 @@ export default function useTodos() {
       },
       onSuccess:()=>{
         getAllTodos.refetch();
+        getAllSharedTodos.refetch();
       }
     })
 

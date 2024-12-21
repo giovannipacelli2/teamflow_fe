@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect} from 'react';
 import {Box, Modal, Button, FormControl, FormLabel, TextField} from '@mui/material';
-import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
@@ -15,6 +14,7 @@ interface ModalProps {
     confirmText ?: string,
     onConfirm ?: (event: FieldValues)=>void,
     defaults ?: editFormI
+    permissions ?: "full" | "limitated";
   }
 
 const defaultProps : ModalProps= {
@@ -27,7 +27,8 @@ const defaultProps : ModalProps= {
       title:'',
       description:'',
       note:'',
-    }
+    },
+    permissions: 'full',
 }
 
 function useModalEditNote () {
@@ -98,6 +99,7 @@ function useModalEditNote () {
         diplayFooter : props.diplayFooter ?? defaultProps.diplayFooter,
         confirmText : props.confirmText ?? defaultProps.confirmText,
         defaults : props.defaults ?? defaultProps.defaults,
+        permissions : props.permissions ?? defaultProps.permissions,
         onConfirm : props.onConfirm ?? defaultProps.onConfirm,
       }
 
@@ -135,7 +137,12 @@ function useModalEditNote () {
               >
                 <Box sx={style}>
                   <Box sx={elemStyle}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    <Typography id="modal-modal-title" variant="h5" component="h2"
+                      sx={{
+                        fontWeight: 500,
+                        color: theme.palette.primary.dark
+                      }}
+                    >
                       {props.title}
                     </Typography>
                   </Box>
@@ -147,39 +154,63 @@ function useModalEditNote () {
                       <Box 
                         className='modalFormControl hide-scrollbar-back'
                       >
-                        <FormControl>
-                          <FormLabel htmlFor="title">Titolo</FormLabel>
-                          <Controller
-                            name="title"
-                            control={control}
-                            defaultValue=""
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                              <TextField
-                                {...field}
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        <FormControl>
-                          <FormLabel htmlFor="description">Descrizione</FormLabel>
-                          <Controller
-                            name="description"
-                            control={control}
-                            defaultValue=""
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                              <Textarea
-                                {...field}
-                                sx={{width:"100%", fontSize:'1em'}}
-                                minRows={3}
-                              />
-                            )}
-                          />
-                        </FormControl>
+                        {props.permissions === 'limitated' && 
+                          <div className="row">
+                            <Typography variant="h6" component="h3">Titolo</Typography>
+                            <Typography variant="subtitle1" component="h6"
+                              sx={{
+                                color: theme.palette.text.secondary
+                              }}
+                            >{props.defaults?.title}</Typography>
+                          </div>
+                        }
+                        {props.permissions === 'limitated' && 
+                          <div className="row">
+                          <Typography variant="h6" component="h3">Descrizione</Typography>
+                          <Typography variant="subtitle1" component="h6"
+                            sx={{
+                              color: theme.palette.text.secondary
+                            }}
+                          >{props.defaults?.description}</Typography>
+                        </div>
+                        }
+                        {props.permissions === 'full' && 
+                          <FormControl>
+                            <FormLabel htmlFor="title">Titolo</FormLabel>
+                            <Controller
+                              name="title"
+                              control={control}
+                              defaultValue=""
+                              rules={{ required: true }}
+                              render={({ field }) => (
+                                <TextField
+                                  {...field}
+                                  type="text"
+                                  fullWidth
+                                  variant="outlined"
+                                />
+                              )}
+                            />
+                          </FormControl>
+                        }
+                        {props.permissions === 'full' && 
+                          <FormControl>
+                            <FormLabel htmlFor="description">Descrizione</FormLabel>
+                            <Controller
+                              name="description"
+                              control={control}
+                              defaultValue=""
+                              rules={{ required: true }}
+                              render={({ field }) => (
+                                <Textarea
+                                  {...field}
+                                  sx={{width:"100%", fontSize:'1em'}}
+                                  minRows={3}
+                                />
+                              )}
+                            />
+                          </FormControl>
+                        }
                         <FormControl>
                           <FormLabel htmlFor="note">Note</FormLabel>
                           <Controller

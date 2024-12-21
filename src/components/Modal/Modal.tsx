@@ -111,7 +111,12 @@ function useModal () {
               >
                 <Box sx={style}>
                   <Box sx={elemStyle}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    <Typography id="modal-modal-title" variant="h6" component="h2"
+                      sx={{
+                        fontWeight: 500,
+                        color: theme.palette.primary.dark
+                      }}
+                    >
                       {props.title}
                     </Typography>
                   </Box>
