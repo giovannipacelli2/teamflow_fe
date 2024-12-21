@@ -44,7 +44,7 @@ const MyTodosPage : React.FC = () => {
     type:'success'
   })
 
-  const {getAllTodos, createTodo, updateTodo, deleteTodo} = useTodos();
+  const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
 
   useEffect(()=>{
     getAllTodos.refetch();
@@ -76,8 +76,31 @@ const MyTodosPage : React.FC = () => {
       }
 
       createTodo.mutate(body);
+    }
+    
+  },[])
 
-      if(createTodo.status === 'success'){
+  const onDelete = React.useCallback((id: string)=>{
+
+      let body : deleteTodoI = {
+        todoId : id,
+      }
+
+      deleteTodo.mutate(body);
+    
+  },[])
+
+  const openAlert = ()=>{
+    setAlertElem(true);
+  }
+  const closeAlert = ()=>{
+    setAlertElem(false);
+  }
+
+  useEffect(()=>{
+    if (createTodo.data?.status){
+
+      if(createTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
           subtitle: 'Nota creata con successo',
@@ -93,19 +116,33 @@ const MyTodosPage : React.FC = () => {
       }
       openAlert();
     }
-    
-  },[])
+  }, [createTodo.data?.status])
+  
+  useEffect(()=>{
+    if (shareTodo.data?.status){
 
-  const onDelete = React.useCallback((id: string)=>{
-
-      let body : deleteTodoI = {
-        todoId : id,
+      if(shareTodo.data?.status <= 201){
+        setAlertType({
+          title:'Successo',
+          subtitle: 'La nota è stata condivisa',
+          type: 'success'
+        })
+      } else {
+        
+        setAlertType({
+          title:'Errore',
+          subtitle: 'Non è stato possibile condividere la nota',
+          type: 'error'
+        })
       }
+      openAlert();
+    }
+  }, [shareTodo.data?.status])
 
-      deleteTodo.mutate(body);
+  useEffect(()=>{
+    if (deleteTodo.data?.status){
 
-      if(deleteTodo.status === 'success'){
-        setCurrentTodo({})
+      if(deleteTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
           subtitle: 'Nota eliminata con successo',
@@ -120,15 +157,9 @@ const MyTodosPage : React.FC = () => {
         })
       }
       openAlert();
-    
-  },[])
-
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
+    }
+  }, [deleteTodo.data?.status])
+  
 
   return (
     <Stack
@@ -271,7 +302,7 @@ const MyTodosPage : React.FC = () => {
       <AlertComponent 
         activated={alertElem}
         onClose={closeAlert}
-        duration={3000}
+        duration={2000}
         title={alertType.title}
         subtitle={alertType.subtitle}
         type={alertType.type}
