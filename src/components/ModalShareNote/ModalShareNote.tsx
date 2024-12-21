@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect} from 'react';
+import React, {SyntheticEvent, useCallback, useContext, useEffect} from 'react';
 import {Box, Modal, Button, FormControl, TextField} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -26,6 +26,11 @@ const defaultProps : ModalProps= {
   diplayFooter: true,
   confirmText: 'Conferma',
   onConfirm: (event: FieldValues) => { },
+}
+
+interface accountField {
+  id: string,
+  label: string,
 }
 
 function useModalShareNote () {
@@ -79,7 +84,7 @@ function useModalShareNote () {
     const { usernames } = useContext(AppContext);
     const [open, setOpen] = React.useState(false);
 
-    const { control, handleSubmit, setValue } = useForm();
+    const { control, handleSubmit, setValue, getValues } = useForm();
 
     const resetForm = ()=>{
 
@@ -148,7 +153,11 @@ function useModalShareNote () {
 
 
       const handleConfirm = useCallback((event: FieldValues)=>{
-        //console.log(event);
+        
+        if (!event.accounts.id){
+          handleClose();
+          return;
+        }
 
         let bodyReq : shareTodoI = {
                 todoId : String(props.id),
@@ -165,7 +174,12 @@ function useModalShareNote () {
 
       }, [props, props.onConfirm]);
 
-      const deleteAssociation = useCallback((event: FieldValues)=>{
+      const deleteAssociation = useCallback((event: SyntheticEvent)=>{
+        let accounts = getValues('accounts') as accountField;
+
+        if(!accounts.id){
+          return;
+        }
 
         let bodyReq : shareTodoI = {
                 todoId : String(props.id),

@@ -1,0 +1,13 @@
+.alert-component{
+    position: fixed;
+    z-index: 1100;
+    top:1em;
+    right: -400px;
+    transition: 0.5s all;
+}
+
+.rigth-to-left{
+    
+    right: 0;
+    transition: 0.5s all;
+}

@@ -8,6 +8,8 @@ interface ModalProps {
     title ?: string,
     diplayFooter ?: boolean,
     confirmText ?: string,
+    discardText ?: string,
+    isDelete ?: boolean,
     onConfirm ?: Function,
   }
 
@@ -16,6 +18,8 @@ const defaultProps = {
     title : 'Text',
     diplayFooter : true,
     confirmText : 'Conferma',
+    discardText : 'Annulla',
+    isDelete : true,
     onConfirm : ()=>{},
 }
 
@@ -58,9 +62,9 @@ function useModal () {
     alignItems:'flex-start',
     justifyContent:'flex-start',
     gap:'0.5em',
-    minHeight: '300px',
+    minHeight: '100px',
     [theme.breakpoints.up('sm')]: {
-      minHeight: '300px',
+      minHeight: '100px',
     },
   }
   const buttonContaier = {
@@ -72,11 +76,11 @@ function useModal () {
     gap:'1em',
   }
 
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const ModalComponent = React.memo((props: ModalProps)=>{
+    const ModalComponent = React.memo((props: ModalProps = defaultProps)=>{
 
       props = {
         ...props,
@@ -84,6 +88,8 @@ function useModal () {
         title : props.title ?? defaultProps.title,
         diplayFooter : props.diplayFooter ?? defaultProps.diplayFooter,
         confirmText : props.confirmText ?? defaultProps.confirmText,
+        discardText : props.discardText ?? defaultProps.discardText,
+        isDelete : props.isDelete ?? defaultProps.isDelete,
       }
 
       const handleConfirm = ()=>{
@@ -113,7 +119,13 @@ function useModal () {
                     {props.children}
                   </Box>
                   { props.diplayFooter && <Box sx={buttonContaier}>
-                      <Button onClick={()=>handleConfirm()}>{props.confirmText}</Button>
+
+                    <Button onClick={()=>handleClose()}>{props.discardText}</Button>
+
+                      <Button 
+                        color={props.isDelete ? 'warning' : 'info'}
+                        onClick={()=>handleConfirm()}
+                      >{props.confirmText}</Button>
                   </Box>}
                 </Box>
               </Modal>

@@ -13,6 +13,8 @@ import { FieldValues } from 'react-hook-form';
 import useTodos from '../../hooks/useTodos';
 import { deleteTodoI, updateTodoI } from '../../interfaces/TodosInterfaces';
 import useModalShareNote from '../../components/ModalShareNote/ModalShareNote';
+import useModal from '../../components/Modal/Modal';
+import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 
 export interface editFormI {
   title : string,
@@ -27,6 +29,7 @@ const MyTodosPage : React.FC = () => {
   
   //modals
   const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
+  const {handleOpen:openDelete, ModalComponent: ModalDelete} = useModal();
   const {handleOpen:openCreate, ModalComponent:ModalCreate} = useModalEditNote();
   const {handleOpen:openShare, ModalComponent:ModalShare} = useModalShareNote();
 
@@ -34,6 +37,12 @@ const MyTodosPage : React.FC = () => {
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
   const { authState } = useContext(AppContext);
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
+  const [alertElem, setAlertElem] = useState<boolean>(false);
+  const [alertType, setAlertType] = useState<AlertProps>({
+    title:'',
+    subtitle:'',
+    type:'success'
+  })
 
   const {getAllTodos, createTodo, updateTodo, deleteTodo} = useTodos();
 
@@ -67,6 +76,22 @@ const MyTodosPage : React.FC = () => {
       }
 
       createTodo.mutate(body);
+
+      if(createTodo.status === 'success'){
+        setAlertType({
+          title:'Successo',
+          subtitle: 'Nota creata con successo',
+          type: 'success'
+        })
+      } else {
+        
+        setAlertType({
+          title:'Errore',
+          subtitle: 'Non è stato possibile creare la nota',
+          type: 'error'
+        })
+      }
+      openAlert();
     }
     
   },[])
@@ -78,8 +103,32 @@ const MyTodosPage : React.FC = () => {
       }
 
       deleteTodo.mutate(body);
+
+      if(deleteTodo.status === 'success'){
+        setCurrentTodo({})
+        setAlertType({
+          title:'Successo',
+          subtitle: 'Nota eliminata con successo',
+          type: 'success'
+        })
+      } else {
+        
+        setAlertType({
+          title:'Errore',
+          subtitle: 'Non è stato possibile eliminare la nota',
+          type: 'error'
+        })
+      }
+      openAlert();
     
   },[])
+
+  const openAlert = ()=>{
+    setAlertElem(true);
+  }
+  const closeAlert = ()=>{
+    setAlertElem(false);
+  }
 
   return (
     <Stack
@@ -164,8 +213,11 @@ const MyTodosPage : React.FC = () => {
                     <ShareIcon></ShareIcon>
                     condividi
                   </Button>
-                  <Button size="small" color="error"
-                    onClick={()=>onDelete(String(todo.id))}
+                  <Button size="small" color="warning"
+                    onClick={()=>{
+                      openDelete();
+                      setCurrentTodo(todo);
+                    }}
                   >
                     <DeleteIcon></DeleteIcon>
                     elimina
@@ -205,9 +257,26 @@ const MyTodosPage : React.FC = () => {
       <ModalShare 
         title={'Condividi nota'}
         id={currentTodo.id}
-        //onConfirm={onCreate}
       >
       </ModalShare>
+      <ModalDelete 
+        title={'Elimina nota'}
+        onConfirm={()=>onDelete(String(currentTodo.id))}
+      >
+        <Typography id="modal-modal-title" variant="subtitle1" component="h6">
+          Sei sicuro di voler eliminare la nota?
+        </Typography>
+      </ModalDelete>
+
+      <AlertComponent 
+        activated={alertElem}
+        onClose={closeAlert}
+        duration={3000}
+        title={alertType.title}
+        subtitle={alertType.subtitle}
+        type={alertType.type}
+      >
+      </AlertComponent>
     </Stack>
   )
 }
