@@ -24,8 +24,6 @@ export interface editFormI {
 
 
 const MyTodosPage : React.FC = () => {
-
-  const theme = useTheme();
   
   //modals
   const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
@@ -37,6 +35,8 @@ const MyTodosPage : React.FC = () => {
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
   const { authState } = useContext(AppContext);
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
+
+  //alerts
   const [alertElem, setAlertElem] = useState<boolean>(false);
   const [alertType, setAlertType] = useState<AlertProps>({
     title:'',

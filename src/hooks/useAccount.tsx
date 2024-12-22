@@ -1,10 +1,10 @@
-import React, {useContext, useEffect} from 'react'
-import { AccountApi, AccountResponse, AccountsUsernames, GetAllUsernames200Response } from '../api';
+import React, {useContext} from 'react'
+import { AccountApi, AccountResponse, GetAllUsernames200Response } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
 import { AppContext } from '../context/context';
 import { UserTypes } from '../reducers/reducers';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { AllAccountsUsernamesI } from '../interfaces/AllRequests';
+import { useMutation } from '@tanstack/react-query';
+import { updateAccountI } from '../interfaces/AccountInterfaces';
 
 export default function useAccount() {
 
@@ -59,5 +59,17 @@ export default function useAccount() {
         return false;
     };
 
-    return { getOwnAccount, getUsernames };
+    const updateAccount = useMutation({
+        mutationFn: (bodyReq:updateAccountI) => {
+          let accountApi = new AccountApi();
+  
+          const {accountId, body} = bodyReq;
+          return accountApi.updateAccount(accountId, body);
+        },
+        onSuccess:()=>{
+          getOwnAccount();
+        }
+      })
+
+    return { getOwnAccount, getUsernames, updateAccount };
 }

@@ -81,7 +81,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
         break;
       }
       case Routes.PROFILE: {
-        setHeaderTitle("I tuoi dati");
+        setHeaderTitle("Profilo");
         break;
       }
       default : {
