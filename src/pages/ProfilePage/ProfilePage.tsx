@@ -31,13 +31,13 @@ const ProfilePage = () => {
     rePassword:'',
   }});
 
-    //alerts
-    const [alertElem, setAlertElem] = useState<boolean>(false);
-    const [alertType, setAlertType] = useState<AlertProps>({
-      title:'',
-      subtitle:'',
-      type:'success'
-    })
+  //alerts
+  const [alertElem, setAlertElem] = useState<boolean>(false);
+  const [alertType, setAlertType] = useState<AlertProps>({
+    title:'',
+    subtitle:'',
+    type:'success'
+  })
 
   const { updateAccount } = useAccount()
 

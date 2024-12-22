@@ -1,5 +1,5 @@
 import React, {useContext} from 'react'
-import { AccountApi, AccountResponse, GetAllUsernames200Response } from '../api';
+import { AccountApi, AccountBodyReq, AccountResponse, GetAllUsernames200Response } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
 import { AppContext } from '../context/context';
 import { UserTypes } from '../reducers/reducers';
@@ -59,6 +59,14 @@ export default function useAccount() {
         return false;
     };
 
+    const createAccount = useMutation({
+        mutationFn: (bodyReq:AccountBodyReq) => {
+          let accountApi = new AccountApi();
+
+          return accountApi.createAccount(bodyReq);
+        }
+      })
+
     const updateAccount = useMutation({
         mutationFn: (bodyReq:updateAccountI) => {
           let accountApi = new AccountApi();
@@ -71,5 +79,5 @@ export default function useAccount() {
         }
       })
 
-    return { getOwnAccount, getUsernames, updateAccount };
+    return { getOwnAccount, getUsernames, createAccount, updateAccount };
 }
