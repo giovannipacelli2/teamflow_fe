@@ -28,6 +28,21 @@ import { isObject, isString } from "lodash";
 
   }
 
+  export function getMsgFromObjValues(msgObj:{[key:string]:string} | string | undefined ):string{
+
+      if (!msgObj) return '';
+
+      if (isObject(msgObj)){
+
+        let messages = Object.values(msgObj);
+        return messages.join(', ');
+      } else if(isString(msgObj)){
+        return msgObj;
+      }
+
+      return '';
+  }
+
 
   export function getErrMsgFromRequest<T>(reqMess : string | T) : any{
     if (isObject(reqMess)){

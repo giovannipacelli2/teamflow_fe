@@ -15,6 +15,7 @@ import { deleteTodoI, updateTodoI } from '../../interfaces/TodosInterfaces';
 import useModalShareNote from '../../components/ModalShareNote/ModalShareNote';
 import useModal from '../../components/Modal/Modal';
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
+import { getMsgFromObjValues } from '../../library/library';
 
 export interface editFormI {
   title : string,
@@ -108,9 +109,13 @@ const MyTodosPage : React.FC = () => {
         })
       } else {
         
+        let msg = getMsgFromObjValues(createTodo.data.data.message);
+
+        msg = msg ?? 'Non è stato possibile creare la nota';
+
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile creare la nota',
+          subtitle: msg,
           type: 'error'
         })
       }

@@ -9,6 +9,7 @@ import { AppContext } from '../../context/context';
 import { updateAccountI } from '../../interfaces/AccountInterfaces';
 import useAccount from '../../hooks/useAccount';
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
+import { getMsgFromObjValues } from '../../library/library';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -90,10 +91,14 @@ const ProfilePage = () => {
           type: 'success'
         })
       } else {
-        
+
+        let msg = getMsgFromObjValues(updateAccount.data.data.message);
+
+        msg = msg ?? 'Non è stato possibile modificare i tuoi dati';
+
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile modificare i tuoi dati',
+          subtitle: msg,
           type: 'error'
         })
       }
