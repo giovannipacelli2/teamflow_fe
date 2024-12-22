@@ -20,6 +20,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Person2Icon from '@mui/icons-material/Person2';
 import {
   QueryClient,
   useQueryClient
@@ -79,6 +80,10 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
         setHeaderTitle("Note condivise con te");
         break;
       }
+      case Routes.PROFILE: {
+        setHeaderTitle("I tuoi dati");
+        break;
+      }
       default : {
         setHeaderTitle("Todos");
       }
@@ -121,19 +126,6 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    /* variants: [
-      {
-        props: ({ open }) => open,
-        style: {
-          width: `calc(100% - ${drawerWidth}px)`,
-          marginLeft: `${drawerWidth}px`,
-          transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        },
-      },
-    ], */
   }));
   
   const DrawerHeader = styled('div')(({ theme }) => ({
@@ -155,6 +147,11 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
       label:"Note condivise",
       icon : <CoPresentIcon/>,
       link : Routes.SHARED_TODOS
+    },
+    {
+      label:"Profilo",
+      icon : <Person2Icon/>,
+      link : Routes.PROFILE
     },
   ];
 

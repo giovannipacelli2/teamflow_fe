@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { loginBodyI, useAuth } from "../../hooks/authHook";
 
 // MUI COMPONENTS
-import { TextField, FormControl, Button, styled, FormLabel, Box, FormControlLabel, Checkbox } from "@mui/material";
+import { TextField, FormControl, Button, styled, FormLabel, Box, FormControlLabel, Checkbox, Typography } from "@mui/material";
 import MuiCard from '@mui/material/Card';
 import useLoading from "../../hooks/useLoading";
 import { Routes } from "../../routerConfig/routes";
+import { Link } from "react-router-dom";
 
 const Card = styled(MuiCard)(({ theme }) => {
 
@@ -179,6 +180,9 @@ const LoginPage: React.FC = () => {
             >
               Sign in
             </Button>
+            <Typography variant="body1" component="h6">
+              oppure <Link to={Routes.SIGNUP}>registrati</Link>
+            </Typography>
           </Box>
         </Card>
       </Box>

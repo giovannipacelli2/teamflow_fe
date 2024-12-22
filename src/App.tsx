@@ -27,6 +27,8 @@ import RootPage from './pages/rootPage/RootPage';
 import SharedTodosPage from './pages/SharedTodos/SharedTodosPage';
 import useCrypto from './hooks/useCrypto';
 import useAccount from './hooks/useAccount';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
+import SignupPage from './pages/SignupPage/SignupPage';
 
 const App : React.FC = () => {
 
@@ -95,6 +97,7 @@ const App : React.FC = () => {
           <RootPage></RootPage>
         <Routes>
           <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
+          <Route path={BaseRoutes.SIGNUP} element={<SignupPage/>} ></Route>
           <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
           <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
@@ -107,6 +110,7 @@ const App : React.FC = () => {
               }>
               <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
               <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
+              <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
             </Route>
 
           </Route>

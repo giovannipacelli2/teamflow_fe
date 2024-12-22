@@ -1,7 +1,8 @@
 import React, {useEffect, useState, useContext} from 'react'
 import { AppContext } from "../../context/context";
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
-import { Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Box, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
 import {TodosContext} from '../../context/todosContext'
 
 // Components
@@ -88,6 +89,18 @@ const SharedTodosPage : React.FC = () => {
         rowGap: { sm: '2em' },
       }}
     >
+
+      <Box
+        width="95%"
+        display='flex'
+        justifyContent='flex-end'
+        alignItems='center'
+      >
+        <Button size="medium" color="primary" variant="contained" onClick={()=>getAllSharedTodos.refetch()}>
+          <RefreshIcon></RefreshIcon>
+          Aggiorna
+        </Button>
+      </Box>
 
       <Stack
         //spacing={{ xs: 2, sm:'inherit'}}
