@@ -4,11 +4,13 @@ import { GenericResponse } from '../interfaces/GenericResponse';
 import { AppContext } from '../context/context';
 import { UserTypes } from '../reducers/reducers';
 import { useMutation } from '@tanstack/react-query';
-import { updateAccountI } from '../interfaces/AccountInterfaces';
+import { deleteAccountI, updateAccountI } from '../interfaces/AccountInterfaces';
+import useAuth from './authHook';
 
 export default function useAccount() {
 
     const { authState, accountDispatch, setUsernames } = useContext(AppContext);
+    const { destroySession } = useAuth()
 
     //const queryClient = useQueryClient()
 
@@ -68,16 +70,31 @@ export default function useAccount() {
       })
 
     const updateAccount = useMutation({
-        mutationFn: (bodyReq:updateAccountI) => {
-          let accountApi = new AccountApi();
-  
-          const {accountId, body} = bodyReq;
-          return accountApi.updateAccount(accountId, body);
-        },
-        onSuccess:()=>{
-          getOwnAccount();
-        }
-      })
+      mutationFn: (bodyReq:updateAccountI) => {
+        let accountApi = new AccountApi();
 
-    return { getOwnAccount, getUsernames, createAccount, updateAccount };
+        const {accountId, body} = bodyReq;
+        return accountApi.updateAccount(accountId, body);
+      },
+      onSuccess:()=>{
+        getOwnAccount();
+      }
+    })
+
+    const deleteAccount = useMutation({
+      mutationFn: (bodyReq:deleteAccountI) => {
+        let accountApi = new AccountApi();
+
+        const { accountId } = bodyReq;
+
+        return accountApi.deleteAccount(accountId);
+      },
+      onSuccess:()=>{
+        if(deleteAccount.data?.status === 200){
+          destroySession();
+        }
+      }
+    })
+
+    return { getOwnAccount, getUsernames, createAccount, updateAccount, deleteAccount };
 }

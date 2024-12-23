@@ -93,23 +93,27 @@ export const useAuth = () => {
 
         if (data.status >= 200 && data.status < 400){
 
-            authDispatch({
-                type: AuthTypes.RESET
-            });
-
-            accountDispatch({
-                type: UserTypes.RESET
-            });
-
-            deleteCookie(cookiesName.TOKEN);
-            deleteCookie(cookiesName.AUTH_TYPE);
+            destroySession();
 
             return true;
         }
         return false
     }
 
-  return {logged, login, logout}
+    const destroySession = ()=>{
+        authDispatch({
+            type: AuthTypes.RESET
+        });
+
+        accountDispatch({
+            type: UserTypes.RESET
+        });
+
+        deleteCookie(cookiesName.TOKEN);
+        deleteCookie(cookiesName.AUTH_TYPE);
+    }
+
+  return {logged, login, logout, destroySession}
 }
 
 export default useAuth

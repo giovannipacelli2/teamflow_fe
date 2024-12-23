@@ -6,10 +6,13 @@ import { useTheme } from '@mui/material';
 
 import SaveIcon from '@mui/icons-material/Save';
 import { AppContext } from '../../context/context';
-import { updateAccountI } from '../../interfaces/AccountInterfaces';
+import { deleteAccountI, updateAccountI } from '../../interfaces/AccountInterfaces';
 import useAccount from '../../hooks/useAccount';
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
+import { Routes } from '../../routerConfig/routes';
+import { useNavigate } from 'react-router-dom';
+import useModal from '../../components/Modal/Modal';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -21,7 +24,9 @@ type formTypes = {
 const ProfilePage = () => {
 
   const theme = useTheme();
+  const navigate = useNavigate();
   const { authState, accountState } = useContext(AppContext);
+  const { deleteAccount } = useAccount();
 
   const { control, handleSubmit, setValue, getValues, formState:{errors}, setError } = useForm({defaultValues:{
     username: String(accountState.username),
@@ -31,6 +36,9 @@ const ProfilePage = () => {
     password:'',
     rePassword:'',
   }});
+
+  //modals
+  const { handleOpen:openDelete, ModalComponent: ModalDelete } = useModal();
 
   //alerts
   const [alertElem, setAlertElem] = useState<boolean>(false);
@@ -106,6 +114,27 @@ const ProfilePage = () => {
     }
   }, [updateAccount.data?.status])
 
+  useEffect(()=>{
+    if (deleteAccount.data?.status){
+  
+      if(deleteAccount.data?.status <= 201){
+        navigate(Routes.LOGIN);
+      } else {
+
+        let msg = getMsgFromObjValues(deleteAccount.data.data.message);
+
+        msg = msg ?? 'Non è stato possibile eliminare l\'account';
+
+        setAlertType({
+          title:'Errore',
+          subtitle: msg,
+          type: 'error'
+        })
+      }
+      openAlert();
+    }
+  }, [deleteAccount.data?.status])
+
   const handleConfirm = useCallback((event: FieldValues)=>{
 
     if (event.password !== event.rePassword){
@@ -136,16 +165,25 @@ const ProfilePage = () => {
 
   },[]);
 
+  const onDelete = ()=>{
+
+    let body : deleteAccountI = {
+      accountId: String(authState.accountId)
+    }
+    deleteAccount.mutate(body);
+  }
+
 
   return (
     <Stack
-      spacing={{ xs: 2, sm: 3 }}
+      spacing={{ xs: 2, sm: 8 }}
       direction='column'
       justifyContent={{ xs: 'flex-start', sm: 'flex-start' }}
       alignItems={{ xs: 'center', sm: 'center' }}
       sx={{ 
         flexWrap: 'wrap', 
         padding:'2em',
+        paddingTop:'0',
       }}
     >
 
@@ -186,7 +224,7 @@ const ProfilePage = () => {
             }}
           >
             <SaveIcon></SaveIcon>
-            </Button>
+          </Button>
         </Box>
         <Stack
           //spacing={{ xs: 2, sm:'inherit'}}
@@ -249,6 +287,61 @@ const ProfilePage = () => {
         </Stack>
 
       </form>
+
+      <Box
+        sx={{
+          width:'100%',
+          display:'flex',
+          flexDirection:'column',
+          gap:'0.5em',
+        }}
+      >
+        <Typography
+          variant="h5" component="h4"
+          sx={{
+            color:theme.palette.error.main
+          }}
+        >Danger Zone</Typography>
+        <div className="line"
+          style={{background:theme.palette.error.main}}
+        ></div>
+      </Box>
+
+      <Box
+        sx={{
+          display:'flex',
+          flexDirection:{xs:'column', sm:'row'},
+          justifyContent:'flex-start',
+          gap:'1em',
+          width:'100%',
+        }}
+      >
+
+        <Typography
+          variant="h6" component="h4"
+        >Questa azione è irreversibile</Typography>
+
+        <Button type='button' variant="contained"
+          onClick={openDelete}
+            sx={{
+              background:theme.palette.error.main
+            }}
+          >
+            Elimina Account
+        </Button>
+
+      </Box>
+
+      <ModalDelete
+        title='Sei davvero sicuro?'
+        onConfirm={onDelete}
+        isDelete={true}
+      >
+        <Typography
+          variant="subtitle1" component="span"
+        >Questa azione eliminerà per sempre il tuo account</Typography>
+      </ModalDelete>
+
       <AlertComponent 
         activated={alertElem}
         onClose={closeAlert}

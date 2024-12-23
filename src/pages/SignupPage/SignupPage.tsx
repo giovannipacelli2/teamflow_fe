@@ -6,6 +6,8 @@ import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Card from '../../components/Card/Card';
 import { AccountBodyReq } from '../../api';
+import { useNavigate } from 'react-router-dom';
+import { Routes } from '../../routerConfig/routes';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -16,6 +18,7 @@ type formTypes = {
 const SignupPage = () => {
 
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const { control, handleSubmit, setValue, getValues, formState:{errors}, setError } = useForm({defaultValues:{
     username: '',
@@ -90,7 +93,9 @@ const SignupPage = () => {
           title:'Successo',
           subtitle: 'Account creato con successo',
           type: 'success'
-        })
+        });
+
+        navigate(Routes.LOGIN);
       } else {
         
         setAlertType({
