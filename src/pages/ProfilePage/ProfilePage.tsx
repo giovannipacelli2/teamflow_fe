@@ -83,11 +83,11 @@ const ProfilePage = () => {
     }
   ];
   const openAlert = ()=>{
-      setAlertElem(true);
-    }
-    const closeAlert = ()=>{
-      setAlertElem(false);
-    }
+    setAlertElem(true);
+  }
+  const closeAlert = ()=>{
+    setAlertElem(false);
+  }
   
   useEffect(()=>{
     if (updateAccount.data?.status){
@@ -118,7 +118,18 @@ const ProfilePage = () => {
     if (deleteAccount.data?.status){
   
       if(deleteAccount.data?.status <= 201){
-        navigate(Routes.LOGIN);
+
+        let msg = 'Account eliminato correttamente';
+  
+        setAlertType({
+          title:'Successo',
+          subtitle: msg,
+          type: 'success'
+        })
+
+        setTimeout(()=>{
+          navigate(Routes.LOGIN);
+        },2500)
       } else {
 
         let msg = getMsgFromObjValues(deleteAccount.data.data.message);

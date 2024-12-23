@@ -95,7 +95,9 @@ const SignupPage = () => {
           type: 'success'
         });
 
-        navigate(Routes.LOGIN);
+        setTimeout(()=>{
+          navigate(Routes.LOGIN);
+        },2500);
       } else {
         
         setAlertType({
