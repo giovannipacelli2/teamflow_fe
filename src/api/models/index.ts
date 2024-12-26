@@ -41,6 +41,7 @@ export * from './sort-filter-params';
 export * from './todo-accounts-response';
 export * from './todo-body-req';
 export * from './todo-response';
+export * from './todo-response-shared-with-inner';
 export * from './todos-response';
 export * from './update-account200-response';
 export * from './update-account400-response';

@@ -16,6 +16,7 @@ import useModalShareNote from '../../components/ModalShareNote/ModalShareNote';
 import useModal from '../../components/Modal/Modal';
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export interface editFormI {
   title : string,
@@ -182,10 +183,14 @@ const MyTodosPage : React.FC = () => {
         display='flex'
         justifyContent='flex-end'
         alignItems='center'
+        gap='0.5em'
       >
         <Button size="medium" color="primary" variant="contained" onClick={openCreate}>
           <AddIcon></AddIcon>
           Aggiungi
+        </Button>
+        <Button size="medium" color="primary" variant="contained" onClick={()=>getAllTodos.refetch()}>
+          <RefreshIcon></RefreshIcon>
         </Button>
       </Box>
 
@@ -201,9 +206,9 @@ const MyTodosPage : React.FC = () => {
         width={{ xs: '100%', sm: '90%'}}
       >
 
-        {todosLoading && <SkeletonComponent/>}
+        {(todosLoading || getAllTodos.isRefetching) && <SkeletonComponent/>}
         {
-          !todosLoading && todoState.myTodos.map((todo)=>{
+          !(todosLoading || getAllTodos.isRefetching) && todoState.myTodos.map((todo)=>{
             return (
               <Card
                 sx={{
@@ -277,11 +282,7 @@ const MyTodosPage : React.FC = () => {
       <ModalUpdate 
         title={'Modifica nota'}
         onConfirm={onEdit}
-        defaults={{
-          title: String(currentTodo.title),
-          description: String(currentTodo.description),
-          note: String(currentTodo.note),
-        }}
+        defaults={currentTodo}
       >
       </ModalUpdate>
 
@@ -292,7 +293,7 @@ const MyTodosPage : React.FC = () => {
       </ModalCreate>
       <ModalShare 
         title={'Condividi nota'}
-        id={currentTodo.id}
+        todo={currentTodo}
       >
       </ModalShare>
       <ModalDelete 

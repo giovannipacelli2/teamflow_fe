@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { TodoResponseSharedWithInner } from './todo-response-shared-with-inner';
 
 /**
  * 
@@ -74,5 +77,17 @@ export interface TodoResponse {
      * @memberof TodoResponse
      */
     'account_id'?: string;
+    /**
+     * 
+     * @type {Array<TodoResponseSharedWithInner>}
+     * @memberof TodoResponse
+     */
+    'sharedWith'?: Array<TodoResponseSharedWithInner>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof TodoResponse
+     */
+    'isShared'?: boolean;
 }
 

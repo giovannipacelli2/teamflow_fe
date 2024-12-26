@@ -1,4 +1,4 @@
-import React, {SyntheticEvent, useCallback, useContext, useEffect} from 'react';
+import React, {SyntheticEvent, useCallback, useContext, useEffect, useState} from 'react';
 import {Box, Modal, Button, FormControl, TextField} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -9,10 +9,11 @@ import { AppContext } from '../../context/context';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useTodos from '../../hooks/useTodos';
 import { shareTodoI } from '../../interfaces/TodosInterfaces';
+import { TodoResponse } from '../../api';
 
 interface ModalProps {
     children?: React.ReactNode;
-    id ?: string
+    todo ?: TodoResponse
     title ?: string,
     diplayFooter ?: boolean,
     confirmText ?: string,
@@ -21,8 +22,10 @@ interface ModalProps {
 
 const defaultProps : ModalProps= {
   children: <></>,
-  id: '',
   title: 'Text',
+  todo : {
+    id:''
+  },
   diplayFooter: true,
   confirmText: 'Conferma',
   onConfirm: (event: FieldValues) => { },
@@ -82,7 +85,8 @@ function useModalShareNote () {
     gap:'1em',
   }
     const { usernames } = useContext(AppContext);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const { accountState } = useContext(AppContext);
 
     const { control, handleSubmit, setValue, getValues } = useForm();
 
@@ -101,55 +105,54 @@ function useModalShareNote () {
 
     const ModalComponent = React.memo((props: ModalProps)=>{
 
-      const { getAllTodoAccounts, shareTodo } = useTodos();
+      const { shareTodo, getAllTodos } = useTodos();
+      const [userList, setUserList] = useState<accountField[]>([]);
 
       props = {
         ...props,
         children : props.children ?? defaultProps.children,
-        id : props.id ?? defaultProps.id,
+        todo : props.todo ?? defaultProps.todo,
         title : props.title ?? defaultProps.title,
         diplayFooter : props.diplayFooter ?? defaultProps.diplayFooter,
         confirmText : props.confirmText ?? defaultProps.confirmText,
         onConfirm : props.onConfirm ?? defaultProps.onConfirm,
       }
 
-      const { data : allAccounts, refetch, status } = useQuery({
-        queryKey:['getTodoAccounts'],
-        queryFn: ()=>getAllTodoAccounts({queryKey:[String(props.id)]}),
-        enabled : false
-      })
-      const queryClient = useQueryClient();
-
-      useEffect(()=>{
-        if (props.id && open){
-          refetch()
-        }
-      }, [props.id, refetch]);
-
       // reset all states
       useEffect(()=>{
         return()=>{
           resetForm();
-          queryClient.setQueryData(['getTodoAccounts'], null);
         }
       }, []);
+      
+      // filter username list
+      useEffect(()=>{
+
+        let tmp : accountField[] = [];
+
+        for (let user of usernames){
+          if (user.id !== accountState.id){
+            tmp.push({
+              id : String(user.id),
+              label : String(user.username)
+            })
+          }
+        }
+
+        setUserList(tmp);
+
+      }, [usernames]);
 
       useEffect(()=>{
-        if(status === 'success'){
-          let accountList = allAccounts?.data.data;
 
-          if(accountList){
+        if(props.todo?.sharedWith && props.todo?.sharedWith.length>0 && open){
 
-            if (accountList.length>0 && open){
-
-              setValue('accounts',{
-                id:accountList[0].id,
-                label:accountList[0].username
-              });
-            } 
-          } 
+          setValue('accounts',{
+            id:props.todo?.sharedWith[0].id,
+            label:props.todo?.sharedWith[0].username
+          });
         }
-      }, [allAccounts?.data, open]);
+      }, [props.todo?.sharedWith, open]);
 
 
       const handleConfirm = useCallback((event: FieldValues)=>{
@@ -160,7 +163,7 @@ function useModalShareNote () {
         }
 
         let bodyReq : shareTodoI = {
-                todoId : String(props.id),
+                todoId : String(props.todo?.id),
                 body : {
                   accounts: [event.accounts.id]
                 }
@@ -174,6 +177,17 @@ function useModalShareNote () {
 
       }, [props, props.onConfirm]);
 
+      // delete todo association
+      useEffect(()=>{
+        if(shareTodo.isSuccess){
+          getAllTodos.refetch();
+
+          if (props.todo?.sharedWith){
+            props.todo.sharedWith = []
+          }
+        }
+      },[shareTodo.isSuccess])
+
       const deleteAssociation = useCallback((event: SyntheticEvent)=>{
         let accounts = getValues('accounts') as accountField;
 
@@ -182,7 +196,7 @@ function useModalShareNote () {
         }
 
         let bodyReq : shareTodoI = {
-                todoId : String(props.id),
+                todoId : String(props.todo?.id),
                 body : {
                   accounts: []
                 }
@@ -230,10 +244,7 @@ function useModalShareNote () {
                               <Autocomplete
                                 {...field}
                                 disablePortal
-                                options={usernames.map((item)=>({
-                                  id : item.id,
-                                  label : item.username
-                                }))}
+                                options={userList}
                                 sx={{ maxWidth: 400, marginTop:'0.5em' }}
                                 renderInput={(params) => <TextField 
                                   {...params}

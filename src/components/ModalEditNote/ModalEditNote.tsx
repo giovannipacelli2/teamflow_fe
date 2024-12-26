@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useContext, useEffect} from 'react';
 import {Box, Modal, Button, FormControl, FormLabel, TextField} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -6,6 +6,9 @@ import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { editFormI } from '../../pages/MyTodos/MyTodosPage';
 import Textarea from '../TextArea/Textarea';
 import "./style.scss";
+import { TodoResponse } from '../../api';
+import { AppContext } from '../../context/context';
+import { addSignature } from '../../library/library';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -13,7 +16,7 @@ interface ModalProps {
     diplayFooter ?: boolean,
     confirmText ?: string,
     onConfirm ?: (event: FieldValues)=>void,
-    defaults ?: editFormI
+    defaults ?: TodoResponse
     permissions ?: "full" | "limitated";
   }
 
@@ -87,6 +90,7 @@ function useModalEditNote () {
     const [open, setOpen] = React.useState(false);
     const handleOpen = useCallback(() => setOpen(true), []);
     const handleClose = useCallback(() => setOpen(false), []);
+    const { usernames, accountState } = useContext(AppContext)
 
     const { control, handleSubmit, setValue } = useForm();
 
@@ -114,6 +118,16 @@ function useModalEditNote () {
       const handleConfirm = useCallback((event: FieldValues)=>{
         handleClose();
 
+        if (props.defaults?.isShared && event.note){
+          
+          let note = addSignature(event.note, String(accountState.username));
+
+          event = {
+            ...event,
+            note,
+          };
+        }
+
         props.onConfirm && props.onConfirm(event);
 
         resetForm();
@@ -125,6 +139,12 @@ function useModalEditNote () {
         setValue('description',"");
         setValue('note',"");
       }
+
+      const findUser = () =>{
+        let user = usernames.find((user)=> user.id === props.defaults?.account_id);
+
+        return user ? user.username : '';
+      };
 
 
         return (
@@ -192,6 +212,16 @@ function useModalEditNote () {
                               )}
                             />
                           </FormControl>
+                        }
+                        {props.permissions === 'limitated' && 
+                          <div className="row">
+                          <Typography variant="h6" component="h3">Condivisa da</Typography>
+                          <Typography variant="subtitle1" component="h6"
+                            sx={{
+                              color: theme.palette.text.secondary
+                            }}
+                          >{props.defaults?.account_id && findUser()}</Typography>
+                        </div>
                         }
                         {props.permissions === 'full' && 
                           <FormControl>

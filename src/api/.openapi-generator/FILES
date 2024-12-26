@@ -53,6 +53,7 @@ models/share-todo-request.ts
 models/sort-filter-params.ts
 models/todo-accounts-response.ts
 models/todo-body-req.ts
+models/todo-response-shared-with-inner.ts
 models/todo-response.ts
 models/todos-response.ts
 models/update-account200-response.ts

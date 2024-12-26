@@ -14,11 +14,13 @@ import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
 import { FieldValues } from 'react-hook-form';
 import { updateTodoI } from '../../interfaces/TodosInterfaces';
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
+import { addSignature } from '../../library/library';
 
 const SharedTodosPage : React.FC = () => {
   const { todoState, sharedTodosLoading, sharedTodosError } = useContext(TodosContext);
   const { getAllSharedTodos, updateTodo } = useTodos();
 
+  const { accountState } = useContext(AppContext)
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
 
   //alerts
@@ -44,7 +46,21 @@ const SharedTodosPage : React.FC = () => {
   }
 
   const onEdit = React.useCallback((event: FieldValues)=>{
-  
+
+    let signature = String(accountState.username);
+
+    if (event.note){
+
+      event.note = event.note as String;
+
+      let notes = addSignature(event.note, signature);
+      
+      event = {
+        ...event,
+        note: notes,
+      }
+    }
+    
       if (currentTodo.id){
         let body : updateTodoI = {
           todoId : String(currentTodo.id),
@@ -113,9 +129,9 @@ const SharedTodosPage : React.FC = () => {
         }}
         width={{ xs: '100%', sm: '90%'}}
       >
-        {sharedTodosLoading && <SkeletonComponent/>}
+        {(sharedTodosLoading || getAllSharedTodos.isRefetching) && <SkeletonComponent/>}
         {
-          !sharedTodosLoading && todoState.sharedTodos.map((todo)=>{
+          !(sharedTodosLoading || getAllSharedTodos.isRefetching) && todoState.sharedTodos.map((todo)=>{
             return (
               <Card
                 sx={{
@@ -171,11 +187,7 @@ const SharedTodosPage : React.FC = () => {
         title={'Commenta nota'}
         onConfirm={onEdit}
         permissions='limitated'
-        defaults={{
-          title: String(currentTodo.title),
-          description: String(currentTodo.description),
-          note: String(currentTodo.note),
-        }}
+        defaults={currentTodo}
       >
       </ModalUpdate>
 
