@@ -108,8 +108,9 @@ const App : React.FC = () => {
                 <Outlet/>
               </TodosProvider>
               }>
-              <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage />} />
+              <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />
               <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
+              <Route path={BaseRoutes.CHECKED_TODOS} element={<MyTodosPage mode='onlyChecked' />} />
               <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
             </Route>
 

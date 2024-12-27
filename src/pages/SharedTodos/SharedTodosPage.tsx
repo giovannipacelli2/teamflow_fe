@@ -2,7 +2,7 @@ import React, {useEffect, useState, useContext} from 'react'
 import { AppContext } from "../../context/context";
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Box, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography, useTheme } from '@mui/material';
 import {TodosContext} from '../../context/todosContext'
 
 // Components
@@ -17,6 +17,9 @@ import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { addSignature } from '../../library/library';
 
 const SharedTodosPage : React.FC = () => {
+
+  const theme = useTheme();
+
   const { todoState, sharedTodosLoading, sharedTodosError } = useContext(TodosContext);
   const { getAllSharedTodos, updateTodo } = useTodos();
 
@@ -143,6 +146,7 @@ const SharedTodosPage : React.FC = () => {
                   '@media (min-width:600px)': {
                     width: '75%',
                   },
+                  background:todo.checked ? theme.palette.grey[200] : 'inherit'
                 }}
                 key={todo.id}
               >

@@ -18,6 +18,10 @@ import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+export interface MyTodosPageI {
+  mode ?: "all" | "withoutChecked" | "onlyChecked",
+}
+
 export interface editFormI {
   title : string,
   description : string,
@@ -25,8 +29,14 @@ export interface editFormI {
 }
 
 
-const MyTodosPage : React.FC = () => {
+const MyTodosPage = (props: MyTodosPageI) => {
+
+  props = {
+    ...props,
+    mode : props.mode ?? 'all',
+  }
   
+  const theme = useTheme();
   //modals
   const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
   const {handleOpen:openDelete, ModalComponent: ModalDelete} = useModal();
@@ -166,6 +176,87 @@ const MyTodosPage : React.FC = () => {
       openAlert();
     }
   }, [deleteTodo.data?.status])
+
+  const getTodoList = ()=>{
+
+    let todoList = [];
+
+    for(let todo of todoState.myTodos){
+
+      let isVisible = true;
+
+      if (props.mode === 'withoutChecked'){
+        isVisible = !todo.checked;
+      }
+
+      if (props.mode === 'onlyChecked'){
+        isVisible = !!todo.checked;
+      }
+
+      if(isVisible){        
+        todoList.push(
+          <Card
+            sx={{
+              width: {xs:'90%', md:'21em'},
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              marginRight:'1.5em',
+              '@media (min-width:600px)': {
+                width: '75%',
+              },
+              background:todo.checked ? theme.palette.grey[200] : 'inherit'
+            }}
+            key={todo.id}
+          >
+            <CardActionArea
+              onClick={() => {
+                openUpdate();
+                setCurrentTodo(todo);
+              }}
+            >
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {todo.title}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {todo.description}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions
+              sx={{
+                display:'flex',
+                alignItems:'center',
+                justifyContent:'space-between'
+              }}
+            >
+              <Button size="small" color="primary"
+                onClick={()=>{
+                  openShare();
+                  setCurrentTodo(todo);
+                }}
+              >
+                <ShareIcon></ShareIcon>
+                condividi
+              </Button>
+              <Button size="small" color="warning"
+                onClick={()=>{
+                  openDelete();
+                  setCurrentTodo(todo);
+                }}
+              >
+                <DeleteIcon></DeleteIcon>
+                elimina
+              </Button>
+            </CardActions>
+          </Card>
+        )
+      }
+    }
+
+    return todoList;
+  }
   
 
   return (
@@ -209,68 +300,10 @@ const MyTodosPage : React.FC = () => {
 
         {(todosLoading || getAllTodos.isRefetching) && <SkeletonComponent/>}
         {
-          !(todosLoading || getAllTodos.isRefetching) && todoState.myTodos.map((todo)=>{
-            return (
-              <Card
-                sx={{
-                  width: {xs:'90%', md:'21em'},
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  marginRight:'1.5em',
-                  '@media (min-width:600px)': {
-                    width: '75%',
-                  },
-                }}
-                key={todo.id}
-              >
-                <CardActionArea
-                  onClick={() => {
-                    openUpdate();
-                    setCurrentTodo(todo);
-                  }}
-                >
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {todo.title}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                      {todo.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-                <CardActions
-                  sx={{
-                    display:'flex',
-                    alignItems:'center',
-                    justifyContent:'space-between'
-                  }}
-                >
-                  <Button size="small" color="primary"
-                    onClick={()=>{
-                      openShare();
-                      setCurrentTodo(todo);
-                    }}
-                  >
-                    <ShareIcon></ShareIcon>
-                    condividi
-                  </Button>
-                  <Button size="small" color="warning"
-                    onClick={()=>{
-                      openDelete();
-                      setCurrentTodo(todo);
-                    }}
-                  >
-                    <DeleteIcon></DeleteIcon>
-                    elimina
-                  </Button>
-                </CardActions>
-              </Card>
-            );
-          })
+          !(todosLoading || getAllTodos.isRefetching) && getTodoList()
         }
         {
-          (!todosLoading && !todosError && todoState.myTodos.length===0) && <>
+          (!todosLoading && !todosError && getTodoList().length===0) && <>
           <Empty text="Nessuna nota trovata"></Empty>
         </>
         }

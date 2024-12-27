@@ -21,6 +21,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Person2Icon from '@mui/icons-material/Person2';
+import AssignmentTurnedInRoundedIcon from '@mui/icons-material/AssignmentTurnedInRounded';
+
 import {
   QueryClient,
   useQueryClient
@@ -78,6 +80,10 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
       }
       case Routes.SHARED_TODOS: {
         setHeaderTitle("Note condivise con te");
+        break;
+      }
+      case Routes.CHECKED_TODOS: {
+        setHeaderTitle("Note spuntate");
         break;
       }
       case Routes.PROFILE: {
@@ -147,6 +153,11 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
       label:"Note condivise",
       icon : <CoPresentIcon/>,
       link : Routes.SHARED_TODOS
+    },
+    {
+      label:"Note spuntate",
+      icon : <AssignmentTurnedInRoundedIcon/>,
+      link : Routes.CHECKED_TODOS
     },
     {
       label:"Profilo",
