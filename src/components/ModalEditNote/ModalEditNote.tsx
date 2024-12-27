@@ -1,14 +1,14 @@
 import React, {useCallback, useContext, useEffect} from 'react';
-import {Box, Modal, Button, FormControl, FormLabel, TextField} from '@mui/material';
+import {Box, Modal, Button, FormControl, FormLabel, TextField, Checkbox} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
-import { editFormI } from '../../pages/MyTodos/MyTodosPage';
 import Textarea from '../TextArea/Textarea';
 import "./style.scss";
 import { TodoResponse } from '../../api';
 import { AppContext } from '../../context/context';
 import { addSignature } from '../../library/library';
+import { CheckBox } from '@mui/icons-material';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -30,6 +30,7 @@ const defaultProps : ModalProps= {
       title:'',
       description:'',
       note:'',
+      checked:false
     },
     permissions: 'full',
 }
@@ -62,7 +63,6 @@ function useModalEditNote () {
     };
   
   const elemStyle = {
-    //border: '1px solid red',
     width: '100%',
   }
   const bodyContaier = {
@@ -81,10 +81,6 @@ function useModalEditNote () {
     alignItems:'center',
     justifyContent:'flex-end',
     gap:'1em',
-  }
-
-  const formStyle = {
-    border: '1px solid red',
   }
      
     const [open, setOpen] = React.useState(false);
@@ -111,6 +107,7 @@ function useModalEditNote () {
         setValue('title', props.defaults?.title);
         setValue('description', props.defaults?.description);
         setValue('note', props.defaults?.note);
+        setValue('checked', props.defaults?.checked);
       },[
         props.defaults
       ])
@@ -138,6 +135,7 @@ function useModalEditNote () {
         setValue('title',"");
         setValue('description',"");
         setValue('note',"");
+        setValue('checked', false);
       }
 
       const findUser = () =>{
@@ -252,7 +250,30 @@ function useModalEditNote () {
                               <Textarea
                                 {...field}
                                 sx={{width:"100%", fontSize:'1em'}}
-                                minRows={6}
+                                minRows={5}
+                              />
+                            )}
+                          />
+                        </FormControl>
+                        <FormControl sx={{
+                          width:'100%',
+                          display:'flex',
+                          flexDirection:'row',
+                          alignItems:'center',
+                          justifyContent:'flex-start',
+                          gap:'0.5em',
+                        }}>
+                          <FormLabel htmlFor="checked">Completato</FormLabel>
+                          <Controller
+                            name="checked"
+                            control={control}
+                            defaultValue={false}
+                            rules={{ required: false }}
+                            render={({ field: { onChange, value, ...field } }) => (
+                              <Checkbox
+                                {...field}
+                                checked={value}
+                                onChange={(e) => onChange(e.target.checked)}
                               />
                             )}
                           />

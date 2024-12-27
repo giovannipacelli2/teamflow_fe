@@ -1,39 +1,15 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginBodyI, useAuth } from "../../hooks/authHook";
 
 // MUI COMPONENTS
-import { TextField, FormControl, Button, styled, FormLabel, Box, FormControlLabel, Checkbox, Typography } from "@mui/material";
-import MuiCard from '@mui/material/Card';
+import { TextField, FormControl, Button, FormLabel, Box, FormControlLabel, Checkbox, Typography } from "@mui/material";
 import useLoading from "../../hooks/useLoading";
 import { Routes } from "../../routerConfig/routes";
 import { Link } from "react-router-dom";
 
-const Card = styled(MuiCard)(({ theme }) => {
-
-  return {
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    width: '98%',
-    padding: theme.spacing(4),
-    gap: theme.spacing(2),
-    margin: 'auto',
-    [theme.breakpoints.up('sm')]: {
-      maxWidth: '450px',
-    },
-    '@media (min-width:450px)': {
-      width: '80%',
-    },
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-    ...theme.applyStyles('dark', {
-      boxShadow:
-        'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-    }),
-  }
-
-});
+// Custom elem
+import Card from '../../components/Card/Card';
 
 const LoginPage: React.FC = () => {
 
@@ -51,10 +27,24 @@ const LoginPage: React.FC = () => {
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
   const [form, setForm] = useState<loginBodyI>({
-    username: "test@dev.com",
+    username: "",
     password: "",
     remember : true,
   });
+
+  //DEBUG, SET DEV ACCOUNT AS DEFAULT
+  useEffect(()=>{
+    if (process.env.NODE_ENV){
+
+      let devMode = process.env.NODE_ENV;
+      if (devMode === 'development'){
+        setForm((prevState)=>({
+          ...prevState,
+          username : 'test@dev.com'
+        }))
+      }
+    }
+  }, [])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 

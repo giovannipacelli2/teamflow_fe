@@ -74,7 +74,8 @@ const MyTodosPage : React.FC = () => {
       let body : TodoBodyReq = {
         title: event.title,
         description: event.description,
-        note: event.note
+        note: event.note,
+        checked: event.checked,
       }
 
       createTodo.mutate(body);
