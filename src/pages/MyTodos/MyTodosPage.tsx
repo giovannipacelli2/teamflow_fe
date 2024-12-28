@@ -210,7 +210,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              marginRight:'1.5em',
+              marginRight: {xs:'0', md:'1.5em'},
               '@media (min-width:600px)': {
                 width: '75%',
               },
