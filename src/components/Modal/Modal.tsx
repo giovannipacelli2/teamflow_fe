@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Modal, Button} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
+import CloseBtn from '../CloseBtn/CloseBtn';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -52,9 +53,13 @@ function useModal () {
     };
   
   const elemStyle = {
-    //border: '1px solid red',
     width: '100%',
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
   }
+
   const bodyContaier = {
     ...elemStyle,
     display:'flex',
@@ -119,6 +124,7 @@ function useModal () {
                     >
                       {props.title}
                     </Typography>
+                    <CloseBtn action={handleClose}/>
                   </Box>
                   <Box sx={bodyContaier}>
                     {props.children}

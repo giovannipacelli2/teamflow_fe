@@ -9,6 +9,7 @@ import { TodoResponse } from '../../api';
 import { AppContext } from '../../context/context';
 import { addSignature } from '../../library/library';
 import { CheckBox } from '@mui/icons-material';
+import CloseBtn from '../CloseBtn/CloseBtn';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -64,6 +65,10 @@ function useModalEditNote () {
   
   const elemStyle = {
     width: '100%',
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
   }
   const bodyContaier = {
     ...elemStyle,
@@ -163,6 +168,7 @@ function useModalEditNote () {
                     >
                       {props.title}
                     </Typography>
+                    <CloseBtn action={handleClose}/>
                   </Box>
                   <Box sx={bodyContaier}>
                     <form 

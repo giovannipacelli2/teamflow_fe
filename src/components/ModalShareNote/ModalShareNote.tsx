@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useTodos from '../../hooks/useTodos';
 import { shareTodoI } from '../../interfaces/TodosInterfaces';
 import { TodoResponse } from '../../api';
+import CloseBtn from '../CloseBtn/CloseBtn';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -65,7 +66,12 @@ function useModalShareNote () {
   
   const elemStyle = {
     width: '100%',
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
   }
+
   const bodyContaier = {
     ...elemStyle,
     display:'flex',
@@ -220,6 +226,7 @@ function useModalShareNote () {
                     >
                       {props.title}
                     </Typography>
+                    <CloseBtn action={handleClose}/>
                   </Box>
                   <Box sx={bodyContaier}>
                     <form 
