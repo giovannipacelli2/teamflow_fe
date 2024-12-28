@@ -8,6 +8,8 @@ import Card from '../../components/Card/Card';
 import { AccountBodyReq } from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { Routes } from '../../routerConfig/routes';
+import { getMsgFromObjValues } from '../../library/library';
+import { Link } from 'react-router-dom';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -19,6 +21,8 @@ const SignupPage = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const { control, handleSubmit, setValue, getValues, formState:{errors}, setError } = useForm({defaultValues:{
     username: '',
@@ -89,6 +93,8 @@ const SignupPage = () => {
     if (createAccount.data?.status){
   
       if(createAccount.data?.status <= 201){
+        setIsSubmitted(true);
+        
         setAlertType({
           title:'Successo',
           subtitle: 'Account creato con successo',
@@ -100,9 +106,13 @@ const SignupPage = () => {
         },2500);
       } else {
         
+        let serverMsg = getMsgFromObjValues(createAccount.data.data.message)
+
+        let msg = serverMsg ?? 'Non è stato possibile creare l\'account';
+
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile creare l\'account',
+          subtitle: msg,
           type: 'error'
         })
       }
@@ -146,16 +156,17 @@ const SignupPage = () => {
       sx={{ 
         flexWrap: 'wrap', 
         padding:'2em',
-        height:{ xs: '100%', sm: '100dvh' },
+        height:{ xs: '100%'},
       }}
     >
-      <Card>
+      <Card sx={{height:'max-content'}}>
         <form 
           style={{
             width:'100%',
             display:'flex',
             flexDirection:'column',
-            gap:'1em'
+            gap:'1em',
+            height:'auto',
           }}
           onSubmit={handleSubmit((e)=>handleConfirm(e))}
         >
@@ -221,9 +232,13 @@ const SignupPage = () => {
               type="submit"
               fullWidth
               variant="contained"
+              disabled={isSubmitted}
             >
               Sign up
             </Button>
+            <Typography variant="body1" component="h6">
+              oppure vai al <Link to={Routes.LOGIN}>login</Link>
+            </Typography>
           </Stack>
 
         </form>
