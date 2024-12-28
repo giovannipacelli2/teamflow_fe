@@ -38,14 +38,18 @@ const AppContext = createContext<{
     authDispatch: Dispatch<authActions>;
     accountDispatch: Dispatch<accountActions>;
     usernames: AccountsUsernames[];
+    isLoadingApp: boolean;
     setUsernames : React.Dispatch<React.SetStateAction<AccountsUsernames[]>>;
+    setIsLoadingApp : React.Dispatch<React.SetStateAction<boolean>>;
     }>({
       authState: initialAuthState,
       accountState: initialAccountState,
       authDispatch: () => null,
       accountDispatch: () => null,
       usernames : [],
-      setUsernames: ()=>{}
+      setUsernames: ()=>{},
+      isLoadingApp : false,
+      setIsLoadingApp: ()=>{}
     });
 
 
@@ -60,9 +64,10 @@ const AppProvider = ( {children}: AppProviderProps ) => {
     );
 
     const [usernames, setUsernames] = useState<AccountsUsernames[]>([]);
+    const [isLoadingApp, setIsLoadingApp] = useState<boolean>(false);
 
   return (
-    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch, usernames, setUsernames }}>
+    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch, usernames, setUsernames, isLoadingApp, setIsLoadingApp }}>
       {children}
     </AppContext.Provider>
   );

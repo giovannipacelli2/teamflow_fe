@@ -1,10 +1,12 @@
 import { Box, CircularProgress } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { AppContext } from '../context/context';
 
 
 export const useLoading = () => {
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    //const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { isLoadingApp : isLoading, setIsLoadingApp : setIsLoading } = useContext(AppContext)
 
     let LoadingElem : JSX.Element = (
         <>

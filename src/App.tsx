@@ -32,7 +32,7 @@ import SignupPage from './pages/SignupPage/SignupPage';
 
 const App : React.FC = () => {
 
-  const { authState, accountState, authDispatch, accountDispatch } = useContext(AppContext);
+  const { authState, authDispatch, setIsLoadingApp } = useContext(AppContext);
   const { logged } = useAuth();
   const { getCookie } = useCookie();
   const { decryptString } = useCrypto();
@@ -41,7 +41,9 @@ const App : React.FC = () => {
 
   const checkAuth = async ()=>{
 
+    setIsLoadingApp(true);
     await logged();
+    setIsLoadingApp(false);
   }
 
   useEffect(()=>{
