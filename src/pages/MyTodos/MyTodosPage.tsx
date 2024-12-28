@@ -62,6 +62,15 @@ const MyTodosPage = (props: MyTodosPageI) => {
     getAllTodos.refetch();
   },[]);
 
+  // force refresh current todo data
+  useEffect(()=>{
+    if (currentTodo.id){
+      setCurrentTodo((prevState)=>{
+        return todoState.myTodos.find((todo)=> todo.id === prevState.id) ?? {};
+      })
+    }
+  },[todoState]);
+
   const onEdit = React.useCallback((event: FieldValues)=>{
 
     if (currentTodo.id){
@@ -154,7 +163,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
       }
       openAlert();
     }
-  }, [shareTodo.data?.status])
+  }, [shareTodo])
 
   useEffect(()=>{
     if (deleteTodo.data?.status){
@@ -277,10 +286,13 @@ const MyTodosPage = (props: MyTodosPageI) => {
         alignItems='center'
         gap='0.5em'
       >
-        <Button size="medium" color="primary" variant="contained" onClick={openCreate}>
-          <AddIcon></AddIcon>
-          Aggiungi
-        </Button>
+        {
+          props.mode !=='onlyChecked' &&
+          <Button size="medium" color="primary" variant="contained" onClick={openCreate}>
+            <AddIcon></AddIcon>
+            Aggiungi
+          </Button>
+        }
         <Button size="medium" color="primary" variant="contained" onClick={()=>getAllTodos.refetch()}>
           <RefreshIcon></RefreshIcon>
         </Button>

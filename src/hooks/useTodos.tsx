@@ -67,6 +67,7 @@ export default function useTodos() {
       },
       onSuccess:()=>{
         getAllTodos.refetch();
+        getAllSharedTodos.refetch();
       }
     })
 

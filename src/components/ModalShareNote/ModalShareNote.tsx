@@ -64,7 +64,6 @@ function useModalShareNote () {
     };
   
   const elemStyle = {
-    //border: '1px solid red',
     width: '100%',
   }
   const bodyContaier = {
@@ -103,7 +102,7 @@ function useModalShareNote () {
       setOpen(false)
     }, []);
 
-    const ModalComponent = React.memo((props: ModalProps)=>{
+    const ModalComponent = (props: ModalProps)=>{
 
       const { shareTodo, getAllTodos } = useTodos();
       const [userList, setUserList] = useState<accountField[]>([]);
@@ -145,14 +144,16 @@ function useModalShareNote () {
 
       useEffect(()=>{
 
-        if(props.todo?.sharedWith && props.todo?.sharedWith.length>0 && open){
+        if (!props.todo?.isShared) return;
+
+        if(props.todo?.sharedWith && props.todo?.sharedWith.length>0){
 
           setValue('accounts',{
             id:props.todo?.sharedWith[0].id,
             label:props.todo?.sharedWith[0].username
           });
         }
-      }, [props.todo?.sharedWith, open]);
+      }, [props.todo?.sharedWith, props.todo?.isShared, open]);
 
 
       const handleConfirm = useCallback((event: FieldValues)=>{
@@ -177,18 +178,7 @@ function useModalShareNote () {
 
       }, [props, props.onConfirm]);
 
-      // delete todo association
-      useEffect(()=>{
-        if(shareTodo.isSuccess){
-          getAllTodos.refetch();
-
-          if (props.todo?.sharedWith){
-            props.todo.sharedWith = []
-          }
-        }
-      },[shareTodo.isSuccess])
-
-      const deleteAssociation = useCallback((event: SyntheticEvent)=>{
+      const deleteAssociation = useCallback(async (event: SyntheticEvent)=>{
         let accounts = getValues('accounts') as accountField;
 
         if(!accounts.id){
@@ -202,7 +192,13 @@ function useModalShareNote () {
                 }
         }
   
-        shareTodo.mutate(bodyReq);
+        //shareTodo.mutate(bodyReq);
+        let deleted = await shareTodo.mutateAsync(bodyReq);
+
+        if (deleted.status === 200){
+          resetForm();
+          setOpen(false);
+        }
 
       }, [props, props.onConfirm]);
 
@@ -274,7 +270,7 @@ function useModalShareNote () {
               </Modal>
             </div>
           );
-    })
+    }
   
     return {ModalComponent, open, handleOpen, handleClose}
   }
