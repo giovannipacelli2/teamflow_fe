@@ -307,7 +307,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
           flexWrap: 'wrap', 
           rowGap: { xs: '1.5em' },
         }}
-        width={{ xs: '100%', sm: '90%'}}
+        width={{ xs: '100%', sm: '95%'}}
       >
 
         {(todosLoading || getAllTodos.isRefetching) && <SkeletonComponent/>}

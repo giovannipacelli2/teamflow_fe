@@ -104,7 +104,7 @@ function useModalShareNote () {
 
     const ModalComponent = (props: ModalProps)=>{
 
-      const { shareTodo, getAllTodos } = useTodos();
+      const { shareTodo } = useTodos();
       const [userList, setUserList] = useState<accountField[]>([]);
 
       props = {

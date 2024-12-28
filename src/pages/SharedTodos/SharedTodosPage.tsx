@@ -150,7 +150,12 @@ const SharedTodosPage : React.FC = () => {
                 }}
                 key={todo.id}
               >
-                <CardActionArea>
+                <CardActionArea
+                  onClick={() => {
+                    openUpdate();
+                    setCurrentTodo(todo);
+                  }}
+                >
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {todo.title}
