@@ -207,6 +207,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
           <Card
             sx={{
               width: {xs:'90%', md:'21em'},
+              height:'9.5em',
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -223,12 +224,21 @@ const MyTodosPage = (props: MyTodosPageI) => {
                 openUpdate();
                 setCurrentTodo(todo);
               }}
+              sx={{
+                height:'8em',
+              }}
             >
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {todo.title}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                <Typography variant="body2" 
+                  sx={{ 
+                    color: "text.secondary",
+                    overflowY:'hidden',
+                    height:'3em',
+                  }}
+                >
                   {todo.description}
                 </Typography>
               </CardContent>

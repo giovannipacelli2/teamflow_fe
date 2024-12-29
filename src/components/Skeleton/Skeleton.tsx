@@ -13,6 +13,7 @@ const SkeletonComponent : () => JSX.Element = () => {
     return <Card
       sx={{
         width: {xs:'90%', md:'21em'},
+        height:'9.5em',
         margin:'0 1.5em 0 0',
         display: "flex",
         flexDirection: "column",
@@ -25,9 +26,19 @@ const SkeletonComponent : () => JSX.Element = () => {
       }}
     >
 
-      <Skeleton variant="rectangular" width='45%' height={'1.2em'} />
+      <Skeleton variant="rectangular" width='45%' height={'1em'} />
       <Skeleton variant="rectangular" width='100%' height={'1em'} />
       <Skeleton variant="rectangular" width='100%' height={'1em'} />
+      <Box sx={{
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between'
+      }}>
+        <Skeleton variant="rectangular" width='25%' height={'0.6em'} />
+        <Skeleton variant="rectangular" width='25%' height={'0.6em'} />
+
+      </Box>
     </Card>
   }
 
