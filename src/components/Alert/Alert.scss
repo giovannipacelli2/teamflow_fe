@@ -2,12 +2,21 @@
     position: fixed;
     z-index: 1100;
     top:1em;
-    right: -400px;
+    width: 90%;
+    right: -90%;
     transition: 0.5s all;
+    height: max-content;
+}
+
+@media screen and (min-width:512px){
+    .alert-component{
+        width: 400px;
+        right: -400px;
+
+    }
 }
 
 .rigth-to-left{
-    
-    right: 0;
+    right: 2px;
     transition: 0.5s all;
 }

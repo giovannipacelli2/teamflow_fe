@@ -93,7 +93,6 @@ const SignupPage = () => {
     if (createAccount.data?.status){
   
       if(createAccount.data?.status <= 201){
-        setIsSubmitted(true);
         
         setAlertType({
           title:'Successo',
@@ -115,6 +114,8 @@ const SignupPage = () => {
           subtitle: msg,
           type: 'error'
         })
+
+        setIsSubmitted(false);
       }
       openAlert();
     }
@@ -143,6 +144,8 @@ const SignupPage = () => {
       ...event
     }
 
+    setIsSubmitted(true);
+
     createAccount.mutate(body);
 
   },[]);
@@ -155,11 +158,14 @@ const SignupPage = () => {
       alignItems={{ xs: 'center', sm: 'center' }}
       sx={{ 
         flexWrap: 'wrap', 
-        padding:'2em',
+        padding:'2em 0',
         height:{ xs: '100%'},
       }}
     >
-      <Card sx={{height:'max-content'}}>
+      <Card sx={{
+        height:'max-content',
+        width:'95%',
+      }}>
         <form 
           style={{
             width:'100%',
