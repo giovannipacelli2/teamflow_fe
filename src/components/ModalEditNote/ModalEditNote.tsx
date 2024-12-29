@@ -51,7 +51,7 @@ function useModalEditNote () {
       display:'flex',
       gap:'1em',
       flexDirection:'column',
-      width: '100%',
+      width: '95%',
       [theme.breakpoints.up('sm')]: {
         width: '70%',
       },
@@ -87,6 +87,11 @@ function useModalEditNote () {
     justifyContent:'flex-end',
     gap:'1em',
   }
+
+  const descriptionStyle = {
+    color: theme.palette.text.secondary,
+    marginLeft:'0.5em'
+  };
      
     const [open, setOpen] = React.useState(false);
     const handleOpen = useCallback(() => setOpen(true), []);
@@ -182,9 +187,7 @@ function useModalEditNote () {
                           <div className="row">
                             <Typography variant="h6" component="h3">Titolo</Typography>
                             <Typography variant="subtitle1" component="h6"
-                              sx={{
-                                color: theme.palette.text.secondary
-                              }}
+                              sx={descriptionStyle}
                             >{props.defaults?.title}</Typography>
                           </div>
                         }
@@ -192,10 +195,10 @@ function useModalEditNote () {
                           <div className="row">
                           <Typography variant="h6" component="h3">Descrizione</Typography>
                           <Typography variant="subtitle1" component="h6"
-                            sx={{
-                              color: theme.palette.text.secondary
-                            }}
-                          >{props.defaults?.description}</Typography>
+                            sx={descriptionStyle}
+                          >{props.defaults?.description?.split('\n').map((text)=>{
+                            return <p>{text}</p>
+                          })}</Typography>
                         </div>
                         }
                         {props.permissions === 'full' && 
@@ -221,9 +224,7 @@ function useModalEditNote () {
                           <div className="row">
                           <Typography variant="h6" component="h3">Condivisa da</Typography>
                           <Typography variant="subtitle1" component="h6"
-                            sx={{
-                              color: theme.palette.text.secondary
-                            }}
+                            sx={descriptionStyle}
                           >{props.defaults?.account_id && findUser()}</Typography>
                         </div>
                         }

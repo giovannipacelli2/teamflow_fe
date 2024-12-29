@@ -117,7 +117,6 @@ const SharedTodosPage : React.FC = () => {
       >
         <Button size="medium" color="primary" variant="contained" onClick={()=>getAllSharedTodos.refetch()}>
           <RefreshIcon></RefreshIcon>
-          Aggiorna
         </Button>
       </Box>
 

@@ -1,16 +1,18 @@
 import React, {SyntheticEvent, useCallback, useContext, useEffect, useState} from 'react';
-import {Box, Modal, Button, FormControl, TextField} from '@mui/material';
+import {Box, Modal, Button, FormControl, TextField, Stack, List, ListItem, IconButton, ListItemText, Divider} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import "./style.scss";
 import Autocomplete from '@mui/material/Autocomplete';
 import { AppContext } from '../../context/context';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useTodos from '../../hooks/useTodos';
 import { shareTodoI } from '../../interfaces/TodosInterfaces';
 import { TodoResponse } from '../../api';
 import CloseBtn from '../CloseBtn/CloseBtn';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import _ from 'lodash';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -52,7 +54,7 @@ function useModalShareNote () {
       display:'flex',
       gap:'1em',
       flexDirection:'column',
-      width: '100%',
+      width: '95%',
       [theme.breakpoints.up('sm')]: {
         width: '70%',
       },
@@ -135,7 +137,13 @@ function useModalShareNote () {
 
         let tmp : accountField[] = [];
 
-        for (let user of usernames){
+        // get array of user ids already shared
+        let sharedWith = props.todo?.sharedWith ?? [];
+        sharedWith = _.differenceBy(usernames, sharedWith, 'id');
+
+        // exclude current user id + transform data for select
+
+        for (let user of sharedWith){
           if (user.id !== accountState.id){
             tmp.push({
               id : String(user.id),
@@ -148,48 +156,33 @@ function useModalShareNote () {
 
       }, [usernames]);
 
-      useEffect(()=>{
-
-        if (!props.todo?.isShared) return;
-
-        if(props.todo?.sharedWith && props.todo?.sharedWith.length>0){
-
-          setValue('accounts',{
-            id:props.todo?.sharedWith[0].id,
-            label:props.todo?.sharedWith[0].username
-          });
-        }
-      }, [props.todo?.sharedWith, props.todo?.isShared, open]);
-
-
       const handleConfirm = useCallback((event: FieldValues)=>{
         
         if (!event.accounts.id){
-          handleClose();
           return;
         }
 
-        let bodyReq : shareTodoI = {
-                todoId : String(props.todo?.id),
-                body : {
-                  accounts: [event.accounts.id]
-                }
-        }
+        if (props.todo?.sharedWith){
+          let accounts = props.todo?.sharedWith.map((user)=>user.id) ?? [];
   
-        shareTodo.mutate(bodyReq);
-
-        handleClose();
-
-        props.onConfirm && props.onConfirm(event);
+          let bodyReq : shareTodoI = {
+                  todoId : String(props.todo?.id),
+                  body : {
+                    accounts: [
+                      ...accounts,
+                      event.accounts.id
+                    ]
+                  }
+          }
+    
+          shareTodo.mutate(bodyReq);
+  
+          props.onConfirm && props.onConfirm(event);
+        }
 
       }, [props, props.onConfirm]);
 
       const deleteAssociation = useCallback(async (event: SyntheticEvent)=>{
-        let accounts = getValues('accounts') as accountField;
-
-        if(!accounts.id){
-          return;
-        }
 
         let bodyReq : shareTodoI = {
                 todoId : String(props.todo?.id),
@@ -203,10 +196,28 @@ function useModalShareNote () {
 
         if (deleted.status === 200){
           resetForm();
-          setOpen(false);
         }
 
       }, [props, props.onConfirm]);
+
+      const deleteSharingAccount = (id:string)=>{
+
+        if (props.todo?.sharedWith){
+          let accounts = props.todo?.sharedWith.map((user)=>String(user.id)) ?? [];
+          
+  
+          let bodyReq : shareTodoI = {
+                  todoId : String(props.todo?.id),
+                  body : {
+                    accounts: [
+                      ...accounts.filter((user)=>user !== id),
+                    ]
+                  }
+          }
+    
+          shareTodo.mutate(bodyReq);
+        }
+      }
 
         return (
             <div>
@@ -236,6 +247,53 @@ function useModalShareNote () {
                       <Box 
                         className='modalFormControl hide-scrollbar-back'
                       >
+
+                        <Divider variant="middle"/>
+                        
+                        <List 
+                          sx={{ 
+                            width: '100%',
+                            bgcolor: 'background.paper',
+                            maxHeight:'7.2em',
+                            overflowY:'scroll',
+                          }}
+                        >
+                          {props.todo?.sharedWith && props.todo?.sharedWith.map((user, index)=> (
+ 
+                            <ListItem
+                              key={user.id}
+                              sx={{
+                                maxWidth:420,
+                              }}
+                              //disableGutters
+                              secondaryAction={
+                                <IconButton 
+                                  aria-label="shared-users"
+                                  onClick={()=>deleteSharingAccount(String(user.id))}
+                                  sx={{
+                                    color: theme.palette.error.light
+                                  }}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              }
+                            >
+                              <ListItemText 
+                                primary={user.username} 
+                                sx={{
+                                  color: theme.palette.grey[700]
+                                }}
+                              />
+                            </ListItem>
+                          ))}
+                        </List>
+
+                        
+                        <Typography id="modal-modal-title" variant="body1" component="h3"
+                        >
+                          Condividi con:
+                        </Typography>
+                        <Divider variant="middle"/>
                         
                         <FormControl>
                           <Controller
@@ -251,7 +309,7 @@ function useModalShareNote () {
                                 sx={{ maxWidth: 400, marginTop:'0.5em' }}
                                 renderInput={(params) => <TextField 
                                   {...params}
-                                  label="Scegli un utente" 
+                                  label="Aggiungi utente" 
                                 />}
                                 onChange={(event, newValue) => {
                                   field.onChange(newValue);
@@ -261,14 +319,13 @@ function useModalShareNote () {
                             
                             />
                         </FormControl>
-                        <Box>
+
+                      </Box>
+                      { props.diplayFooter && <Box sx={buttonContaier}>
                           <Button
                             onClick={deleteAssociation}
                             color='error'
                           >Elimina Condivisione</Button>
-                        </Box>
-                      </Box>
-                      { props.diplayFooter && <Box sx={buttonContaier}>
                           <Button type='submit'>{props.confirmText}</Button>
                       </Box>}
                     </form>

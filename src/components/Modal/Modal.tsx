@@ -40,7 +40,7 @@ function useModal () {
       display:'flex',
       gap:'1em',
       flexDirection:'column',
-      width: '100%',
+      width: '95%',
       [theme.breakpoints.up('sm')]: {
         width: '70%',
       },
