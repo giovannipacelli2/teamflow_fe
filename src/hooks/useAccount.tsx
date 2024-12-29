@@ -46,7 +46,7 @@ export default function useAccount() {
     const getUsernames = async () : Promise<boolean> => {
         let accountApi = new AccountApi();
         
-        let res = await accountApi.getAllUsernames();
+        let res = await accountApi.getAllUsernames(500);
 
         if (!res.status) return false;
 
