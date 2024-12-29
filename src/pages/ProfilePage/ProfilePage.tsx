@@ -28,6 +28,8 @@ const ProfilePage = () => {
   const { authState, accountState } = useContext(AppContext);
   const { deleteAccount } = useAccount();
 
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
   const { control, handleSubmit, setValue, getValues, formState:{errors}, setError } = useForm({defaultValues:{
     username: String(accountState.username),
     name: String(accountState.name),
@@ -141,6 +143,8 @@ const ProfilePage = () => {
           subtitle: msg,
           type: 'error'
         })
+
+        setIsSubmitted(false);
       }
       openAlert();
     }
@@ -181,6 +185,7 @@ const ProfilePage = () => {
     let body : deleteAccountI = {
       accountId: String(authState.accountId)
     }
+    setIsSubmitted(true);
     deleteAccount.mutate(body);
   }
 
@@ -333,6 +338,7 @@ const ProfilePage = () => {
         >Questa azione è irreversibile</Typography>
 
         <Button type='button' variant="contained"
+          disabled={isSubmitted}
           onClick={openDelete}
             sx={{
               background:theme.palette.error.main
