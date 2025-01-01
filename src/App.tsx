@@ -5,6 +5,11 @@ import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
 import useCookie from './hooks/useCookie';
 import {TodosProvider} from './context/todosContext'
+
+// theme setting
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './theme/ThemeConfig';
+
 import {
   QueryClient,
   QueryClientProvider,
@@ -94,32 +99,34 @@ const App : React.FC = () => {
   }, [authState.authorization?.token])
 
   return (
-    <div className="App">
-      <Router>
-          <RootPage></RootPage>
-        <Routes>
-          <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
-          <Route path={BaseRoutes.SIGNUP} element={<SignupPage/>} ></Route>
-          <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
-          <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <Router>
+            <RootPage></RootPage>
+          <Routes>
+            <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
+            <Route path={BaseRoutes.SIGNUP} element={<SignupPage/>} ></Route>
+            <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
+            <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
-            <Route path={BaseRoutes.DASHBOARD} element={
-              <TodosProvider>
-                <DashboardPage>
-                </DashboardPage>
-                <Outlet/>
-              </TodosProvider>
-              }>
-              <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />
-              <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
-              <Route path={BaseRoutes.CHECKED_TODOS} element={<MyTodosPage mode='onlyChecked' />} />
-              <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
+              <Route path={BaseRoutes.DASHBOARD} element={
+                <TodosProvider>
+                  <DashboardPage>
+                  </DashboardPage>
+                  <Outlet/>
+                </TodosProvider>
+                }>
+                <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />
+                <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
+                <Route path={BaseRoutes.CHECKED_TODOS} element={<MyTodosPage mode='onlyChecked' />} />
+                <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
+              </Route>
+
             </Route>
-
-          </Route>
-        </Routes>
-      </Router>
-    </div>
+          </Routes>
+        </Router>
+      </div>
+    </ThemeProvider>
   );
 }
 

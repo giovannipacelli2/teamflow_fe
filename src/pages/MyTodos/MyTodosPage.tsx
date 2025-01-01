@@ -215,7 +215,8 @@ const MyTodosPage = (props: MyTodosPageI) => {
               '@media (min-width:600px)': {
                 width: '75%',
               },
-              background:todo.checked ? theme.palette.grey[200] : 'inherit'
+              //background:todo.checked ? theme.palette.grey[200] : 'inherit'
+              background:todo.checked ? theme.palette.secondary.light : 'inherit'
             }}
             key={todo.id}
           >
