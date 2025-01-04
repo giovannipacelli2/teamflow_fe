@@ -13,6 +13,7 @@ import { Routes } from '../../routerConfig/routes';
 import { useNavigate } from 'react-router-dom';
 import useModal from '../../components/Modal/Modal';
 import { AlertContext } from '../../context/alertContext';
+import useAuth from '../../hooks/authHook';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -27,6 +28,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   const { setAlertType, openAlert } = useContext(AlertContext);
+  const { destroySession } = useAuth()
   const { authState, accountState } = useContext(AppContext);
   const { deleteAccount } = useAccount();
 
@@ -119,9 +121,9 @@ const ProfilePage = () => {
           type: 'success'
         })
 
-        setTimeout(()=>{
-          navigate(Routes.LOGIN);
-        },2500)
+        navigate(Routes.LOGIN);
+        destroySession();
+
       } else {
 
         let msg = getMsgFromObjValues(deleteAccount.data.data.message);

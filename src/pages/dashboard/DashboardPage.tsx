@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import "./DashboardPage.scss";
 import { TodosContext } from '../../context/todosContext';
-import { AppContext } from '../../context/context';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -38,7 +37,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Routes } from '../../routerConfig/routes';
 import useAuth from '../../hooks/authHook';
 import useLoading from '../../hooks/useLoading';
-import AlertComponent from '../../components/Alert/Alert';
 
 interface NavLink {
   label : string,
@@ -59,8 +57,6 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
   const navigate = useNavigate();
   const {logout} = useAuth();
   const {LoadingElem, setIsLoading} = useLoading();
-
-  const { alertElem, alertType, closeAlert } = useContext(AlertContext)
 
   const {resetState} = useContext(TodosContext)
   const queryClient = useQueryClient();
@@ -276,15 +272,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
           {children ?? <></>}
         </Main>
       </Box>
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
+      
     </>
   );
 })
