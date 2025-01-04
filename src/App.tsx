@@ -10,11 +10,6 @@ import {TodosProvider} from './context/todosContext'
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './theme/ThemeConfig';
 
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
-
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
 import {removeHeaderInterceptor, requestHeaderInterceptor} from './interceptors/requestHeaderInterceptor';
@@ -34,6 +29,7 @@ import useCrypto from './hooks/useCrypto';
 import useAccount from './hooks/useAccount';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SignupPage from './pages/SignupPage/SignupPage';
+import { AlertProvider } from './context/alertContext';
 
 const App : React.FC = () => {
 
@@ -111,9 +107,11 @@ const App : React.FC = () => {
 
               <Route path={BaseRoutes.DASHBOARD} element={
                 <TodosProvider>
-                  <DashboardPage>
-                  </DashboardPage>
-                  <Outlet/>
+                  <AlertProvider>
+                    <DashboardPage>
+                    </DashboardPage>
+                    <Outlet/>
+                  </AlertProvider>
                 </TodosProvider>
                 }>
                 <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />

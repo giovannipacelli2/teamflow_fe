@@ -8,11 +8,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import { AppContext } from '../../context/context';
 import { deleteAccountI, updateAccountI } from '../../interfaces/AccountInterfaces';
 import useAccount from '../../hooks/useAccount';
-import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
 import { Routes } from '../../routerConfig/routes';
 import { useNavigate } from 'react-router-dom';
 import useModal from '../../components/Modal/Modal';
+import { AlertContext } from '../../context/alertContext';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -25,6 +25,8 @@ const ProfilePage = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const { setAlertType, openAlert } = useContext(AlertContext);
   const { authState, accountState } = useContext(AppContext);
   const { deleteAccount } = useAccount();
 
@@ -42,13 +44,6 @@ const ProfilePage = () => {
   //modals
   const { handleOpen:openDelete, ModalComponent: ModalDelete } = useModal();
 
-  //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
 
   const { updateAccount } = useAccount()
 
@@ -84,12 +79,7 @@ const ProfilePage = () => {
       type:'password',
     }
   ];
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
+
   
   useEffect(()=>{
     if (updateAccount.data?.status){
@@ -359,15 +349,6 @@ const ProfilePage = () => {
         >Questa azione eliminerà per sempre il tuo account</Typography>
       </ModalDelete>
 
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
     </Stack>
   )
 }

@@ -196,8 +196,8 @@ function useModalEditNote () {
                           <Typography variant="h6" component="h3">Descrizione</Typography>
                           <Typography variant="subtitle1" component="h6"
                             sx={descriptionStyle}
-                          >{props.defaults?.description?.split('\n').map((text)=>{
-                            return <p>{text}</p>
+                          >{props.defaults?.description?.split('\n').map((text, index)=>{
+                            return <p key={index}>{text}</p>
                           })}</Typography>
                         </div>
                         }

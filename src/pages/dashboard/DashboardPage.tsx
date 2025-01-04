@@ -23,10 +23,11 @@ import ListItemText from '@mui/material/ListItemText';
 import Person2Icon from '@mui/icons-material/Person2';
 import AssignmentTurnedInRoundedIcon from '@mui/icons-material/AssignmentTurnedInRounded';
 
-import {
-  QueryClient,
-  useQueryClient
-} from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
+
+//Alert
+
+import { AlertContext } from '../../context/alertContext'
 
 // ICONS
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
@@ -37,6 +38,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Routes } from '../../routerConfig/routes';
 import useAuth from '../../hooks/authHook';
 import useLoading from '../../hooks/useLoading';
+import AlertComponent from '../../components/Alert/Alert';
 
 interface NavLink {
   label : string,
@@ -58,7 +60,8 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
   const {logout} = useAuth();
   const {LoadingElem, setIsLoading} = useLoading();
 
-  const {accountState} = useContext(AppContext)
+  const { alertElem, alertType, closeAlert } = useContext(AlertContext)
+
   const {resetState} = useContext(TodosContext)
   const queryClient = useQueryClient();
 
@@ -106,19 +109,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    /* marginLeft: `-${drawerWidth}px`,
-    variants: [
-      {
-        props: ({ open }) => open,
-        style: {
-          transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-          marginLeft: 0,
-        },
-      },
-    ], */
+
   }));
   
   interface AppBarProps extends MuiAppBarProps {
@@ -285,6 +276,15 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
           {children ?? <></>}
         </Main>
       </Box>
+      <AlertComponent 
+        activated={alertElem}
+        onClose={closeAlert}
+        duration={2500}
+        title={alertType.title}
+        subtitle={alertType.subtitle}
+        type={alertType.type}
+      >
+      </AlertComponent>
     </>
   );
 })

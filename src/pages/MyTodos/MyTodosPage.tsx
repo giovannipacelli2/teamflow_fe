@@ -17,6 +17,7 @@ import useModal from '../../components/Modal/Modal';
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { AlertContext } from '../../context/alertContext';
 
 export interface MyTodosPageI {
   mode ?: "all" | "withoutChecked" | "onlyChecked",
@@ -45,16 +46,10 @@ const MyTodosPage = (props: MyTodosPageI) => {
 
 
   const { todoState, todosLoading, todosError } = useContext(TodosContext);
+  const { setAlertType, openAlert } = useContext(AlertContext);
   const { authState } = useContext(AppContext);
+  
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
-
-  //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
 
   const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
 
@@ -111,13 +106,6 @@ const MyTodosPage = (props: MyTodosPageI) => {
       deleteTodo.mutate(body);
     
   },[])
-
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
 
   useEffect(()=>{
     if (createTodo.data?.status){
@@ -362,15 +350,6 @@ const MyTodosPage = (props: MyTodosPageI) => {
         </Typography>
       </ModalDelete>
 
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
     </Stack>
   )
 }

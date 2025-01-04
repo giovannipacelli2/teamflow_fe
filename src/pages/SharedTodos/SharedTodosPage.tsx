@@ -13,26 +13,19 @@ import { TodoResponse } from '../../api';
 import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
 import { FieldValues } from 'react-hook-form';
 import { updateTodoI } from '../../interfaces/TodosInterfaces';
-import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { addSignature } from '../../library/library';
+import { AlertContext } from '../../context/alertContext';
 
 const SharedTodosPage : React.FC = () => {
 
   const theme = useTheme();
 
+  const { setAlertType, openAlert } = useContext(AlertContext);
   const { todoState, sharedTodosLoading, sharedTodosError } = useContext(TodosContext);
   const { getAllSharedTodos, updateTodo } = useTodos();
 
   const { accountState } = useContext(AppContext)
   const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
-
-  //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
 
   //modals
   const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
@@ -41,12 +34,6 @@ const SharedTodosPage : React.FC = () => {
     getAllSharedTodos.refetch();
   }, []);
 
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
 
   const onEdit = React.useCallback((event: FieldValues)=>{
 
@@ -209,16 +196,6 @@ const SharedTodosPage : React.FC = () => {
         defaults={currentTodo}
       >
       </ModalUpdate>
-
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
 
     </Stack>
   )
