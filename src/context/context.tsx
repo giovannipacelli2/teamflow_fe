@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, Dispatch, Reducer, useEffect, useState } from "react";
+import React, { createContext, useReducer, Dispatch, Reducer, useState } from "react";
 import {
     accountReducer,
     accountActions,
@@ -6,7 +6,7 @@ import {
     authActions,
 } from '../reducers/reducers';
 
-import { AccountResponse, AccountsUsernames, Auth, GetAllUsernames200Response } from "../api";
+import { AccountResponse, AccountsUsernames, Auth } from "../api";
 
 interface AppProviderProps {
     children: React.ReactNode;

@@ -1,6 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./DashboardPage.scss";
-import { TodosContext } from '../../context/todosContext';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -23,10 +22,6 @@ import Person2Icon from '@mui/icons-material/Person2';
 import AssignmentTurnedInRoundedIcon from '@mui/icons-material/AssignmentTurnedInRounded';
 
 import { useQueryClient } from '@tanstack/react-query'
-
-//Alert
-
-import { AlertContext } from '../../context/alertContext'
 
 // ICONS
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
@@ -58,7 +53,6 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
   const {logout} = useAuth();
   const {LoadingElem, setIsLoading} = useLoading();
 
-  const {resetState} = useContext(TodosContext)
   const queryClient = useQueryClient();
 
   useEffect(()=>{
@@ -171,7 +165,6 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
     setIsLoading(false);
 
     if (loggedOut){
-      resetState();
       queryClient.clear();
     }
 

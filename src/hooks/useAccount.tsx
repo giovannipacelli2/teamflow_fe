@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react'
+import {useContext} from 'react'
 import { AccountApi, AccountBodyReq, AccountResponse, GetAllUsernames200Response } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
 import { AppContext } from '../context/context';
@@ -9,7 +9,7 @@ import useAuth from './authHook';
 
 export default function useAccount() {
 
-    const { authState, accountDispatch, setUsernames, accountState, usernames } = useContext(AppContext);
+    const { authState, accountDispatch, setUsernames } = useContext(AppContext);
     const { destroySession } = useAuth()
 
     //const queryClient = useQueryClient()

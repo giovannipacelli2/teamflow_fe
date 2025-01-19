@@ -4,7 +4,6 @@ import './App.scss';
 import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
 import useCookie from './hooks/useCookie';
-import {TodosProvider} from './context/todosContext'
 
 // theme setting
 import { ThemeProvider } from '@mui/material/styles';
@@ -30,7 +29,6 @@ import useAccount from './hooks/useAccount';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import { AlertProvider } from './context/alertContext';
-import AlertComponent from './components/Alert/Alert';
 
 const App : React.FC = () => {
 
@@ -108,11 +106,11 @@ const App : React.FC = () => {
               <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
                 <Route path={BaseRoutes.DASHBOARD} element={
-                  <TodosProvider>
+                  <>
                     <DashboardPage>
                     </DashboardPage>
                     <Outlet/>
-                  </TodosProvider>
+                  </>
                   }>
                   <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />
                   <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />

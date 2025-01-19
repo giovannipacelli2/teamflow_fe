@@ -1,4 +1,4 @@
-import React from 'react'
+import {useContext} from 'react'
 import { Auth, AuthApi, Logged, LoginRequest } from '../api';
 import { GenericResponse } from '../interfaces/GenericResponse';
 
@@ -14,7 +14,7 @@ export interface loginBodyI extends LoginRequest {
 
 export const useAuth = () => {
 
-    const { authDispatch, accountDispatch } = React.useContext(AppContext);
+    const { authDispatch, accountDispatch } = useContext(AppContext);
     const { setCookie, setSessionCookie, deleteCookie } = useCookie();
     const { encryptString } = useCrypto();
 

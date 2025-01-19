@@ -3,7 +3,6 @@ import ShareIcon from '@mui/icons-material/Share';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography, useTheme } from '@mui/material';
-import {TodosContext} from '../../context/todosContext'
 import {AppContext} from '../../context/context'
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
@@ -14,7 +13,6 @@ import useTodos from '../../hooks/useTodos';
 import { deleteTodoI, updateTodoI } from '../../interfaces/TodosInterfaces';
 import useModalShareNote from '../../components/ModalShareNote/ModalShareNote';
 import useModal from '../../components/Modal/Modal';
-import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { AlertContext } from '../../context/alertContext';
@@ -45,38 +43,29 @@ const MyTodosPage = (props: MyTodosPageI) => {
   const {handleOpen:openShare, ModalComponent:ModalShare} = useModalShareNote();
 
 
-  const { todoState, todosLoading, todosError } = useContext(TodosContext);
   const { setAlertType, openAlert } = useContext(AlertContext);
   const { authState } = useContext(AppContext);
   
-  const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
+  const [currentTodo, setCurrentTodo] = useState<string>('');
 
   const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
+  const { data:todoState, isLoading:todosLoading, isError:todosError} = getAllTodos;
 
   useEffect(()=>{
     getAllTodos.refetch();
   },[]);
 
-  // force refresh current todo data
-  useEffect(()=>{
-    if (currentTodo.id){
-      setCurrentTodo((prevState)=>{
-        return todoState.myTodos.find((todo)=> todo.id === prevState.id) ?? {};
-      })
-    }
-  },[todoState]);
-
   const onEdit = React.useCallback((event: FieldValues)=>{
 
-    if (currentTodo.id){
+    if (currentTodo){
       let body : updateTodoI = {
-        todoId : String(currentTodo.id),
+        todoId : String(currentTodo),
         body : event
       }
 
       updateTodo.mutate(body);
       if(updateTodo.isSuccess){
-        setCurrentTodo({});
+        setCurrentTodo('');
       }
     }
     
@@ -176,9 +165,15 @@ const MyTodosPage = (props: MyTodosPageI) => {
 
   const getTodoList = ()=>{
 
+    let res = todoState?.data.data?.data ?? []
+    
+    if (!res) return[];
+
+    let allTodos : TodoResponse[] = [...res];
+
     let todoList = [];
 
-    for(let todo of todoState.myTodos){
+    for(let todo of allTodos){
 
       let isVisible = true;
 
@@ -211,7 +206,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
             <CardActionArea
               onClick={() => {
                 openUpdate();
-                setCurrentTodo(todo);
+                setCurrentTodo(todo.id ?? '');
               }}
               sx={{
                 height:'8em',
@@ -242,7 +237,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
               <Button size="small" color="primary"
                 onClick={()=>{
                   openShare();
-                  setCurrentTodo(todo);
+                  setCurrentTodo(todo.id ?? '');
                 }}
               >
                 <ShareIcon></ShareIcon>
@@ -251,7 +246,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
               <Button size="small" color="warning"
                 onClick={()=>{
                   openDelete();
-                  setCurrentTodo(todo);
+                  setCurrentTodo(todo.id ?? '');
                 }}
               >
                 <DeleteIcon></DeleteIcon>
@@ -324,26 +319,26 @@ const MyTodosPage = (props: MyTodosPageI) => {
         </>
         }
       </Stack>
-      <ModalUpdate 
+      {/* <ModalUpdate 
         title={'Modifica nota'}
         onConfirm={onEdit}
         defaults={currentTodo}
       >
-      </ModalUpdate>
+      </ModalUpdate> */}
 
       <ModalCreate 
         title={'Crea nota'}
         onConfirm={onCreate}
       >
       </ModalCreate>
-      <ModalShare 
+      {/* <ModalShare 
         title={'Condividi nota'}
         todo={currentTodo}
       >
-      </ModalShare>
+      </ModalShare> */}
       <ModalDelete 
         title={'Elimina nota'}
-        onConfirm={()=>onDelete(String(currentTodo.id))}
+        onConfirm={()=>onDelete(String(currentTodo))}
       >
         <Typography id="modal-modal-title" variant="subtitle1" component="h6">
           Sei sicuro di voler eliminare la nota?
