@@ -14,9 +14,17 @@
 
 
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/comment-api';
-export * from './api/params-api';
-export * from './api/todo-api';
+/**
+ * 
+ * @export
+ * @interface CommentBodyReq
+ */
+export interface CommentBodyReq {
+    /**
+     * 
+     * @type {string}
+     * @memberof CommentBodyReq
+     */
+    'content'?: string;
+}
 

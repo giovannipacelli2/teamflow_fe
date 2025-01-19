@@ -3,6 +3,7 @@
 api.ts
 api/account-api.ts
 api/auth-api.ts
+api/comment-api.ts
 api/params-api.ts
 api/todo-api.ts
 base.ts
@@ -18,8 +19,13 @@ models/accounts-response.ts
 models/accounts-usernames.ts
 models/auth-authorization.ts
 models/auth.ts
+models/comment-body-req.ts
+models/comment-response.ts
+models/comments-response-data.ts
+models/comments-response.ts
 models/create-account201-response-data.ts
 models/create-account201-response.ts
+models/create-comment201-response.ts
 models/create-todo201-response-data.ts
 models/create-todo201-response.ts
 models/delete-account200-response.ts
@@ -33,6 +39,8 @@ models/get-all-todo-accounts200-response.ts
 models/get-all-todo-accounts404-response.ts
 models/get-all-todos200-response.ts
 models/get-all-usernames200-response.ts
+models/get-comment200-response.ts
+models/get-comment404-response.ts
 models/get-todo200-response.ts
 models/index.ts
 models/logged.ts
