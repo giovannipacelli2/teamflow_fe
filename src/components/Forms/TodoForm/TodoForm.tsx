@@ -29,7 +29,7 @@ const TodoForm = ({todo, editForm, handleChange}:defaultPropsI) => {
             />
         </FormControl>
             <FormControl>
-                <FormLabel htmlFor="description">Password</FormLabel>
+                <FormLabel htmlFor="description">Descrizione</FormLabel>
                 <TextField
                     id="description"
                     type="text"

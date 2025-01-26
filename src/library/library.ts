@@ -5,29 +5,6 @@ import { isObject, isString } from "lodash";
     value : V
   }
 
-  /*---------------------------ADD-SIGNATURE-TO-TEXT----------------------------*/
-
-  export function addSignature(text:string, signature:string){
-  
-      if (text){
-  
-        let lines = text.split('\n');
-  
-        lines = lines.map((line:string, index:number)=>{
-  
-          if (!line.includes(signature) && (index === lines.length-1)){
-            return signature  + ': ' + line;
-          }
-  
-          return line;
-        });
-  
-        let notes = lines.join('\n');
-        
-        return notes;
-      }
-  }
-
   /*----------------------------KEY-VALUE-GENERATOR-----------------------------*/
 
   export function processData<T>(data : T, fields : KeyValue<string, string>[]) : KeyValue<string, string>[] {

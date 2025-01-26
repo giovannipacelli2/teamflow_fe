@@ -304,6 +304,7 @@ function useModalShareNote () {
                             render={({ field }) => (
                               <Autocomplete
                                 {...field}
+                                id={field.name}
                                 disablePortal
                                 options={userList}
                                 sx={{ maxWidth: 400, marginTop:'0.5em' }}

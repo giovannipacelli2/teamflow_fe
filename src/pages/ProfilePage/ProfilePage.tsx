@@ -277,6 +277,7 @@ const ProfilePage = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        id={field.name}
                         type={formElem.type}
                         fullWidth
                         autoComplete='off'

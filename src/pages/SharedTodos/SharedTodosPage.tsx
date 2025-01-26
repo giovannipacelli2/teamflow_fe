@@ -12,7 +12,6 @@ import { TodoResponse } from '../../api';
 import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
 import { FieldValues } from 'react-hook-form';
 import { updateTodoI } from '../../interfaces/TodosInterfaces';
-import { addSignature } from '../../library/library';
 import { AlertContext } from '../../context/alertContext';
 
 const SharedTodosPage : React.FC = () => {
@@ -20,7 +19,7 @@ const SharedTodosPage : React.FC = () => {
   const theme = useTheme();
 
   const { setAlertType, openAlert } = useContext(AlertContext);
-  const { getAllSharedTodos, updateTodo } = useTodos();
+  const { getAllSharedTodos, updateTodo, useGetTodo } = useTodos();
   const { data:sharedTodoState, isLoading:sharedTodosLoading, isError:sharedTodosError} = getAllSharedTodos;
 
   const { accountState } = useContext(AppContext)
@@ -35,32 +34,18 @@ const SharedTodosPage : React.FC = () => {
 
 
   const onEdit = React.useCallback((event: FieldValues)=>{
-
-    let signature = String(accountState.username);
-
-    if (event.note){
-
-      event.note = event.note as String;
-
-      let notes = addSignature(event.note, signature);
-      
-      event = {
-        ...event,
-        note: notes,
+    
+    if (currentTodo){
+      let body : updateTodoI = {
+        todoId : String(currentTodo),
+        body : event
       }
+  
+      updateTodo.mutate(body);
+      setCurrentTodo('');
     }
     
-      if (currentTodo){
-        let body : updateTodoI = {
-          todoId : String(currentTodo),
-          body : event
-        }
-  
-        updateTodo.mutate(body);
-        setCurrentTodo('');
-      }
-      
-    },[currentTodo])
+  },[currentTodo])
 
   useEffect(()=>{
       if (updateTodo.data?.status){
@@ -203,13 +188,13 @@ const SharedTodosPage : React.FC = () => {
         }
       </Stack>
 
-      {/* <ModalUpdate 
+      <ModalUpdate 
         title={'Commenta nota'}
         onConfirm={onEdit}
         permissions='limitated'
-        defaults={currentTodo}
+        query={useGetTodo(currentTodo)}
       >
-      </ModalUpdate> */}
+      </ModalUpdate>
 
     </Stack>
   )

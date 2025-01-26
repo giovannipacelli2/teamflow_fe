@@ -16,6 +16,7 @@ import useModal from '../../components/Modal/Modal';
 import { getMsgFromObjValues } from '../../library/library';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { AlertContext } from '../../context/alertContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface MyTodosPageI {
   mode ?: "all" | "withoutChecked" | "onlyChecked",
@@ -42,13 +43,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
   const {handleOpen:openCreate, ModalComponent:ModalCreate} = useModalEditNote();
   const {handleOpen:openShare, ModalComponent:ModalShare} = useModalShareNote();
 
-
   const { setAlertType, openAlert } = useContext(AlertContext);
   const { authState } = useContext(AppContext);
   
   const [currentTodo, setCurrentTodo] = useState<string>('');
 
-  const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
+  const queryClient = useQueryClient()
+
+  const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo, useGetTodo} = useTodos();
   const { data:todoState, isLoading:todosLoading, isError:todosError} = getAllTodos;
 
   useEffect(()=>{
@@ -64,12 +66,17 @@ const MyTodosPage = (props: MyTodosPageI) => {
       }
 
       updateTodo.mutate(body);
-      if(updateTodo.isSuccess){
-        setCurrentTodo('');
-      }
     }
     
   },[currentTodo])
+
+  useEffect(()=>{
+    if(updateTodo.status === 'success'){
+      console.log('invalidate')
+      queryClient.invalidateQueries({ queryKey: ['todo', currentTodo] })
+      setCurrentTodo('');
+    }
+  }, [updateTodo.status]);
 
   const onCreate = React.useCallback((event: FieldValues)=>{
 
@@ -82,6 +89,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
       }
 
       createTodo.mutate(body);
+      setCurrentTodo('');
     }
     
   },[])
@@ -319,12 +327,12 @@ const MyTodosPage = (props: MyTodosPageI) => {
         </>
         }
       </Stack>
-      {/* <ModalUpdate 
+      <ModalUpdate 
         title={'Modifica nota'}
         onConfirm={onEdit}
-        defaults={currentTodo}
+        query={useGetTodo(currentTodo)}
       >
-      </ModalUpdate> */}
+      </ModalUpdate>
 
       <ModalCreate 
         title={'Crea nota'}
