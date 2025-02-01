@@ -38,11 +38,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
   
   const theme = useTheme();
   //modals
-  const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
+  const {ModalComponent: ModalUpdate} = useModalEditNote();
+  const {ModalComponent:ModalCreate} = useModalEditNote();
   const {handleOpen:openDelete, ModalComponent: ModalDelete} = useModal();
-  const {handleOpen:openCreate, ModalComponent:ModalCreate} = useModalEditNote();
   const {handleOpen:openShare, ModalComponent:ModalShare} = useModalShareNote();
 
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
+  
   const { setAlertType, openAlert } = useContext(AlertContext);
   const { authState } = useContext(AppContext);
   
@@ -50,7 +53,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
 
   const queryClient = useQueryClient()
 
-  const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo, useGetTodo} = useTodos();
+  const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
   const { data:todoState, isLoading:todosLoading, isError:todosError} = getAllTodos;
 
   useEffect(()=>{
@@ -72,8 +75,6 @@ const MyTodosPage = (props: MyTodosPageI) => {
 
   useEffect(()=>{
     if(updateTodo.status === 'success'){
-      console.log('invalidate')
-      queryClient.invalidateQueries({ queryKey: ['todo', currentTodo] })
       setCurrentTodo('');
     }
   }, [updateTodo.status]);
@@ -213,7 +214,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
           >
             <CardActionArea
               onClick={() => {
-                openUpdate();
+                setIsOpenUpdate(true);
                 setCurrentTodo(todo.id ?? '');
               }}
               sx={{
@@ -290,7 +291,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
       >
         {
           props.mode !=='onlyChecked' &&
-          <Button size="medium" color="primary" variant="contained" onClick={openCreate}>
+          <Button size="medium" color="primary" variant="contained" onClick={()=>setIsOpenCreate(true)}>
             <AddIcon></AddIcon>
             Aggiungi
           </Button>
@@ -327,18 +328,25 @@ const MyTodosPage = (props: MyTodosPageI) => {
         </>
         }
       </Stack>
-      <ModalUpdate 
-        title={'Modifica nota'}
-        onConfirm={onEdit}
-        query={useGetTodo(currentTodo)}
-      >
-      </ModalUpdate>
-
-      <ModalCreate 
-        title={'Crea nota'}
-        onConfirm={onCreate}
-      >
-      </ModalCreate>
+      {
+        isOpenUpdate &&
+        <ModalUpdate 
+          title={'Modifica nota'}
+          onConfirm={onEdit}
+          setIsOpen={setIsOpenUpdate}
+          id={currentTodo}
+        >
+        </ModalUpdate>
+      }
+      {
+        isOpenCreate &&
+        <ModalCreate 
+          title={'Crea nota'}
+          onConfirm={onCreate}
+          setIsOpen={setIsOpenCreate}
+        >
+        </ModalCreate>
+      }
       {/* <ModalShare 
         title={'Condividi nota'}
         todo={currentTodo}

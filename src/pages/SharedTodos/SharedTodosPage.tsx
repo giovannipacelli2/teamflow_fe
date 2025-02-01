@@ -26,7 +26,8 @@ const SharedTodosPage : React.FC = () => {
   const [currentTodo, setCurrentTodo] = useState<string>('');
 
   //modals
-  const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
+  const {ModalComponent: ModalUpdate} = useModalEditNote();
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
 
   useEffect(()=>{
     getAllSharedTodos.refetch();
@@ -98,7 +99,7 @@ const SharedTodosPage : React.FC = () => {
           >
             <CardActionArea
               onClick={() => {
-                openUpdate();
+                setIsOpenCreate(true);
                 setCurrentTodo(todo.id ?? '');
               }}
               sx={{
@@ -123,7 +124,7 @@ const SharedTodosPage : React.FC = () => {
             <CardActions >
               <Button size="small" color="primary" sx={{display:"flex", gap:"0.5em"}}
                 onClick={()=>{
-                  openUpdate();
+                  setIsOpenCreate(true);
                   setCurrentTodo(todo.id ?? '');
                 }}
               >
@@ -191,8 +192,9 @@ const SharedTodosPage : React.FC = () => {
       <ModalUpdate 
         title={'Commenta nota'}
         onConfirm={onEdit}
+        setIsOpen={setIsOpenCreate}
         permissions='limitated'
-        query={useGetTodo(currentTodo)}
+        id={currentTodo}
       >
       </ModalUpdate>
 

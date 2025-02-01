@@ -5,26 +5,26 @@ import { useTheme } from '@mui/material/styles';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import Textarea from '../TextArea/Textarea';
 import "./style.scss";
-import { GetTodo200Response, TodoResponse } from '../../api';
+import { TodoResponse } from '../../api';
 import { AppContext } from '../../context/context';
 import CloseBtn from '../CloseBtn/CloseBtn';
-import { UseQueryResult } from '@tanstack/react-query/build/legacy/types';
-import { AxiosResponse } from 'axios';
 import CommentList from '../CommentList/CommentList';
 import useTodos from '../../hooks/useTodos';
 import { createCommentI } from '../../interfaces/TodosInterfaces';
 import SendIcon from '@mui/icons-material/Send';
 import Divider from '@mui/material/Divider';
 import CommentIcon from '@mui/icons-material/Comment';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ModalProps {
     children?: React.ReactNode;
     id ?: string,
     title ?: string,
+    isOpen ?: boolean,
     diplayFooter ?: boolean,
     confirmText ?: string,
+    setIsOpen : React.Dispatch<React.SetStateAction<boolean>>,
     onConfirm ?: (event: FieldValues)=>void,
-    query ?: UseQueryResult<AxiosResponse<GetTodo200Response, any>, Error>
     permissions ?: "full" | "limitated";
   }
 
@@ -32,8 +32,10 @@ const defaultProps : ModalProps= {
     children : <></>,
     id: '',
     title : 'Text',
+    isOpen : false,
     diplayFooter : true,
     confirmText : 'Conferma',
+    setIsOpen : ()=>{},
     onConfirm : (event: FieldValues)=>{},
     permissions: 'full',
 }
@@ -98,25 +100,26 @@ function useModalEditNote () {
     color: theme.palette.text.secondary,
     marginLeft:'0.5em'
   };
-     
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = useCallback(() => setOpen(true), []);
-    const handleClose = useCallback(() => setOpen(false), []);
     const { usernames } = useContext(AppContext)
 
-    const {createComment, deleteComment} = useTodos(false);
+    const {createComment, deleteComment, useGetTodo} = useTodos(false);
 
     const { 
       control,
       handleSubmit,
+      register,
+      reset,
       setValue,
       formState:{errors},
       setError 
-    } = useForm({defaultValues:{
-        title:'',
-        description:'',
-        checked: false,
-      }});
+    } = useForm({
+        defaultValues:{
+          title:'',
+          description:'',
+          checked: false,
+        }, 
+        mode:"onSubmit",
+    });
 
     const { 
       control:commentCtr,
@@ -128,14 +131,12 @@ function useModalEditNote () {
         comment:'',
       }});
 
-    const [todo, setTodo] = useState<TodoResponse>({});
-    const [firstLoad, setFirstLoad] = useState<boolean>(false);
-
     const ModalComponent = (props: ModalProps)=>{
 
       props = {
         ...props,
         id : props.id ?? defaultProps.id,
+        isOpen : props.isOpen ?? defaultProps.isOpen,
         children : props.children ?? defaultProps.children,
         title : props.title ?? defaultProps.title,
         diplayFooter : props.diplayFooter ?? defaultProps.diplayFooter,
@@ -144,48 +145,41 @@ function useModalEditNote () {
         onConfirm : props.onConfirm ?? defaultProps.onConfirm,
       }
 
-      useEffect(()=>{
-        if (!open){
-          setFirstLoad(false);
-        }
-      }, [open]);
-
-      useEffect(()=>{
-          console.log('firstLoad', firstLoad)
-
-      }, [firstLoad]);
+      const queryClient = useQueryClient()
+      const {data:todoData, status, refetch, isFetching, isRefetching} = useGetTodo(props.id ?? '');
 
       useEffect(()=>{
 
-        if (props.query && props.query.data && !firstLoad){
-          let todo = props.query.data?.data.data ?? {};
-          setTodo(todo);
+        if(isRefetching){
+          queryClient.invalidateQueries({ queryKey: ['todo', props.id] })
+        }
+      }, [isFetching]);
 
-          setValue('title', todo.title ?? '');
-          setValue('description', todo.description ?? '');
-          setValue('checked', todo.checked ?? false);
+      useEffect(()=>{
+
+        if (props.id && status === 'success'){
+          setValue('title', todoData?.data.data?.title ?? '');
+          setValue('description', todoData?.data.data?.description ?? '');
+          setValue('checked', todoData?.data.data?.checked ?? false);
         }
 
-        if (!firstLoad && open){
-          console.log('ni')
-          setFirstLoad(!firstLoad);
-        }
+      },[props.id, status, todoData?.data.data])
 
-      },[props.query?.data?.data.data])
 
       const handleConfirm = useCallback((event: FieldValues)=>{
-        handleClose();
+        props.setIsOpen(false);
 
         props.onConfirm && props.onConfirm(event);
+        reset();
 
-        resetForm();
+        refetch();
 
       }, [props, props.onConfirm]);
 
       const handleComment = async (event: FieldValues)=>{
         
         let body : createCommentI = {
-          todoId: props.query?.data?.data.data?.id ?? '',
+          todoId: todoData?.data.data?.id ?? '',
           body:{
             content: event.comment ?? ''
           }
@@ -195,27 +189,21 @@ function useModalEditNote () {
 
         if (created.status === 201){
           setComment('comment', '');
-          props.query?.refetch();
+          refetch();
         }
 
       };
-
-      const resetForm = ()=>{
-        setValue('title',"");
-        setValue('description',"");
-        setValue('checked', false);
-      }
 
       const onDeleteComment = async (id:string)=>{
         let deleted = await deleteComment.mutateAsync({commentId: id})
 
         if (deleted.status === 200){
-          props.query?.refetch();
+          refetch();
         }
       };
 
       const findUser = () =>{
-        let user = usernames.find((user)=> user.id === todo.account_id);
+        let user = usernames.find((user)=> user.id === todoData?.data.data?.account_id);
 
         return user ? user.username : '';
       };
@@ -225,8 +213,8 @@ function useModalEditNote () {
             <div>
               <Modal
                 disableAutoFocus={false}
-                open={props.query ? props.query.isSuccess && open : open}
-                onClose={handleClose}
+                open={todoData?.data.data?.id ? status === 'success' : true}
+                onClose={()=>{props.setIsOpen(false)}}
                 aria-labelledby="modal-modal-title"
               >
                 <Box sx={style}>
@@ -239,7 +227,7 @@ function useModalEditNote () {
                     >
                       {props.title}
                     </Typography>
-                    <CloseBtn action={handleClose}/>
+                    <CloseBtn action={()=>{props.setIsOpen(false)}}/>
                   </Box>
                   <Divider component='div'></Divider>
                   <Box 
@@ -254,7 +242,7 @@ function useModalEditNote () {
                           <Typography variant="h6" component="h3">Titolo</Typography>
                           <Typography variant="subtitle1" component="h6"
                             sx={descriptionStyle}
-                          >{todo.title}</Typography>
+                          >{todoData?.data.data?.title}</Typography>
                         </div>
                       }
                       {props.permissions === 'limitated' && 
@@ -262,7 +250,7 @@ function useModalEditNote () {
                         <Typography variant="h6" component="h3">Descrizione</Typography>
                         <Typography variant="subtitle1" component="h6"
                           sx={descriptionStyle}
-                        >{todo.description?.split('\n').map((text, index)=>{
+                        >{todoData?.data.data?.description?.split('\n').map((text, index)=>{
                           return <p key={index}>{text}</p>
                         })}</Typography>
                       </div>
@@ -279,6 +267,9 @@ function useModalEditNote () {
                               <TextField
                                 {...field}
                                 id={field.name}
+                                {...register("title",{
+                                  required:false
+                                })}
                                 type="text"
                                 fullWidth
                                 variant="outlined"
@@ -292,7 +283,7 @@ function useModalEditNote () {
                         <Typography variant="h6" component="h3">Condivisa da</Typography>
                         <Typography variant="subtitle1" component="h6"
                           sx={descriptionStyle}
-                        >{todo.account_id && findUser()}</Typography>
+                        >{todoData?.data.data?.account_id && findUser()}</Typography>
                       </div>
                       }
                       {props.permissions === 'full' && 
@@ -307,6 +298,9 @@ function useModalEditNote () {
                               <Textarea
                                 {...field}
                                 id={field.name}
+                                {...register("description",{
+                                  required:false
+                                })}
                                 sx={{minWidth:"100%", maxWidth:'100%', fontSize:'1em'}}
                                 minRows={3}
                                 maxRows={10}
@@ -315,7 +309,7 @@ function useModalEditNote () {
                           />
                         </FormControl>
                       }
-                      {props.query?.data && <FormControl sx={{
+                      {todoData && <FormControl sx={{
                         width:'100%',
                         display:'flex',
                         flexDirection:'row',
@@ -333,6 +327,9 @@ function useModalEditNote () {
                             <Checkbox
                               {...field}
                               id={field.name}
+                              {...register("checked",{
+                                required:false
+                              })}
                               checked={value}
                               onChange={(e) => onChange(e.target.checked)}
                             />
@@ -340,11 +337,11 @@ function useModalEditNote () {
                         />
                       </FormControl>}
                       <CommentList 
-                        comments={todo.comments ?? []}
+                        comments={todoData?.data.data?.comments ?? []}
                         onDelete={onDeleteComment}
                       />
 
-                      { props.query?.data && <Box sx={commentInputContainer}>
+                      { todoData && <Box sx={commentInputContainer}>
                         <Box sx={{
                             width:'3.7em',
                             display:'flex',
@@ -404,7 +401,7 @@ function useModalEditNote () {
           );
     }
   
-    return {ModalComponent, open, handleOpen, handleClose}
+    return {ModalComponent}
   }
 
 export default useModalEditNote
