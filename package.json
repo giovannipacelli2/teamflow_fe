@@ -1,6 +1,6 @@
 {
-  "name": "mytodos",
-  "version": "0.1.0",
+  "name": "team_flow",
+  "version": "1.2.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
