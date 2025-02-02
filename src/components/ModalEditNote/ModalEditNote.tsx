@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {Box, Modal, Button, FormControl, FormLabel, TextField, Checkbox} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -145,15 +145,19 @@ function useModalEditNote () {
         onConfirm : props.onConfirm ?? defaultProps.onConfirm,
       }
 
-      const queryClient = useQueryClient()
-      const {data:todoData, status, refetch, isFetching, isRefetching} = useGetTodo(props.id ?? '');
+      //const queryClient = useQueryClient()
+      const {data:todoData, status, refetch} = useGetTodo(props.id ?? '');
+      const firstRender = useRef(false);
 
       useEffect(()=>{
 
-        if(isRefetching){
-          queryClient.invalidateQueries({ queryKey: ['todo', props.id] })
+        return ()=>{
+          if (firstRender.current){
+            console.log('[CLEANUP]: ModalEditNote')
+            reset();
+          }
         }
-      }, [isFetching]);
+      }, []);
 
       useEffect(()=>{
 
@@ -167,12 +171,13 @@ function useModalEditNote () {
 
 
       const handleConfirm = useCallback((event: FieldValues)=>{
-        props.setIsOpen(false);
-
+        
         props.onConfirm && props.onConfirm(event);
-        reset();
 
-        refetch();
+        firstRender.current = true;
+        
+        //refetch();
+        props.setIsOpen(false);
 
       }, [props, props.onConfirm]);
 
@@ -214,7 +219,10 @@ function useModalEditNote () {
               <Modal
                 disableAutoFocus={false}
                 open={todoData?.data.data?.id ? status === 'success' : true}
-                onClose={()=>{props.setIsOpen(false)}}
+                onClose={()=>{
+                  firstRender.current = true;
+                  props.setIsOpen(false);
+                }}
                 aria-labelledby="modal-modal-title"
               >
                 <Box sx={style}>
@@ -227,7 +235,10 @@ function useModalEditNote () {
                     >
                       {props.title}
                     </Typography>
-                    <CloseBtn action={()=>{props.setIsOpen(false)}}/>
+                    <CloseBtn action={()=>{
+                      firstRender.current = true;
+                      props.setIsOpen(false);
+                    }}/>
                   </Box>
                   <Divider component='div'></Divider>
                   <Box 
