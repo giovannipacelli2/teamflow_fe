@@ -44,27 +44,20 @@ function useModalShareNote () {
   const theme = useTheme();
 
   const style = {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      bgcolor: 'background.paper',
-      boxShadow: 24,
-      p: 4,
-      display:'flex',
-      gap:'1em',
-      flexDirection:'column',
-      width: '95%',
-      [theme.breakpoints.up('sm')]: {
-        width: '70%',
-      },
-      [theme.breakpoints.up('md')]: {
-        width: '60%',
-      },
-      [theme.breakpoints.up('lg')]: {
-        width: '700px',
-      },
-    };
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    padding: {xs:'1.5em 0.7em', sm:'2em'},
+    display:'flex',
+    gap:'1em',
+    flexDirection:'column',
+    borderRadius:'0.5em',
+    width:{xs:'98%', sm:'70%', md:'60%', lg:'700px'},
+    maxHeight:{xs:'100%', sm:'98%', xl:'80%'},
+  };
   
   const elemStyle = {
     width: '100%',
@@ -263,9 +256,9 @@ function useModalShareNote () {
                             <ListItem
                               key={user.id}
                               sx={{
-                                maxWidth:420,
+                                maxWidth:{xs:'100%', sm:420},
                               }}
-                              //disableGutters
+                              disableGutters
                               secondaryAction={
                                 <IconButton 
                                   aria-label="shared-users"
@@ -305,9 +298,12 @@ function useModalShareNote () {
                               <Autocomplete
                                 {...field}
                                 id={field.name}
-                                disablePortal
+                                //disablePortal
                                 options={userList}
-                                sx={{ maxWidth: 400, marginTop:'0.5em' }}
+                                sx={{ 
+                                  maxWidth: {xs:'100%', sm:420},
+                                  marginTop:'0.5em' 
+                                }}
                                 renderInput={(params) => <TextField 
                                   {...params}
                                   label="Aggiungi utente" 

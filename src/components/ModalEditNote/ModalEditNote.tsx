@@ -46,20 +46,20 @@ function useModalEditNote () {
   const theme = useTheme();
 
   const style = {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      bgcolor: 'background.paper',
-      boxShadow: 24,
-      p: 4,
-      display:'flex',
-      gap:'1em',
-      flexDirection:'column',
-      borderRadius:'0.5em',
-      width:{xs:'95%', sm:'70%', md:'60%', lg:'700px'},
-      maxHeight:{xs:'100%', sm:'98%', xl:'80%'},
-    };
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    padding: {xs:'1.5em 0.7em', sm:'2em'},
+    display:'flex',
+    gap:'1em',
+    flexDirection:'column',
+    borderRadius:'0.5em',
+    width:{xs:'98%', sm:'70%', md:'60%', lg:'700px'},
+    maxHeight:{xs:'100%', sm:'98%', xl:'80%'},
+  };
   
   const elemStyle = {
     width: '100%',
@@ -81,8 +81,8 @@ function useModalEditNote () {
   const commentInputContainer = {
     ...elemStyle,
     display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
+    flexDirection:{xs:'column', sm:'row'},
+    alignItems:{xs:'flex-start', sm:'center'},
     justifyContent:'center',
     height: 'fit-content',
     gap:'1em',
@@ -246,10 +246,10 @@ function useModalEditNote () {
                       !isLoading ?
                         <Box 
                           sx={bodyContaier}
-                          className='modalForm hide-scrollbar-back'
+                          className='modalForm hide-scrollbar-back hide-scrollbar'
                         > 
                           <Box 
-                            className='modalFormControl hide-scrollbar-back'
+                            className='modalFormControl hide-scrollbar-back hide-scrollbar'
                           >
                             {props.permissions === 'limitated' && 
                               <div className="row">
@@ -358,7 +358,7 @@ function useModalEditNote () {
                             { todoData && <Box sx={commentInputContainer}>
                               <Box sx={{
                                   width:'3.7em',
-                                  display:'flex',
+                                  display:{xs:'none', sm:'flex'},
                                   alignItems:'center',
                                   justifyContent:'center',
                                   color: theme.palette.grey['600']
@@ -392,12 +392,25 @@ function useModalEditNote () {
                                 />
                               </FormControl>
                               <Button 
+                                variant='text'
                                 sx={{
                                   width:'5%',
+                                  display:{xs:'none', sm:'block'}
                                 }}
                                 onClick={addComment((e)=>handleComment(e))}
                               >
                                 <SendIcon></SendIcon>
+                              </Button>
+
+                              <Button 
+                                variant='outlined'
+                                sx={{
+                                  width:'max-content',
+                                  display:{xs:'block', sm:'none'}
+                                }}
+                                onClick={addComment((e)=>handleComment(e))}
+                              >
+                                Aggiungi
                               </Button>
                             </Box>}
                             

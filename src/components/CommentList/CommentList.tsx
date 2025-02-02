@@ -29,7 +29,8 @@ const CommentList = (props: Props) => {
       <List
         sx={{
           width: "100%",
-          minWidth: 360,
+          //minWidth: 360,
+          minWidth: 300,
           height:"fit-content",
           bgcolor: "background.paper",
         }}
@@ -39,7 +40,9 @@ const CommentList = (props: Props) => {
                 return(
                     <Box
                         key={comment.id}
-                        sx={{position: 'relative'}}
+                        sx={{
+                            position: 'relative',
+                        }}
                     >
                         {
                             comment.account_id === accountState.id &&
@@ -61,37 +64,54 @@ const CommentList = (props: Props) => {
                             disablePadding
                             divider={false}
                             dense={false}
-                        >
-                        <ListItemAvatar>
-                            <Avatar alt={comment.account_username} src="/static/images/avatar/1.jpg" />
-                        </ListItemAvatar>
-                        <ListItemText
-                            //primary="Brunch this weekend?"
                             sx={{
-                                borderRadius:'8px',
-                                padding: '0.4em 0.6em',
-                                background: theme.palette.grey[100]
+                                display: 'flex',
+                                gap:{xs:'0.3em', sm:'1em'},
+                                //flexDirection: {xs:'column', sm:'row'}
                             }}
-                            secondary={
-                            <React.Fragment>
-                                <Typography
-                                component="span"
-                                variant="subtitle2"
-                                sx={{ color: "text.primary", display: "block" }}
-                                >
-                                {comment.account_username}
-                                </Typography>
+                        >
+                            <ListItemAvatar 
+                                sx={{
+                                    minWidth:'auto',
+                                }}
+                            >
+                                <Avatar 
+                                    alt={comment.account_username}
+                                    src="/static/images/avatar/1.jpg" 
+                                    sx={{
+                                        width:{xs:'1.5em', sm:'2em'},
+                                        height:{xs:'1.5em', sm:'2em'},
+                                    }}
+                                />
+                            </ListItemAvatar>
+                            <ListItemText
+                                //primary="Brunch this weekend?"
+                                sx={{
+                                    borderRadius:'8px',
+                                    padding: '0.4em 0.6em',
+                                    background: theme.palette.grey[100],
+                                    width:{xs:'100%'}
+                                }}
+                                secondary={
+                                <Box>
+                                    <Typography
+                                    component="span"
+                                    variant="subtitle2"
+                                    sx={{ color: "text.primary", display: "block" }}
+                                    >
+                                    {comment.account_username}
+                                    </Typography>
 
-                                <Typography
-                                component="span"
-                                variant="body2"
-                                sx={{ color: "text.secondary", display: "block" }}
-                                >
-                                    {comment.content}
-                                </Typography>
-                            </React.Fragment>
-                            }
-                        />
+                                    <Typography
+                                    component="span"
+                                    variant="body2"
+                                    sx={{ color: "text.secondary", display: "block" }}
+                                    >
+                                        {comment.content}
+                                    </Typography>
+                                </Box>
+                                }
+                            />
                         </ListItem>
                     
                     </Box>
