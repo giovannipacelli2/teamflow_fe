@@ -54,7 +54,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
   const queryClient = useQueryClient()
 
   const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
-  const { data:todoState, isLoading:todosLoading, isError:todosError} = getAllTodos;
+  const { data:todoState, isLoading:todosLoading, isError:todosError, isFetching: todosFetching} = getAllTodos;
 
   useEffect(()=>{
     getAllTodos.refetch();
@@ -328,7 +328,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
           !(todosLoading || getAllTodos.isRefetching) && getTodoList()
         }
         {
-          (!todosLoading && !todosError && getTodoList().length===0) && <>
+          (!todosFetching && !todosLoading && !todosError && getTodoList().length===0) && <>
           <Empty text="Nessuna nota trovata"></Empty>
         </>
         }

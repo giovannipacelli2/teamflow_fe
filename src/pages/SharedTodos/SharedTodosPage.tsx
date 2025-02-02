@@ -20,7 +20,7 @@ const SharedTodosPage : React.FC = () => {
 
   const { setAlertType, openAlert } = useContext(AlertContext);
   const { getAllSharedTodos, updateTodo, useGetTodo } = useTodos();
-  const { data:sharedTodoState, isLoading:sharedTodosLoading, isError:sharedTodosError} = getAllSharedTodos;
+  const { data:sharedTodoState, isLoading:sharedTodosLoading, isError:sharedTodosError, isFetching: sharedTodosFetching} = getAllSharedTodos;
 
   const { accountState } = useContext(AppContext)
   const [currentTodo, setCurrentTodo] = useState<string>('');
@@ -156,6 +156,7 @@ const SharedTodosPage : React.FC = () => {
         display='flex'
         justifyContent='flex-end'
         alignItems='center'
+        gap='0.5em'
       >
         <Button size="medium" color="primary" variant="contained" onClick={()=>getAllSharedTodos.refetch()}>
           <RefreshIcon></RefreshIcon>
@@ -171,14 +172,14 @@ const SharedTodosPage : React.FC = () => {
           flexWrap: 'wrap', 
           rowGap: { xs: '1.5em' },
         }}
-        width={{ xs: '100%', sm: '90%'}}
+        width={{ xs: '100%', sm: '95%'}}
       >
         {(sharedTodosLoading || getAllSharedTodos.isRefetching) && <SkeletonComponent/>}
         {
           !(sharedTodosLoading || getAllSharedTodos.isRefetching) && getTodoList()
         }
         {
-          (!sharedTodosLoading && !sharedTodosError && getTodoList().length===0) && <>
+          (!sharedTodosFetching && !sharedTodosLoading && !sharedTodosError && getTodoList().length===0) && <>
             <Empty text="Nessuna nota condivisa trovata"></Empty>
           </>
         }
