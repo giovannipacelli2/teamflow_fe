@@ -105,6 +105,16 @@ const MyTodosPage = (props: MyTodosPageI) => {
     
   },[])
 
+  const getTodoFromList = (id:string)=>{
+    let todo : TodoResponse | undefined = undefined;
+
+    if(todoState?.data.data?.data){
+      todo = todoState?.data.data?.data.find((todo)=>todo.id === id);
+    }
+
+    return todo;
+  }
+
   useEffect(()=>{
     if (createTodo.data?.status){
 
@@ -347,11 +357,11 @@ const MyTodosPage = (props: MyTodosPageI) => {
         >
         </ModalCreate>
       }
-      {/* <ModalShare 
+      <ModalShare 
         title={'Condividi nota'}
-        todo={currentTodo}
+        todo={getTodoFromList(currentTodo)}
       >
-      </ModalShare> */}
+      </ModalShare>
       <ModalDelete 
         title={'Elimina nota'}
         onConfirm={()=>onDelete(String(currentTodo))}

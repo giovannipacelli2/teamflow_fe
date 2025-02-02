@@ -16,7 +16,7 @@ import _ from 'lodash';
 
 interface ModalProps {
     children?: React.ReactNode;
-    todo ?: TodoResponse
+    todo ?: TodoResponse | undefined
     title ?: string,
     diplayFooter ?: boolean,
     confirmText ?: string,
@@ -112,7 +112,7 @@ function useModalShareNote () {
 
     const ModalComponent = (props: ModalProps)=>{
 
-      const { shareTodo } = useTodos();
+      const { shareTodo } = useTodos(false);
       const [userList, setUserList] = useState<accountField[]>([]);
 
       props = {
