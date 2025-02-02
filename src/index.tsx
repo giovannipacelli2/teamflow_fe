@@ -20,7 +20,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: true,
-      refetchInterval : 350000
+      refetchInterval : process.env.NODE_ENV === 'production' ? 60000 : 300000
     },
   },
 })
