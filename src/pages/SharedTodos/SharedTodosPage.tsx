@@ -189,14 +189,17 @@ const SharedTodosPage : React.FC = () => {
         }
       </Stack>
 
-      <ModalUpdate 
-        title={'Commenta nota'}
-        onConfirm={onEdit}
-        setIsOpen={setIsOpenCreate}
-        permissions='limitated'
-        id={currentTodo}
-      >
-      </ModalUpdate>
+      {  
+        isOpenCreate &&
+        <ModalUpdate
+          title={'Commenta nota'}
+          onConfirm={onEdit}
+          setIsOpen={setIsOpenCreate}
+          permissions='limitated'
+          id={currentTodo}
+        >
+        </ModalUpdate>
+      }
 
     </Stack>
   )
