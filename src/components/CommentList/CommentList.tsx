@@ -92,7 +92,7 @@ const CommentList = (props: Props) => {
                                     background: theme.palette.grey[100],
                                     width:{xs:'100%'}
                                 }}
-                                secondary={
+                            >
                                 <Box>
                                     <Typography
                                     component="span"
@@ -110,8 +110,8 @@ const CommentList = (props: Props) => {
                                         {comment.content}
                                     </Typography>
                                 </Box>
-                                }
-                            />
+                            </ListItemText>
+
                         </ListItem>
                     
                     </Box>

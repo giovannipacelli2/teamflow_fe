@@ -262,11 +262,18 @@ function useModalEditNote () {
                             {props.permissions === 'limitated' && 
                               <div className="row">
                               <Typography variant="h6" component="h3">Descrizione</Typography>
+
                               <Typography variant="subtitle1" component="h6"
                                 sx={descriptionStyle}
-                              >{todoData?.data.data?.description?.split('\n').map((text, index)=>{
-                                return <p key={index}>{text}</p>
-                              })}</Typography>
+                              >
+                                {
+                                  todoData?.data.data?.description ?
+                                    todoData?.data.data?.description?.split('\n').map((text, index)=>{
+                                      return <p key={index}>{text}</p>
+                                    }) :
+                                    <>Nessuna descrizione</>
+                                }
+                              </Typography>
                             </div>
                             }
                             {props.permissions === 'full' && 
