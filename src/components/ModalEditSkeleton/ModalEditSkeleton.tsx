@@ -121,10 +121,28 @@ const ModalEditSkeleton = ({permissions} : Props) => {
                 <Skeleton variant="circular" width='2.5em' height={'2.5em'} />
                 <Skeleton variant="rounded" width='70%' height={'3em'} />
               </Box>
-              <Box sx={row}>
-                <Skeleton variant="rounded" width='2em' height={'2em'} />
-                <Skeleton variant="rounded" width='80%' height={'2em'} />
-                <Skeleton variant="rounded" width='2em' height={'2em'} />
+              
+              <Box sx={{
+                ...row,
+                flexWrap:'wrap',
+              }}>
+                {/* on desktop version */}
+                <Skeleton variant="rounded" width='10%' height={'2em'} sx={{
+                  display: {xs:'none', sm:'flex'}
+                }}/>
+                <Skeleton variant="rounded" width='70%' height={'2em'} sx={{
+                  display: {xs:'none', sm:'flex'}
+                }}/>
+                <Skeleton variant="rounded" width='10%' height={'2em'} sx={{
+                  display: {xs:'none', sm:'flex'}
+                }}/>
+                {/* on mobile version */}
+                <Skeleton variant="rounded" width='100%' height={'2em'} sx={{
+                  display: {xs:'flex', sm:'none'}
+                }}/>
+                <Skeleton variant="rounded" width='25%' height={'2em'} sx={{
+                  display: {xs:'flex', sm:'none'}
+                }}/>
               </Box>
             </>
           }
