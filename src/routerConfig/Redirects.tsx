@@ -11,7 +11,7 @@ interface RedirectsProps {
 
 const Redirects : React.FC<RedirectsProps> = ({
     isAuth,
-    redirectTrue = Routes.MY_TODOS,
+    redirectTrue = Routes.MY_TASKS,
     redirectFalse = Routes.LOGIN,
 }) => {
 

@@ -23,7 +23,7 @@ const RootPage : React.FC = () => {
     if (authState.status === "success"){
 
       // go to the previous route if it exists
-      let currentRoute = prevRoute.pathname ?? Routes.MY_TODOS;
+      let currentRoute = prevRoute.pathname ?? Routes.MY_TASKS;
       navigate(currentRoute);
     }
   }, [authState.status]);

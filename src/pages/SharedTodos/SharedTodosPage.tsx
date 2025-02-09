@@ -54,14 +54,14 @@ const SharedTodosPage : React.FC = () => {
         if(updateTodo.data?.status <= 201){
           setAlertType({
             title:'Successo',
-            subtitle: 'Commento aggiunto con successo',
+            subtitle: 'Task modificato con successo',
             type: 'success'
           })
         } else {
           
           setAlertType({
             title:'Errore',
-            subtitle: 'Non è stato possibile commentare la nota',
+            subtitle: 'Non è stato possibile commentare il task',
             type: 'error'
           })
         }
@@ -180,12 +180,12 @@ const SharedTodosPage : React.FC = () => {
         }
         {
           (!sharedTodosFetching && !sharedTodosLoading && !sharedTodosError && getTodoList().length===0) && <>
-            <Empty text="Nessuna nota condivisa trovata"></Empty>
+            <Empty text="Nessun task condiviso trovato"></Empty>
           </>
         }
         {
           (sharedTodosError ) && <>
-            <Empty text="Errore nel recupero delle note condivise"></Empty>
+            <Empty text="Errore nel recupero dei tasks condivisi"></Empty>
           </>
         }
       </Stack>
@@ -193,7 +193,7 @@ const SharedTodosPage : React.FC = () => {
       {  
         isOpenCreate &&
         <ModalUpdate
-          title={'Commenta nota'}
+          title={'Commenta task'}
           onConfirm={onEdit}
           setIsOpen={setIsOpenCreate}
           permissions='limitated'

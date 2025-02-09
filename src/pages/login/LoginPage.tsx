@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
     });
 
     if (res) {
-      navigate(Routes.MY_TODOS);
+      navigate(Routes.MY_TASKS);
     } else {
       setLoginError(true);
       setLoginErrorMessage('Credenziali errate');

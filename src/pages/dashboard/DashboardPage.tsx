@@ -67,16 +67,16 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
   useEffect(()=>{
 
     switch(location.pathname){
-      case Routes.MY_TODOS : {
-        setHeaderTitle("Le tue note");
+      case Routes.MY_TASKS : {
+        setHeaderTitle("I tuoi task");
         break;
       }
-      case Routes.SHARED_TODOS: {
-        setHeaderTitle("Note condivise con te");
+      case Routes.SHARED_TASKS: {
+        setHeaderTitle("Task condivisi con te");
         break;
       }
-      case Routes.CHECKED_TODOS: {
-        setHeaderTitle("Note spuntate");
+      case Routes.CHECKED_TASKS: {
+        setHeaderTitle("Task completati");
         break;
       }
       case Routes.PROFILE: {
@@ -84,7 +84,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
         break;
       }
       default : {
-        setHeaderTitle("Todos");
+        setHeaderTitle("TeamFlow");
       }
     }
 
@@ -126,19 +126,19 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
 
   const NavItems : NavLink[] = [
     {
-      label:"Le tue note",
+      label:"I tuoi task",
       icon : <StickyNote2Icon/>,
-      link : Routes.MY_TODOS
+      link : Routes.MY_TASKS
     },
     {
-      label:"Note condivise",
+      label:"Task condivisi",
       icon : <CoPresentIcon/>,
-      link : Routes.SHARED_TODOS
+      link : Routes.SHARED_TASKS
     },
     {
-      label:"Note spuntate",
+      label:"Task completati",
       icon : <AssignmentTurnedInRoundedIcon/>,
-      link : Routes.CHECKED_TODOS
+      link : Routes.CHECKED_TASKS
     },
     {
       label:"Profilo",

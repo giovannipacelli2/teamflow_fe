@@ -121,14 +121,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
       if(createTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
-          subtitle: 'Nota creata con successo',
+          subtitle: 'Task creato con successo',
           type: 'success'
         })
       } else {
         
         let msg = getMsgFromObjValues(createTodo.data.data.message);
 
-        msg = msg ?? 'Non è stato possibile creare la nota';
+        msg = msg ?? 'Non è stato possibile creare il task';
 
         setAlertType({
           title:'Errore',
@@ -146,14 +146,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
       if(shareTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
-          subtitle: 'La nota è stata condivisa',
+          subtitle: 'Il task è stato condiviso',
           type: 'success'
         })
       } else {
         
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile condividere la nota',
+          subtitle: 'Non è stato possibile condividere il task',
           type: 'error'
         })
       }
@@ -167,14 +167,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
       if(deleteTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
-          subtitle: 'Nota eliminata con successo',
+          subtitle: 'Task eliminato con successo',
           type: 'success'
         })
       } else {
         
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile eliminare la nota',
+          subtitle: 'Non è stato possibile eliminare il task',
           type: 'error'
         })
       }
@@ -329,19 +329,19 @@ const MyTodosPage = (props: MyTodosPageI) => {
         }
         {
           (!todosFetching && !todosLoading && !todosError && getTodoList().length===0) && <>
-          <Empty text="Nessuna nota trovata"></Empty>
+          <Empty text="Nessun task trovato"></Empty>
         </>
         }
         {
           (todosError) && <>
-          <Empty text="Errore nel recupero delle note"></Empty>
+          <Empty text="Errore nel recupero dei tasks"></Empty>
         </>
         }
       </Stack>
       {
         isOpenUpdate &&
         <ModalUpdate 
-          title={'Modifica nota'}
+          title={'Modifica task'}
           onConfirm={onEdit}
           setIsOpen={setIsOpenUpdate}
           id={currentTodo}
@@ -351,23 +351,23 @@ const MyTodosPage = (props: MyTodosPageI) => {
       {
         isOpenCreate &&
         <ModalCreate 
-          title={'Crea nota'}
+          title={'Crea task'}
           onConfirm={onCreate}
           setIsOpen={setIsOpenCreate}
         >
         </ModalCreate>
       }
       <ModalShare 
-        title={'Condividi nota'}
+        title={'Condividi task'}
         todo={getTodoFromList(currentTodo)}
       >
       </ModalShare>
       <ModalDelete 
-        title={'Elimina nota'}
+        title={'Elimina task'}
         onConfirm={()=>onDelete(String(currentTodo))}
       >
         <Typography id="modal-modal-title" variant="subtitle1" component="h6">
-          Sei sicuro di voler eliminare la nota?
+          Sei sicuro di voler eliminare il task?
         </Typography>
       </ModalDelete>
 

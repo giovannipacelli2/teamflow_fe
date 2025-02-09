@@ -112,9 +112,9 @@ const App : React.FC = () => {
                     <Outlet/>
                   </>
                   }>
-                  <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />
-                  <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
-                  <Route path={BaseRoutes.CHECKED_TODOS} element={<MyTodosPage mode='onlyChecked' />} />
+                  <Route path={BaseRoutes.MY_TASKS} element={<MyTodosPage mode='withoutChecked' />} />
+                  <Route path={BaseRoutes.SHARED_TASKS} element={<SharedTodosPage />} />
+                  <Route path={BaseRoutes.CHECKED_TASKS} element={<MyTodosPage mode='onlyChecked' />} />
                   <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
                 </Route>
 
