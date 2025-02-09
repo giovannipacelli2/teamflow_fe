@@ -33,7 +33,7 @@ import { AlertProvider } from './context/alertContext';
 const App : React.FC = () => {
 
   const { authState, authDispatch, setIsLoadingApp } = useContext(AppContext);
-  const { logged } = useAuth();
+  const { logged, destroySession } = useAuth();
   const { getCookie } = useCookie();
   const { decryptString } = useCrypto();
   const { getOwnAccount, getUsernames } = useAccount();
@@ -67,7 +67,7 @@ const App : React.FC = () => {
       });
     }
 
-    responseInterceptor();
+    responseInterceptor(destroySession);
     
   }, [])
 

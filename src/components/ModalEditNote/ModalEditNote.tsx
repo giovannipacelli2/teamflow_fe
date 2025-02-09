@@ -152,9 +152,9 @@ function useModalEditNote () {
 
       useEffect(()=>{
 
+        // Clean up after closing
         return ()=>{
           if (firstRender.current){
-            console.log('[CLEANUP]: ModalEditNote')
             reset();
           }
         }

@@ -1,6 +1,7 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { BaseRoutes } from './routes';
+import { AppContext } from '../context/context';
 
 interface PrivateRouteProps {
     isAuth : boolean;
@@ -10,6 +11,16 @@ interface PrivateRouteProps {
 const PrivateRoute : React.FC<PrivateRouteProps> = ({
     isAuth, redirectPath = BaseRoutes.LOGIN
 }) => {
+
+  const location = useLocation();
+  const {setPrevRoute} = useContext(AppContext);
+
+  useEffect(() => {
+    setPrevRoute(location);
+
+  }, [location, setPrevRoute]);
+
+
   return (
    isAuth ? <Outlet/> : <Navigate to={redirectPath} replace/>
   )

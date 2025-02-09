@@ -35,18 +35,16 @@ const ProfilePage = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const { control, handleSubmit, setValue, getValues, formState:{errors}, setError } = useForm({defaultValues:{
-    username: String(accountState.username),
-    name: String(accountState.name),
-    surname: String(accountState.surname),
-    email: String(accountState.email),
+    username: '',
+    name: '',
+    surname: '',
+    email: '',
     password:'',
     rePassword:'',
   }});
 
   //modals
   const { handleOpen:openDelete, ModalComponent: ModalDelete } = useModal();
-
-
   const { updateAccount } = useAccount()
 
   const formObj : formObj<formNames, formTypes>[] = [
@@ -82,6 +80,15 @@ const ProfilePage = () => {
     }
   ];
 
+  useEffect(()=>{
+
+    if (accountState.id){
+      setValue('username', String(accountState.username));
+      setValue('name', String(accountState.name));
+      setValue('surname', String(accountState.surname));
+      setValue('email', String(accountState.email));
+    }
+  },[accountState]);
   
   useEffect(()=>{
     if (updateAccount.data?.status){

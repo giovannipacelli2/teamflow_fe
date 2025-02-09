@@ -14,7 +14,7 @@ export interface loginBodyI extends LoginRequest {
 
 export const useAuth = () => {
 
-    const { authDispatch, accountDispatch } = useContext(AppContext);
+    const { authDispatch, accountDispatch, setPrevRoute } = useContext(AppContext);
     const { setCookie, setSessionCookie, deleteCookie } = useCookie();
     const { encryptString } = useCrypto();
 
@@ -108,6 +108,8 @@ export const useAuth = () => {
         accountDispatch({
             type: UserTypes.RESET
         });
+
+        setPrevRoute({pathname: "", search: "", hash: "", state: "", key: ""});
 
         deleteCookie(cookiesName.TOKEN);
         deleteCookie(cookiesName.AUTH_TYPE);

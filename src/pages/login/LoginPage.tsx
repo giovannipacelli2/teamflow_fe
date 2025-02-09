@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginBodyI, useAuth } from "../../hooks/authHook";
 
@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 
 // Custom elem
 import Card from '../../components/Card/Card';
+import { AppContext } from "../../context/context";
 
 const LoginPage: React.FC = () => {
 
@@ -19,6 +20,7 @@ const LoginPage: React.FC = () => {
   }
 
   const navigate = useNavigate();
+  const { authState, accountState, prevRoute } = useContext(AppContext);
   const {LoadingElem, setIsLoading} = useLoading();
 
   const { login } = useAuth();
@@ -44,6 +46,13 @@ const LoginPage: React.FC = () => {
         }))
       }
     }
+
+    // redirect if already logged in
+    if(authState.authorization?.token && accountState.id){
+      navigate(prevRoute.pathname);
+    }
+
+    
   }, [])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

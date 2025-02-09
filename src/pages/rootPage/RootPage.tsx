@@ -9,7 +9,7 @@ import AlertComponent from '../../components/Alert/Alert';
 const RootPage : React.FC = () => {
 
   const { alertElem, alertType, closeAlert } = useContext(AlertContext)
-  const { authState } = useContext(AppContext);
+  const { authState, prevRoute } = useContext(AppContext);
   const navigate = useNavigate();
   const {LoadingElem} = useLoading()
 
@@ -21,7 +21,10 @@ const RootPage : React.FC = () => {
 
   useEffect(()=>{
     if (authState.status === "success"){
-      navigate(Routes.MY_TODOS);
+
+      // go to the previous route if it exists
+      let currentRoute = prevRoute.pathname ?? Routes.MY_TODOS;
+      navigate(currentRoute);
     }
   }, [authState.status]);
 
