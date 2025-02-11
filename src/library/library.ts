@@ -1,8 +1,35 @@
 import { isObject, isString } from "lodash";
+import { format } from 'date-fns';
 
   export type KeyValue<K, V> = {
     key : K,
     value : V
+  }
+
+  /*------------------------------DATE-MANAGEMENT-------------------------------*/
+
+
+  export function formatDate(date : Date | string , mode : "full" | "date" | "hours" = "full") : string{
+
+    let dateFormat = 'dd/MM/yyyy HH:mm:SS';
+    switch(mode){
+      case "full":{
+        dateFormat = 'dd/MM/yyyy HH:mm:SS';
+        break;
+      }
+
+      case "date":{
+        dateFormat = 'dd/MM/yyyy';
+        break;
+      }
+
+      case "hours":{
+        dateFormat = 'HH:mm:SS';
+        break;
+      }
+    }
+    
+    return format(date, dateFormat);
   }
 
   /*----------------------------KEY-VALUE-GENERATOR-----------------------------*/

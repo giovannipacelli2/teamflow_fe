@@ -1,11 +1,10 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef} from 'react';
 import {Box, Modal, Button, FormControl, FormLabel, TextField, Checkbox} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import Textarea from '../TextArea/Textarea';
 import "./style.scss";
-import { TodoResponse } from '../../api';
 import { AppContext } from '../../context/context';
 import CloseBtn from '../CloseBtn/CloseBtn';
 import CommentList from '../CommentList/CommentList';
@@ -14,8 +13,8 @@ import { createCommentI } from '../../interfaces/TodosInterfaces';
 import SendIcon from '@mui/icons-material/Send';
 import Divider from '@mui/material/Divider';
 import CommentIcon from '@mui/icons-material/Comment';
-import { useQueryClient } from '@tanstack/react-query';
 import ModalEditSkeleton from '../ModalEditSkeleton/ModalEditSkeleton';
+import { formatDate } from '../../library/library';
 
 interface ModalProps {
     children?: React.ReactNode;
@@ -97,8 +96,12 @@ function useModalEditNote () {
     gap:'1em',
   }
 
-  const descriptionStyle = {
+  const descriptionColor = {
     color: theme.palette.text.secondary,
+  };
+
+  const descriptionStyle = {
+    ...descriptionColor,
     marginLeft:'0.5em'
   };
     const { usernames } = useContext(AppContext)
@@ -251,6 +254,24 @@ function useModalEditNote () {
                           <Box 
                             className='modalFormControl hide-scrollbar-back hide-scrollbar'
                           >
+                            <Box sx={{
+                              margin:0,
+                              display:'flex',
+                              flexDirection:'row',
+                              flexWrap : 'wrap',
+                              alignItems:'center',
+                              gap:'1em',
+                              width:'100%',
+                              justifyContent:'space-between',
+                            }}>
+                              <Typography variant="subtitle2" component="h6"
+                                sx={descriptionColor}
+                              >Creato il: {formatDate(String(todoData?.data.data?.created_at))}</Typography>
+
+                              <Typography variant="subtitle2" component="h6"
+                                sx={descriptionColor}
+                              >Ultima modifica: {formatDate(String(todoData?.data.data?.updated_at))}</Typography>
+                            </Box>
                             {props.permissions === 'limitated' && 
                               <div className="row">
                                 <Typography variant="h6" component="h3">Titolo</Typography>

@@ -96,6 +96,20 @@ const ModalEditSkeleton = ({permissions} : Props) => {
             gap:'1.5em',
           }}
         >        
+          {/* Created at and Updated at */}
+          <Box sx={{
+            margin:0,
+            display:'flex',
+            flexDirection:'row',
+            flexWrap : 'wrap',
+            alignItems:'center',
+            gap:'1em',
+            width:'100%',
+            justifyContent:'space-between',
+          }}>
+            <Skeleton variant="rectangular" width='11em' height={'0.7em'} />
+            <Skeleton variant="rounded" width='11em' height={'0.7em'} />
+          </Box>
           {/* TITLE */}
           <Box sx={column}>
             <Skeleton variant="rectangular" width='35%' height={'1em'} />
