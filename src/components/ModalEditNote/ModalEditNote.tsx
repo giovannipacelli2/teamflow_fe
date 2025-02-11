@@ -253,7 +253,7 @@ function useModalEditNote () {
                         > 
                           <Box 
                             className='modalFormControl hide-scrollbar-back hide-scrollbar'
-                          >
+                          >                         
                             <Box sx={{
                               margin:0,
                               display:'flex',
@@ -264,13 +264,18 @@ function useModalEditNote () {
                               width:'100%',
                               justifyContent:'space-between',
                             }}>
-                              <Typography variant="subtitle2" component="h6"
-                                sx={descriptionColor}
-                              >Creato il: {formatDate(String(todoData?.data.data?.created_at))}</Typography>
-
-                              <Typography variant="subtitle2" component="h6"
-                                sx={descriptionColor}
-                              >Ultima modifica: {formatDate(String(todoData?.data.data?.updated_at))}</Typography>
+                              {
+                                todoData?.data.data?.created_at &&
+                                <Typography variant="subtitle2" component="h6"
+                                  sx={descriptionColor}
+                                >Creato il: {formatDate(String(todoData?.data.data?.created_at))}</Typography>
+                              }
+                              {
+                                todoData?.data.data?.updated_at &&
+                                <Typography variant="subtitle2" component="h6"
+                                  sx={descriptionColor}
+                                >Ultima modifica: {formatDate(String(todoData?.data.data?.updated_at))}</Typography>
+                              }
                             </Box>
                             {props.permissions === 'limitated' && 
                               <div className="row">
