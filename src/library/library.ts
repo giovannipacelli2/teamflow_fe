@@ -9,7 +9,7 @@ import { format } from 'date-fns';
   /*------------------------------DATE-MANAGEMENT-------------------------------*/
 
 
-  export function formatDate(date : Date | string , mode : "full" | "date" | "hours" = "full") : string{
+  export function formatDate(date : Date | string , mode : "full" | "date" | "hours" | "full_no_seconds"= "full") : string{
 
     let dateFormat = 'dd/MM/yyyy HH:mm:SS';
     switch(mode){
@@ -25,6 +25,11 @@ import { format } from 'date-fns';
 
       case "hours":{
         dateFormat = 'HH:mm:SS';
+        break;
+      }
+
+      case "full_no_seconds":{
+        dateFormat = 'dd/MM/yyyy HH:mm';
         break;
       }
     }

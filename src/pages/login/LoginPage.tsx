@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 // Custom elem
 import Card from '../../components/Card/Card';
 import { AppContext } from "../../context/context";
+import { theme } from "../../theme/ThemeConfig";
 
 const LoginPage: React.FC = () => {
 
@@ -130,7 +131,7 @@ const LoginPage: React.FC = () => {
                   id="username"
                   type="text"
                   name="username"
-                  autoComplete="off"
+                  autoComplete="on"
                   autoFocus
                   required
                   fullWidth
@@ -149,8 +150,7 @@ const LoginPage: React.FC = () => {
                   id="password"
                   type="password"
                   name="password"
-                  autoComplete="off"
-                  autoFocus
+                  autoComplete="on"
                   required
                   fullWidth
                   variant="outlined"
@@ -180,7 +180,7 @@ const LoginPage: React.FC = () => {
               Sign in
             </Button>
             <Typography variant="body1" component="h6">
-              oppure <Link to={Routes.SIGNUP}>registrati</Link>
+              oppure <Link to={Routes.SIGNUP} style={{ color:theme.palette.primary.main }}>registrati</Link>
             </Typography>
           </Box>
         </Card>

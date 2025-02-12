@@ -11,6 +11,7 @@ import { CommentResponse } from '../../api';
 import { AppContext } from '../../context/context';
 import CloseIcon from '@mui/icons-material/Close';
 import useTodos from '../../hooks/useTodos';
+import { formatDate } from '../../library/library';
 
 interface Props {
     children?: React.ReactNode;
@@ -52,7 +53,7 @@ const CommentList = (props: Props) => {
                                     fontSize: '1em',
                                     cursor:'pointer',
                                     position:'absolute',
-                                    top:'0.5em',
+                                    top:'0.75em',
                                     right:'0.5em',
                                     zIndex:'1000',
                                 }}
@@ -93,14 +94,44 @@ const CommentList = (props: Props) => {
                                     width:{xs:'100%'}
                                 }}
                             >
-                                <Box>
-                                    <Typography
-                                    component="span"
-                                    variant="subtitle2"
-                                    sx={{ color: "text.primary", display: "block" }}
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap:'0.1em',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            width: '95%',
+                                        }}
                                     >
-                                    {comment.account_username}
-                                    </Typography>
+
+                                        <Typography
+                                            component="span"
+                                            variant="subtitle2"
+                                            sx={{ color: "text.primary", display: "block" }}
+                                        >
+                                            { comment.account_username}
+                                        </Typography>
+
+                                        {comment.created_at && <Typography
+                                            component="span"
+                                            variant="subtitle2"
+                                            sx={{ 
+                                                fontSize: '0.8em',
+                                                color: "text.secondary",
+                                                display: "block",
+                                            }}
+                                        >
+                                            {formatDate(comment.created_at, 'full_no_seconds')}
+                                        </Typography>}
+
+                                    </Box>
 
                                     <Typography
                                     component="span"
@@ -109,6 +140,7 @@ const CommentList = (props: Props) => {
                                     >
                                         {comment.content}
                                     </Typography>
+
                                 </Box>
                             </ListItemText>
 

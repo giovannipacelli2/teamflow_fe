@@ -232,7 +232,7 @@ const SignupPage = () => {
               Sign up
             </Button>
             <Typography variant="body1" component="h6">
-              oppure vai al <Link to={Routes.LOGIN}>login</Link>
+              oppure vai al <Link to={Routes.LOGIN} style={{ color:theme.palette.primary.main }}>login</Link>
             </Typography>
           </Stack>
 
