@@ -1,14 +1,62 @@
-# [Guida Team Flow: gestione tasks](https://app.tango.us/app/workflow/b24040f1-248f-4edb-97e7-4584ddfb66ad?utm_source=markdown&utm_medium=markdown&utm_campaign=workflow%20export%20links)
-
-__Creation Date:__ Feb 15, 2025  
-__Created By:__ Giovanni Pacelli  
-[View most recent version on Tango.ai](https://app.tango.us/app/workflow/b24040f1-248f-4edb-97e7-4584ddfb66ad?utm_source=markdown&utm_medium=markdown&utm_campaign=workflow%20export%20links)
+# **Team Flow: gestione tasks**
 
 
+# Organizzazione dei file:
 
-***
+## Cartella `./src` contiene:
 
+* il file `index.tsx` ovvero **l'entry** point dell'app, essa renderizza il componente `App` avvolto da `<QueryClientProvider>` che gestisce le chiamate al server e `<AppProvider>` che si occupa di gestire stati e funzioni condivise.
 
+* `App.tsx` contiene l'intera struttura di routing e incorpora le logiche di accesso/autenticazione.
+
+## Cartella `./api` contiene:
+
+* cartella creata automaticamente utilizzando swagger, lanciando il comando `npm run generate-api` necessita di java per essere lanciato. Al suo interno ci tutte le funzioni già pronte per comunicare con il server.
+
+## Cartella `./components` contiene:
+
+* tutti i componenti che vengono utilizzati.
+
+## Cartella `./context` contiene:
+
+* `context.tsx` gestisce funzioni e variabli globali per autenticazione e gestione dell'utente corrente
+* `alertContext.tsx` rende disponibili una serie di funzionalità legate agli alert 
+
+## Cartella `./hooks` contiene tutte le custom hooks:
+
+* gestione dati server: `authHook.tsx`, `useAccount.tsx` e `useTodos.tsx`
+* gestione cookie: `useCookie.tsx`
+* gestione crittografia: `useCrypto.tsx`
+* gestione loader (UI): `useLoading.tsx`
+
+## Cartella `./interceptors` contiene:
+
+* un interceptor che aggiunge il token di autorizzazione alle richeste prima che esse partano
+* un interceptor che si occupa di gestire il logout/invalidare la sessione se una richiesta fallisce (401)
+
+## Cartella `./library` contiene una serie di funzioni riutilizzabili
+
+## Cartella `./pages` contiene:
+
+* Tutte le pagine
+
+* `rootPage.tsx` che viene mostrato sempre e renderizzato per primo, si occupa di gestire correttamente il redirect in caso di mancata autenticazione o in caso di refresh page.
+
+* `DashboardPage.tsx` contiene l'insieme di rotte dove vi si può accedere solo se autenticati
+
+## Cartella `./reducers` contiene i pezzi dello stato globale:
+
+* salva i dati dell'utente corrente ed i dati relativi all'autenticazione
+
+## Cartella `./routerConfig` contiene la gestione del routing:
+
+* `./Redirect.tsx` interviene quando si cerca di accedere alla rotta `/` questo può succedere all'avvio dell'app o dopo un refresh. Nel caso in cui non si è autenticati si viene reindirizzati alla login, altrimenti alla pagina principale.
+
+* `./PrivateRoute.tsx` interviene ogni volta che si cambia rotta nel range delle rotte autenticate, salva in un context la rotta corrente e verifica se si è loggati altrimenti blocca la navigazione. La rotta corrente servirà poi a RootPage in caso di refresh o in caso si visiti `/` oppure quando si visita `/login` mentre si è loggati.
+
+* `./routes.ts` contiene gli enums con i nomi delle rotte e un oggetto `Routes` che contiene i path completi di tutte le rotte
+
+</br>
 
 
 ## # [Team Flow](https://teamflow.gplans.it/login)
