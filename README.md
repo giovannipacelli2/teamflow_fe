@@ -1,7 +1,48 @@
 # **Team Flow: gestione tasks**
 
+## **Prerequisiti:** 
+
+### - Per l'utilizzo:
+
+*  Avere un browser recente ( Chrome, Firefox, Safari...ecc ).
+
+### - Per lo sviluppo, richiede npm:
+
+* Installare tutte le dipendenze tramite `npm`
+* Per il back-end info a questo [link](https://github.com/giovannipacelli2/backend_s2i_final)
+
+Comando di installazione:
+
+    npm install
+
+Comando di avvio:
+
+    npm run start
+
+Comando compilazione api:
+
+    npm generate-api
+
+Indicare in package.json il percorso dove risiede il file swagger di input.
+
+</br>
+
+## **Linguaggi e framework utilizzati:** 
+
+* HTML, CSS, JavaScript, TypeScript, React.
+
+## **Funzioni principali:** 
+
+* Creazione ed eliminazione account
+* Modifica informazioni personali
+* Creazione, modifica ed eliminazione task
+* Possibilità di visualizzare task condivisi da altri utenti
+* Possibilità di aggiungere commenti ai task propri e di altri utenti
+
+<br></br>
 
 # Organizzazione dei file:
+
 
 ## Cartella `./src` contiene:
 
