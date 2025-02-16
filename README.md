@@ -220,6 +220,6 @@ Gli altri utenti non potranno più visualizzarli
 
 ## **Link utili:**
 
-### - [Link alla web app'](https://teamflow.gplans.it)
+### - [Link alla web app](https://teamflow.gplans.it)
 
 ### - [Breve presentazione](./presentation/teamflow_presentation.pdf)
