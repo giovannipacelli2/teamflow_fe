@@ -3,7 +3,6 @@ import ShareIcon from '@mui/icons-material/Share';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography, useTheme } from '@mui/material';
-import {TodosContext} from '../../context/todosContext'
 import {AppContext} from '../../context/context'
 import Empty from '../../components/Empty/Empty';
 import SkeletonComponent from '../../components/Skeleton/Skeleton';
@@ -14,9 +13,10 @@ import useTodos from '../../hooks/useTodos';
 import { deleteTodoI, updateTodoI } from '../../interfaces/TodosInterfaces';
 import useModalShareNote from '../../components/ModalShareNote/ModalShareNote';
 import useModal from '../../components/Modal/Modal';
-import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { AlertContext } from '../../context/alertContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface MyTodosPageI {
   mode ?: "all" | "withoutChecked" | "onlyChecked",
@@ -38,54 +38,46 @@ const MyTodosPage = (props: MyTodosPageI) => {
   
   const theme = useTheme();
   //modals
-  const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
+  const {ModalComponent: ModalUpdate} = useModalEditNote();
+  const {ModalComponent:ModalCreate} = useModalEditNote();
   const {handleOpen:openDelete, ModalComponent: ModalDelete} = useModal();
-  const {handleOpen:openCreate, ModalComponent:ModalCreate} = useModalEditNote();
   const {handleOpen:openShare, ModalComponent:ModalShare} = useModalShareNote();
 
-
-  const { todoState, todosLoading, todosError } = useContext(TodosContext);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
+  
+  const { setAlertType, openAlert } = useContext(AlertContext);
   const { authState } = useContext(AppContext);
-  const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
+  
+  const [currentTodo, setCurrentTodo] = useState<string>('');
 
-  //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
+  const queryClient = useQueryClient()
 
   const {getAllTodos, createTodo, updateTodo, deleteTodo, shareTodo} = useTodos();
+  const { data:todoState, isLoading:todosLoading, isError:todosError, isFetching: todosFetching} = getAllTodos;
 
   useEffect(()=>{
     getAllTodos.refetch();
   },[]);
 
-  // force refresh current todo data
-  useEffect(()=>{
-    if (currentTodo.id){
-      setCurrentTodo((prevState)=>{
-        return todoState.myTodos.find((todo)=> todo.id === prevState.id) ?? {};
-      })
-    }
-  },[todoState]);
-
   const onEdit = React.useCallback((event: FieldValues)=>{
 
-    if (currentTodo.id){
+    if (currentTodo){
       let body : updateTodoI = {
-        todoId : String(currentTodo.id),
+        todoId : String(currentTodo),
         body : event
       }
 
       updateTodo.mutate(body);
-      if(updateTodo.isSuccess){
-        setCurrentTodo({});
-      }
     }
     
   },[currentTodo])
+
+  useEffect(()=>{
+    if(updateTodo.status === 'success'){
+      setCurrentTodo('');
+    }
+  }, [updateTodo.status]);
 
   const onCreate = React.useCallback((event: FieldValues)=>{
 
@@ -98,6 +90,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
       }
 
       createTodo.mutate(body);
+      setCurrentTodo('');
     }
     
   },[])
@@ -112,11 +105,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
     
   },[])
 
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
+  const getTodoFromList = (id:string)=>{
+    let todo : TodoResponse | undefined = undefined;
+
+    if(todoState?.data.data?.data){
+      todo = todoState?.data.data?.data.find((todo)=>todo.id === id);
+    }
+
+    return todo;
   }
 
   useEffect(()=>{
@@ -125,14 +121,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
       if(createTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
-          subtitle: 'Nota creata con successo',
+          subtitle: 'Task creato con successo',
           type: 'success'
         })
       } else {
         
         let msg = getMsgFromObjValues(createTodo.data.data.message);
 
-        msg = msg ?? 'Non è stato possibile creare la nota';
+        msg = msg ?? 'Non è stato possibile creare il task';
 
         setAlertType({
           title:'Errore',
@@ -150,14 +146,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
       if(shareTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
-          subtitle: 'La nota è stata condivisa',
+          subtitle: 'Il task è stato condiviso',
           type: 'success'
         })
       } else {
         
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile condividere la nota',
+          subtitle: 'Non è stato possibile condividere il task',
           type: 'error'
         })
       }
@@ -171,14 +167,14 @@ const MyTodosPage = (props: MyTodosPageI) => {
       if(deleteTodo.data?.status <= 201){
         setAlertType({
           title:'Successo',
-          subtitle: 'Nota eliminata con successo',
+          subtitle: 'Task eliminato con successo',
           type: 'success'
         })
       } else {
         
         setAlertType({
           title:'Errore',
-          subtitle: 'Non è stato possibile eliminare la nota',
+          subtitle: 'Non è stato possibile eliminare il task',
           type: 'error'
         })
       }
@@ -188,9 +184,15 @@ const MyTodosPage = (props: MyTodosPageI) => {
 
   const getTodoList = ()=>{
 
+    let res = todoState?.data.data?.data ?? []
+    
+    if (!res) return[];
+
+    let allTodos : TodoResponse[] = [...res];
+
     let todoList = [];
 
-    for(let todo of todoState.myTodos){
+    for(let todo of allTodos){
 
       let isVisible = true;
 
@@ -222,8 +224,8 @@ const MyTodosPage = (props: MyTodosPageI) => {
           >
             <CardActionArea
               onClick={() => {
-                openUpdate();
-                setCurrentTodo(todo);
+                setIsOpenUpdate(true);
+                setCurrentTodo(todo.id ?? '');
               }}
               sx={{
                 height:'8em',
@@ -254,7 +256,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
               <Button size="small" color="primary"
                 onClick={()=>{
                   openShare();
-                  setCurrentTodo(todo);
+                  setCurrentTodo(todo.id ?? '');
                 }}
               >
                 <ShareIcon></ShareIcon>
@@ -263,7 +265,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
               <Button size="small" color="warning"
                 onClick={()=>{
                   openDelete();
-                  setCurrentTodo(todo);
+                  setCurrentTodo(todo.id ?? '');
                 }}
               >
                 <DeleteIcon></DeleteIcon>
@@ -299,7 +301,7 @@ const MyTodosPage = (props: MyTodosPageI) => {
       >
         {
           props.mode !=='onlyChecked' &&
-          <Button size="medium" color="primary" variant="contained" onClick={openCreate}>
+          <Button size="medium" color="primary" variant="contained" onClick={()=>setIsOpenCreate(true)}>
             <AddIcon></AddIcon>
             Aggiungi
           </Button>
@@ -326,51 +328,49 @@ const MyTodosPage = (props: MyTodosPageI) => {
           !(todosLoading || getAllTodos.isRefetching) && getTodoList()
         }
         {
-          (!todosLoading && !todosError && getTodoList().length===0) && <>
-          <Empty text="Nessuna nota trovata"></Empty>
+          (!todosFetching && !todosLoading && !todosError && getTodoList().length===0) && <>
+          <Empty text="Nessun task trovato"></Empty>
         </>
         }
         {
           (todosError) && <>
-          <Empty text="Errore nel recupero delle note"></Empty>
+          <Empty text="Errore nel recupero dei tasks"></Empty>
         </>
         }
       </Stack>
-      <ModalUpdate 
-        title={'Modifica nota'}
-        onConfirm={onEdit}
-        defaults={currentTodo}
-      >
-      </ModalUpdate>
-
-      <ModalCreate 
-        title={'Crea nota'}
-        onConfirm={onCreate}
-      >
-      </ModalCreate>
+      {
+        isOpenUpdate &&
+        <ModalUpdate 
+          title={'Modifica task'}
+          onConfirm={onEdit}
+          setIsOpen={setIsOpenUpdate}
+          id={currentTodo}
+        >
+        </ModalUpdate>
+      }
+      {
+        isOpenCreate &&
+        <ModalCreate 
+          title={'Crea task'}
+          onConfirm={onCreate}
+          setIsOpen={setIsOpenCreate}
+        >
+        </ModalCreate>
+      }
       <ModalShare 
-        title={'Condividi nota'}
-        todo={currentTodo}
+        title={'Condividi task'}
+        todo={getTodoFromList(currentTodo)}
       >
       </ModalShare>
       <ModalDelete 
-        title={'Elimina nota'}
-        onConfirm={()=>onDelete(String(currentTodo.id))}
+        title={'Elimina task'}
+        onConfirm={()=>onDelete(String(currentTodo))}
       >
         <Typography id="modal-modal-title" variant="subtitle1" component="h6">
-          Sei sicuro di voler eliminare la nota?
+          Sei sicuro di voler eliminare il task?
         </Typography>
       </ModalDelete>
 
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
     </Stack>
   )
 }

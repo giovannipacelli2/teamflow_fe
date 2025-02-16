@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AppContext } from "../../context/context";
 import { useNavigate } from 'react-router-dom';
 import { Routes } from '../../routerConfig/routes';
 import useLoading from '../../hooks/useLoading';
+import { AlertContext } from '../../context/alertContext';
+import AlertComponent from '../../components/Alert/Alert';
 
 const RootPage : React.FC = () => {
 
-  const { authState } = React.useContext(AppContext);
+  const { alertElem, alertType, closeAlert } = useContext(AlertContext)
+  const { authState, prevRoute } = useContext(AppContext);
   const navigate = useNavigate();
   const {LoadingElem} = useLoading()
 
@@ -18,13 +21,27 @@ const RootPage : React.FC = () => {
 
   useEffect(()=>{
     if (authState.status === "success"){
-      navigate(Routes.MY_TODOS);
+
+      // go to the previous route if it exists
+      let currentRoute = prevRoute.pathname ?? Routes.MY_TASKS;
+      navigate(currentRoute);
     }
   }, [authState.status]);
 
 
   return (
-    <>{LoadingElem}</>
+    <>
+     <AlertComponent
+        activated={alertElem}
+        onClose={closeAlert}
+        duration={2500}
+        title={alertType.title}
+        subtitle={alertType.subtitle}
+        type={alertType.type}
+      >
+      </AlertComponent>
+      {LoadingElem}
+    </>
   )
 }
 

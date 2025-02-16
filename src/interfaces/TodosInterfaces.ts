@@ -1,4 +1,4 @@
-import { ShareTodoRequest, TodoBodyReq } from "../api";
+import { CommentBodyReq, ShareTodoRequest, TodoBodyReq } from "../api";
 
 export interface GetAllTodoAccountParams {
     todoId : string
@@ -8,6 +8,10 @@ export interface updateTodoI {
     todoId : string,
     body: TodoBodyReq
 }
+export interface createCommentI {
+    todoId : string,
+    body: CommentBodyReq
+}
 
 export interface shareTodoI {
     todoId : string,
@@ -16,4 +20,8 @@ export interface shareTodoI {
 
 export interface deleteTodoI {
     todoId : string,
-  }
+}
+
+export interface deleteCommentI {
+    commentId : string,
+}

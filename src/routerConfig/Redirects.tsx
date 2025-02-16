@@ -1,6 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Routes } from './routes';
+import { AppContext } from '../context/context';
 
 interface RedirectsProps {
     isAuth : boolean;
@@ -10,9 +11,18 @@ interface RedirectsProps {
 
 const Redirects : React.FC<RedirectsProps> = ({
     isAuth,
-    redirectTrue = Routes.MY_TODOS,
+    redirectTrue = Routes.MY_TASKS,
     redirectFalse = Routes.LOGIN,
 }) => {
+
+  const location = useLocation();
+  const {setPrevRoute} = useContext(AppContext);
+
+  useEffect(() => {
+
+    setPrevRoute(location);
+
+  }, [location, setPrevRoute]);
   return (
    isAuth ? <Navigate to={redirectTrue} replace/> : <Navigate to={redirectFalse} replace/>
   )

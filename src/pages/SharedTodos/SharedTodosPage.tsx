@@ -3,7 +3,6 @@ import { AppContext } from "../../context/context";
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography, useTheme } from '@mui/material';
-import {TodosContext} from '../../context/todosContext'
 
 // Components
 import Empty from '../../components/Empty/Empty';
@@ -13,68 +12,41 @@ import { TodoResponse } from '../../api';
 import useModalEditNote from '../../components/ModalEditNote/ModalEditNote';
 import { FieldValues } from 'react-hook-form';
 import { updateTodoI } from '../../interfaces/TodosInterfaces';
-import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
-import { addSignature } from '../../library/library';
+import { AlertContext } from '../../context/alertContext';
 
 const SharedTodosPage : React.FC = () => {
 
   const theme = useTheme();
 
-  const { todoState, sharedTodosLoading, sharedTodosError } = useContext(TodosContext);
-  const { getAllSharedTodos, updateTodo } = useTodos();
+  const { setAlertType, openAlert } = useContext(AlertContext);
+  const { getAllSharedTodos, updateTodo, useGetTodo } = useTodos();
+  const { data:sharedTodoState, isLoading:sharedTodosLoading, isError:sharedTodosError, isFetching: sharedTodosFetching} = getAllSharedTodos;
 
   const { accountState } = useContext(AppContext)
-  const [currentTodo, setCurrentTodo] = useState<TodoResponse>({});
-
-  //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
+  const [currentTodo, setCurrentTodo] = useState<string>('');
 
   //modals
-  const {handleOpen:openUpdate, ModalComponent: ModalUpdate} = useModalEditNote();
+  const {ModalComponent: ModalUpdate} = useModalEditNote();
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
 
   useEffect(()=>{
     getAllSharedTodos.refetch();
   }, []);
 
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
 
   const onEdit = React.useCallback((event: FieldValues)=>{
-
-    let signature = String(accountState.username);
-
-    if (event.note){
-
-      event.note = event.note as String;
-
-      let notes = addSignature(event.note, signature);
-      
-      event = {
-        ...event,
-        note: notes,
+    
+    if (currentTodo){
+      let body : updateTodoI = {
+        todoId : String(currentTodo),
+        body : event
       }
+  
+      updateTodo.mutate(body);
+      setCurrentTodo('');
     }
     
-      if (currentTodo.id){
-        let body : updateTodoI = {
-          todoId : String(currentTodo.id),
-          body : event
-        }
-  
-        updateTodo.mutate(body);
-        setCurrentTodo({});
-      }
-      
-    },[currentTodo])
+  },[currentTodo])
 
   useEffect(()=>{
       if (updateTodo.data?.status){
@@ -82,20 +54,90 @@ const SharedTodosPage : React.FC = () => {
         if(updateTodo.data?.status <= 201){
           setAlertType({
             title:'Successo',
-            subtitle: 'Commento aggiunto con successo',
+            subtitle: 'Task modificato con successo',
             type: 'success'
           })
         } else {
           
           setAlertType({
             title:'Errore',
-            subtitle: 'Non è stato possibile commentare la nota',
+            subtitle: 'Non è stato possibile commentare il task',
             type: 'error'
           })
         }
         openAlert();
       }
     }, [updateTodo.data?.status])
+
+    const getTodoList = ()=>{
+
+      let res = sharedTodoState?.data.data?.data ?? []
+      
+      if (!res) return[];
+  
+      let allTodos : TodoResponse[] = [...res];
+  
+      let todoList = [];
+  
+      for(let todo of allTodos){
+        todoList.push(
+          <Card
+            sx={{
+              width: {xs:'90%', md:'21em'},
+              height:'9.5em',
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              marginRight: {xs:'0', md:'1.5em'},
+              '@media (min-width:600px)': {
+                width: '75%',
+              },
+              //background:todo.checked ? theme.palette.grey[200] : 'inherit'
+              background:todo.checked ? theme.palette.secondary.light : 'inherit'
+            }}
+            key={todo.id}
+          >
+            <CardActionArea
+              onClick={() => {
+                setIsOpenCreate(true);
+                setCurrentTodo(todo.id ?? '');
+              }}
+              sx={{
+                height:'8em'
+              }}
+            >
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {todo.title}
+                </Typography>
+                <Typography variant="body2" 
+                  sx={{ 
+                    color: "text.secondary",
+                    overflowY:'hidden',
+                    height:'3em'
+                  }}
+                >
+                  {todo.description}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions >
+              <Button size="small" color="primary" sx={{display:"flex", gap:"0.5em"}}
+                onClick={()=>{
+                  setIsOpenCreate(true);
+                  setCurrentTodo(todo.id ?? '');
+                }}
+              >
+                <AddCommentOutlinedIcon></AddCommentOutlinedIcon>
+                  commenta
+                </Button>
+            </CardActions>
+          </Card>
+        );
+      }
+  
+      return todoList;
+    }
 
   return (
     <Stack
@@ -114,6 +156,7 @@ const SharedTodosPage : React.FC = () => {
         display='flex'
         justifyContent='flex-end'
         alignItems='center'
+        gap='0.5em'
       >
         <Button size="medium" color="primary" variant="contained" onClick={()=>getAllSharedTodos.refetch()}>
           <RefreshIcon></RefreshIcon>
@@ -129,96 +172,35 @@ const SharedTodosPage : React.FC = () => {
           flexWrap: 'wrap', 
           rowGap: { xs: '1.5em' },
         }}
-        width={{ xs: '100%', sm: '90%'}}
+        width={{ xs: '100%', sm: '95%'}}
       >
         {(sharedTodosLoading || getAllSharedTodos.isRefetching) && <SkeletonComponent/>}
         {
-          !(sharedTodosLoading || getAllSharedTodos.isRefetching) && todoState.sharedTodos.map((todo)=>{
-            return (
-              <Card
-                sx={{
-                  width: {xs:'90%', md:'21em'},
-                  height:'9.5em',
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  marginRight: {xs:'0', md:'1.5em'},
-                  '@media (min-width:600px)': {
-                    width: '75%',
-                  },
-                  //background:todo.checked ? theme.palette.grey[200] : 'inherit'
-                  background:todo.checked ? theme.palette.secondary.light : 'inherit'
-                }}
-                key={todo.id}
-              >
-                <CardActionArea
-                  onClick={() => {
-                    openUpdate();
-                    setCurrentTodo(todo);
-                  }}
-                  sx={{
-                    height:'8em'
-                  }}
-                >
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {todo.title}
-                    </Typography>
-                    <Typography variant="body2" 
-                      sx={{ 
-                        color: "text.secondary",
-                        overflowY:'hidden',
-                        height:'3em'
-                      }}
-                    >
-                      {todo.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-                <CardActions >
-                  <Button size="small" color="primary" sx={{display:"flex", gap:"0.5em"}}
-                    onClick={()=>{
-                      openUpdate();
-                      setCurrentTodo(todo)
-                    }}
-                  >
-                    <AddCommentOutlinedIcon></AddCommentOutlinedIcon>
-                      commenta
-                    </Button>
-                </CardActions>
-              </Card>
-            );
-          })
+          !(sharedTodosLoading || getAllSharedTodos.isRefetching) && getTodoList()
         }
         {
-          (!sharedTodosLoading && !sharedTodosError && todoState.sharedTodos.length===0) && <>
-            <Empty text="Nessuna nota condivisa trovata"></Empty>
+          (!sharedTodosFetching && !sharedTodosLoading && !sharedTodosError && getTodoList().length===0) && <>
+            <Empty text="Nessun task condiviso trovato"></Empty>
           </>
         }
         {
           (sharedTodosError ) && <>
-            <Empty text="Errore nel recupero delle note condivise"></Empty>
+            <Empty text="Errore nel recupero dei tasks condivisi"></Empty>
           </>
         }
       </Stack>
 
-      <ModalUpdate 
-        title={'Commenta nota'}
-        onConfirm={onEdit}
-        permissions='limitated'
-        defaults={currentTodo}
-      >
-      </ModalUpdate>
-
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
+      {  
+        isOpenCreate &&
+        <ModalUpdate
+          title={'Commenta task'}
+          onConfirm={onEdit}
+          setIsOpen={setIsOpenCreate}
+          permissions='limitated'
+          id={currentTodo}
+        >
+        </ModalUpdate>
+      }
 
     </Stack>
   )

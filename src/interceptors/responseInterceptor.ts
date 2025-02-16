@@ -2,11 +2,15 @@ import axios from 'axios';
 import { httpProcessedResponseType } from '../interfaces/GenericResponse';
 
 
-const responseInterceptor = () => {
+const responseInterceptor = (callback : ()=>void) => {
   // Add a request interceptor
   axios.interceptors.response.use(
     function (response) {
 
+      if (response.data?.status === 401){
+        callback();
+        return response
+      }
       if (response.data?.status === 500){
         return response
       }

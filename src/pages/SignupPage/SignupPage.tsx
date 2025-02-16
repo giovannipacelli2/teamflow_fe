@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import useAccount from '../../hooks/useAccount';
 import { formObj } from '../../interfaces/FormInterfaces';
@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { Routes } from '../../routerConfig/routes';
 import { getMsgFromObjValues } from '../../library/library';
 import { Link } from 'react-router-dom';
+import { AlertContext } from '../../context/alertContext';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -34,12 +35,7 @@ const SignupPage = () => {
   }});
 
 //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
+  const { setAlertType, openAlert } = useContext(AlertContext);
 
   const { createAccount } = useAccount()
 
@@ -81,13 +77,7 @@ const SignupPage = () => {
       rules:{required:'Il campo è obbligatorio'}
     }
   ];
-  
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
+
   
   useEffect(()=>{
     if (createAccount.data?.status){
@@ -100,9 +90,7 @@ const SignupPage = () => {
           type: 'success'
         });
 
-        setTimeout(()=>{
-          navigate(Routes.LOGIN);
-        },2500);
+        navigate(Routes.LOGIN);
       } else {
         
         let serverMsg = getMsgFromObjValues(createAccount.data.data.message)
@@ -219,6 +207,7 @@ const SignupPage = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
+                          id={field.name}
                           type={formElem.type}
                           fullWidth
                           autoComplete='off'
@@ -243,23 +232,13 @@ const SignupPage = () => {
               Sign up
             </Button>
             <Typography variant="body1" component="h6">
-              oppure vai al <Link to={Routes.LOGIN}>login</Link>
+              oppure vai al <Link to={Routes.LOGIN} style={{ color:theme.palette.primary.main }}>login</Link>
             </Typography>
           </Stack>
 
         </form>
 
       </Card>
-
-      <AlertComponent
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
     </Stack>
   )
 }

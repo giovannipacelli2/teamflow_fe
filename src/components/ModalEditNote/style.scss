@@ -4,14 +4,21 @@
     width: 100%;
     height: 100%;
     gap: 1.5em;
-    justify-content: space-between;
+    //justify-content: space-between;
 
 }
 .modalFormControl{
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-height: 30em;
+    width: 98% !important;
+    min-height: 100%;
+    gap: 1.5em;
     overflow-y: scroll;
+}
+
+.commentContainer{
+    display: flex;
+    width: 98% !important;
+    height: max-content !important;
     gap: 1.5em;
 }

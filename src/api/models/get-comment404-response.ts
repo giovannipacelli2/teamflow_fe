@@ -14,9 +14,23 @@
 
 
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/comment-api';
-export * from './api/params-api';
-export * from './api/todo-api';
+/**
+ * 
+ * @export
+ * @interface GetComment404Response
+ */
+export interface GetComment404Response {
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof GetComment404Response
+     */
+    'data'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetComment404Response
+     */
+    'message'?: string;
+}
 

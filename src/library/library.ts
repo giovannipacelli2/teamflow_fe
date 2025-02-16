@@ -1,31 +1,40 @@
 import { isObject, isString } from "lodash";
+import { format } from 'date-fns';
 
   export type KeyValue<K, V> = {
     key : K,
     value : V
   }
 
-  /*---------------------------ADD-SIGNATURE-TO-TEXT----------------------------*/
+  /*------------------------------DATE-MANAGEMENT-------------------------------*/
 
-  export function addSignature(text:string, signature:string){
-  
-      if (text){
-  
-        let lines = text.split('\n');
-  
-        lines = lines.map((line:string, index:number)=>{
-  
-          if (!line.includes(signature) && (index === lines.length-1)){
-            return signature  + ': ' + line;
-          }
-  
-          return line;
-        });
-  
-        let notes = lines.join('\n');
-        
-        return notes;
+
+  export function formatDate(date : Date | string , mode : "full" | "date" | "hours" | "full_no_seconds"= "full") : string{
+
+    let dateFormat = 'dd/MM/yyyy HH:mm:SS';
+    switch(mode){
+      case "full":{
+        dateFormat = 'dd/MM/yyyy HH:mm:SS';
+        break;
       }
+
+      case "date":{
+        dateFormat = 'dd/MM/yyyy';
+        break;
+      }
+
+      case "hours":{
+        dateFormat = 'HH:mm:SS';
+        break;
+      }
+
+      case "full_no_seconds":{
+        dateFormat = 'dd/MM/yyyy HH:mm';
+        break;
+      }
+    }
+    
+    return format(date, dateFormat);
   }
 
   /*----------------------------KEY-VALUE-GENERATOR-----------------------------*/

@@ -16,7 +16,14 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: true,
+      refetchInterval : process.env.NODE_ENV === 'production' ? 60000 : 300000
+    },
+  },
+})
 
 root.render(
   <React.StrictMode>

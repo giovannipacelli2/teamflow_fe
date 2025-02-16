@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginBodyI, useAuth } from "../../hooks/authHook";
 
@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 
 // Custom elem
 import Card from '../../components/Card/Card';
+import { AppContext } from "../../context/context";
+import { theme } from "../../theme/ThemeConfig";
 
 const LoginPage: React.FC = () => {
 
@@ -19,6 +21,7 @@ const LoginPage: React.FC = () => {
   }
 
   const navigate = useNavigate();
+  const { authState, accountState, prevRoute } = useContext(AppContext);
   const {LoadingElem, setIsLoading} = useLoading();
 
   const { login } = useAuth();
@@ -44,6 +47,13 @@ const LoginPage: React.FC = () => {
         }))
       }
     }
+
+    // redirect if already logged in
+    if(authState.authorization?.token && accountState.id){
+      navigate(prevRoute.pathname);
+    }
+
+    
   }, [])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +89,7 @@ const LoginPage: React.FC = () => {
     });
 
     if (res) {
-      navigate(Routes.MY_TODOS);
+      navigate(Routes.MY_TASKS);
     } else {
       setLoginError(true);
       setLoginErrorMessage('Credenziali errate');
@@ -121,7 +131,7 @@ const LoginPage: React.FC = () => {
                   id="username"
                   type="text"
                   name="username"
-                  autoComplete="off"
+                  autoComplete="on"
                   autoFocus
                   required
                   fullWidth
@@ -140,8 +150,7 @@ const LoginPage: React.FC = () => {
                   id="password"
                   type="password"
                   name="password"
-                  autoComplete="off"
-                  autoFocus
+                  autoComplete="on"
                   required
                   fullWidth
                   variant="outlined"
@@ -171,7 +180,7 @@ const LoginPage: React.FC = () => {
               Sign in
             </Button>
             <Typography variant="body1" component="h6">
-              oppure <Link to={Routes.SIGNUP}>registrati</Link>
+              oppure <Link to={Routes.SIGNUP} style={{ color:theme.palette.primary.main }}>registrati</Link>
             </Typography>
           </Box>
         </Card>

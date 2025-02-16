@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, Dispatch, Reducer, useEffect, useState } from "react";
+import React, { createContext, useReducer, Dispatch, Reducer, useState } from "react";
 import {
     accountReducer,
     accountActions,
@@ -6,7 +6,8 @@ import {
     authActions,
 } from '../reducers/reducers';
 
-import { AccountResponse, AccountsUsernames, Auth, GetAllUsernames200Response } from "../api";
+import { AccountResponse, AccountsUsernames, Auth } from "../api";
+import { Location } from "react-router-dom";
 
 interface AppProviderProps {
     children: React.ReactNode;
@@ -39,8 +40,10 @@ const AppContext = createContext<{
     accountDispatch: Dispatch<accountActions>;
     usernames: AccountsUsernames[];
     isLoadingApp: boolean;
+    prevRoute: Location;
     setUsernames : React.Dispatch<React.SetStateAction<AccountsUsernames[]>>;
     setIsLoadingApp : React.Dispatch<React.SetStateAction<boolean>>;
+    setPrevRoute : React.Dispatch<React.SetStateAction<Location>>;
     }>({
       authState: initialAuthState,
       accountState: initialAccountState,
@@ -49,7 +52,9 @@ const AppContext = createContext<{
       usernames : [],
       setUsernames: ()=>{},
       isLoadingApp : false,
-      setIsLoadingApp: ()=>{}
+      setIsLoadingApp: ()=>{},
+      prevRoute: { pathname: "", search: "", hash: "", state: "", key: ""},
+      setPrevRoute: ()=>{},
     });
 
 
@@ -65,9 +70,10 @@ const AppProvider = ( {children}: AppProviderProps ) => {
 
     const [usernames, setUsernames] = useState<AccountsUsernames[]>([]);
     const [isLoadingApp, setIsLoadingApp] = useState<boolean>(false);
+    const [prevRoute, setPrevRoute] = useState<Location>({pathname: "", search: "", hash: "", state: "", key: ""});
 
   return (
-    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch, usernames, setUsernames, isLoadingApp, setIsLoadingApp }}>
+    <AppContext.Provider value={{ authState, authDispatch, accountState, accountDispatch, usernames, setUsernames, isLoadingApp, setIsLoadingApp, prevRoute, setPrevRoute }}>
       {children}
     </AppContext.Provider>
   );

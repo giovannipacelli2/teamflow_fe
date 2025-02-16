@@ -8,11 +8,12 @@ import SaveIcon from '@mui/icons-material/Save';
 import { AppContext } from '../../context/context';
 import { deleteAccountI, updateAccountI } from '../../interfaces/AccountInterfaces';
 import useAccount from '../../hooks/useAccount';
-import AlertComponent, { AlertProps } from '../../components/Alert/Alert';
 import { getMsgFromObjValues } from '../../library/library';
 import { Routes } from '../../routerConfig/routes';
 import { useNavigate } from 'react-router-dom';
 import useModal from '../../components/Modal/Modal';
+import { AlertContext } from '../../context/alertContext';
+import useAuth from '../../hooks/authHook';
 
 type formNames = "username" | "name" | "surname" | "email" |"password" | "rePassword";
 
@@ -25,31 +26,25 @@ const ProfilePage = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const { setAlertType, openAlert } = useContext(AlertContext);
+  const { destroySession } = useAuth()
   const { authState, accountState } = useContext(AppContext);
   const { deleteAccount } = useAccount();
 
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const { control, handleSubmit, setValue, getValues, formState:{errors}, setError } = useForm({defaultValues:{
-    username: String(accountState.username),
-    name: String(accountState.name),
-    surname: String(accountState.surname),
-    email: String(accountState.email),
+    username: '',
+    name: '',
+    surname: '',
+    email: '',
     password:'',
     rePassword:'',
   }});
 
   //modals
   const { handleOpen:openDelete, ModalComponent: ModalDelete } = useModal();
-
-  //alerts
-  const [alertElem, setAlertElem] = useState<boolean>(false);
-  const [alertType, setAlertType] = useState<AlertProps>({
-    title:'',
-    subtitle:'',
-    type:'success'
-  })
-
   const { updateAccount } = useAccount()
 
   const formObj : formObj<formNames, formTypes>[] = [
@@ -84,12 +79,16 @@ const ProfilePage = () => {
       type:'password',
     }
   ];
-  const openAlert = ()=>{
-    setAlertElem(true);
-  }
-  const closeAlert = ()=>{
-    setAlertElem(false);
-  }
+
+  useEffect(()=>{
+
+    if (accountState.id){
+      setValue('username', String(accountState.username));
+      setValue('name', String(accountState.name));
+      setValue('surname', String(accountState.surname));
+      setValue('email', String(accountState.email));
+    }
+  },[accountState]);
   
   useEffect(()=>{
     if (updateAccount.data?.status){
@@ -129,9 +128,9 @@ const ProfilePage = () => {
           type: 'success'
         })
 
-        setTimeout(()=>{
-          navigate(Routes.LOGIN);
-        },2500)
+        navigate(Routes.LOGIN);
+        destroySession();
+
       } else {
 
         let msg = getMsgFromObjValues(deleteAccount.data.data.message);
@@ -285,6 +284,7 @@ const ProfilePage = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        id={field.name}
                         type={formElem.type}
                         fullWidth
                         autoComplete='off'
@@ -359,15 +359,6 @@ const ProfilePage = () => {
         >Questa azione eliminerà per sempre il tuo account</Typography>
       </ModalDelete>
 
-      <AlertComponent 
-        activated={alertElem}
-        onClose={closeAlert}
-        duration={2500}
-        title={alertType.title}
-        subtitle={alertType.subtitle}
-        type={alertType.type}
-      >
-      </AlertComponent>
     </Stack>
   )
 }

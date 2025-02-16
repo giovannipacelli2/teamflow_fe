@@ -1,7 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./DashboardPage.scss";
-import { TodosContext } from '../../context/todosContext';
-import { AppContext } from '../../context/context';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -23,10 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Person2Icon from '@mui/icons-material/Person2';
 import AssignmentTurnedInRoundedIcon from '@mui/icons-material/AssignmentTurnedInRounded';
 
-import {
-  QueryClient,
-  useQueryClient
-} from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 // ICONS
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
@@ -58,8 +53,6 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
   const {logout} = useAuth();
   const {LoadingElem, setIsLoading} = useLoading();
 
-  const {accountState} = useContext(AppContext)
-  const {resetState} = useContext(TodosContext)
   const queryClient = useQueryClient();
 
   useEffect(()=>{
@@ -74,16 +67,16 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
   useEffect(()=>{
 
     switch(location.pathname){
-      case Routes.MY_TODOS : {
-        setHeaderTitle("Le tue note");
+      case Routes.MY_TASKS : {
+        setHeaderTitle("I tuoi task");
         break;
       }
-      case Routes.SHARED_TODOS: {
-        setHeaderTitle("Note condivise con te");
+      case Routes.SHARED_TASKS: {
+        setHeaderTitle("Task condivisi con te");
         break;
       }
-      case Routes.CHECKED_TODOS: {
-        setHeaderTitle("Note spuntate");
+      case Routes.CHECKED_TASKS: {
+        setHeaderTitle("Task completati");
         break;
       }
       case Routes.PROFILE: {
@@ -91,7 +84,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
         break;
       }
       default : {
-        setHeaderTitle("Todos");
+        setHeaderTitle("TeamFlow");
       }
     }
 
@@ -106,19 +99,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    /* marginLeft: `-${drawerWidth}px`,
-    variants: [
-      {
-        props: ({ open }) => open,
-        style: {
-          transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-          marginLeft: 0,
-        },
-      },
-    ], */
+
   }));
   
   interface AppBarProps extends MuiAppBarProps {
@@ -145,19 +126,19 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
 
   const NavItems : NavLink[] = [
     {
-      label:"Le tue note",
+      label:"I tuoi task",
       icon : <StickyNote2Icon/>,
-      link : Routes.MY_TODOS
+      link : Routes.MY_TASKS
     },
     {
-      label:"Note condivise",
+      label:"Task condivisi",
       icon : <CoPresentIcon/>,
-      link : Routes.SHARED_TODOS
+      link : Routes.SHARED_TASKS
     },
     {
-      label:"Note spuntate",
+      label:"Task completati",
       icon : <AssignmentTurnedInRoundedIcon/>,
-      link : Routes.CHECKED_TODOS
+      link : Routes.CHECKED_TASKS
     },
     {
       label:"Profilo",
@@ -184,7 +165,6 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
     setIsLoading(false);
 
     if (loggedOut){
-      resetState();
       queryClient.clear();
     }
 
@@ -285,6 +265,7 @@ const DashboardPage = React.memo(({children}: DashboardProps) => {
           {children ?? <></>}
         </Main>
       </Box>
+      
     </>
   );
 })

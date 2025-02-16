@@ -4,16 +4,10 @@ import './App.scss';
 import { AppContext } from './context/context';
 import { useAuth } from './hooks/authHook'
 import useCookie from './hooks/useCookie';
-import {TodosProvider} from './context/todosContext'
 
 // theme setting
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './theme/ThemeConfig';
-
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
 
 // ROUTER CONFIG
 import PrivateRoute from './routerConfig/PrivateRoute';
@@ -34,11 +28,12 @@ import useCrypto from './hooks/useCrypto';
 import useAccount from './hooks/useAccount';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import SignupPage from './pages/SignupPage/SignupPage';
+import { AlertProvider } from './context/alertContext';
 
 const App : React.FC = () => {
 
   const { authState, authDispatch, setIsLoadingApp } = useContext(AppContext);
-  const { logged } = useAuth();
+  const { logged, destroySession } = useAuth();
   const { getCookie } = useCookie();
   const { decryptString } = useCrypto();
   const { getOwnAccount, getUsernames } = useAccount();
@@ -72,7 +67,7 @@ const App : React.FC = () => {
       });
     }
 
-    responseInterceptor();
+    responseInterceptor(destroySession);
     
   }, [])
 
@@ -100,32 +95,34 @@ const App : React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="App">
-        <Router>
-            <RootPage></RootPage>
-          <Routes>
-            <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
-            <Route path={BaseRoutes.SIGNUP} element={<SignupPage/>} ></Route>
-            <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
-            <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
+      <AlertProvider>
+        <div className="App">
+          <Router>
+              <RootPage></RootPage>
+            <Routes>
+              <Route path={BaseRoutes.ROOT} element={<Redirects isAuth={authState.status==="success"} />}></Route>
+              <Route path={BaseRoutes.SIGNUP} element={<SignupPage/>} ></Route>
+              <Route path={BaseRoutes.LOGIN} element={<LoginPage/>} ></Route>
+              <Route element={<PrivateRoute isAuth={authState.status==="success"} />}>
 
-              <Route path={BaseRoutes.DASHBOARD} element={
-                <TodosProvider>
-                  <DashboardPage>
-                  </DashboardPage>
-                  <Outlet/>
-                </TodosProvider>
-                }>
-                <Route path={BaseRoutes.MY_TODOS} element={<MyTodosPage mode='withoutChecked' />} />
-                <Route path={BaseRoutes.SHARED_TODOS} element={<SharedTodosPage />} />
-                <Route path={BaseRoutes.CHECKED_TODOS} element={<MyTodosPage mode='onlyChecked' />} />
-                <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
+                <Route path={BaseRoutes.DASHBOARD} element={
+                  <>
+                    <DashboardPage>
+                    </DashboardPage>
+                    <Outlet/>
+                  </>
+                  }>
+                  <Route path={BaseRoutes.MY_TASKS} element={<MyTodosPage mode='withoutChecked' />} />
+                  <Route path={BaseRoutes.SHARED_TASKS} element={<SharedTodosPage />} />
+                  <Route path={BaseRoutes.CHECKED_TASKS} element={<MyTodosPage mode='onlyChecked' />} />
+                  <Route path={BaseRoutes.PROFILE} element={<ProfilePage />} />
+                </Route>
+
               </Route>
-
-            </Route>
-          </Routes>
-        </Router>
-      </div>
+            </Routes>
+          </Router>
+        </div>
+      </AlertProvider>
     </ThemeProvider>
   );
 }

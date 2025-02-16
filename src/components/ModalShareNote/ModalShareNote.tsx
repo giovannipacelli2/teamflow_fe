@@ -16,7 +16,7 @@ import _ from 'lodash';
 
 interface ModalProps {
     children?: React.ReactNode;
-    todo ?: TodoResponse
+    todo ?: TodoResponse | undefined
     title ?: string,
     diplayFooter ?: boolean,
     confirmText ?: string,
@@ -44,30 +44,25 @@ function useModalShareNote () {
   const theme = useTheme();
 
   const style = {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      bgcolor: 'background.paper',
-      boxShadow: 24,
-      p: 4,
-      display:'flex',
-      gap:'1em',
-      flexDirection:'column',
-      width: '95%',
-      [theme.breakpoints.up('sm')]: {
-        width: '70%',
-      },
-      [theme.breakpoints.up('md')]: {
-        width: '60%',
-      },
-      [theme.breakpoints.up('lg')]: {
-        width: '700px',
-      },
-    };
+    boxSizing: 'border-box',
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    padding: {xs:'1.5em 0.7em', sm:'2em'},
+    display:'flex',
+    gap:'1em',
+    flexDirection:'column',
+    borderRadius:'0.5em',
+    width:{xs:'98%', sm:'70%', md:'60%', lg:'700px'},
+    height:{xs:'98%', sm:'90%', xl:'80%'},
+  };
   
   const elemStyle = {
     width: '100%',
+    height: '10%',
     display:'flex',
     flexDirection:'row',
     justifyContent:'space-between',
@@ -75,20 +70,21 @@ function useModalShareNote () {
   }
 
   const bodyContaier = {
-    ...elemStyle,
+    width: '100%',
     display:'flex',
     flexDirection:'column',
     alignItems:'flex-start',
     justifyContent:'flex-start',
     gap:'0.5em',
-    height: '100%',
+    height: '80%',
   }
   const buttonContaier = {
-    ...elemStyle,
+    width: '100%',
     display:'flex',
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'flex-end',
+    height:'10%',
     gap:'1em',
   }
     const { usernames } = useContext(AppContext);
@@ -112,7 +108,7 @@ function useModalShareNote () {
 
     const ModalComponent = (props: ModalProps)=>{
 
-      const { shareTodo } = useTodos();
+      const { shareTodo } = useTodos(false);
       const [userList, setUserList] = useState<accountField[]>([]);
 
       props = {
@@ -245,7 +241,7 @@ function useModalShareNote () {
                       onSubmit={handleSubmit((e)=>handleConfirm(e))}
                     >
                       <Box 
-                        className='modalFormControl hide-scrollbar-back'
+                        className='modalFormControl hide-scrollbar-back hide-scrollbar'
                       >
 
                         <Divider variant="middle"/>
@@ -254,7 +250,7 @@ function useModalShareNote () {
                           sx={{ 
                             width: '100%',
                             bgcolor: 'background.paper',
-                            maxHeight:'7.2em',
+                            maxHeight:'80',
                             overflowY:'scroll',
                           }}
                         >
@@ -263,9 +259,9 @@ function useModalShareNote () {
                             <ListItem
                               key={user.id}
                               sx={{
-                                maxWidth:420,
+                                maxWidth:{xs:'100%'},
                               }}
-                              //disableGutters
+                              disableGutters
                               secondaryAction={
                                 <IconButton 
                                   aria-label="shared-users"
@@ -304,9 +300,13 @@ function useModalShareNote () {
                             render={({ field }) => (
                               <Autocomplete
                                 {...field}
-                                disablePortal
+                                id={field.name}
+                                //disablePortal
                                 options={userList}
-                                sx={{ maxWidth: 400, marginTop:'0.5em' }}
+                                sx={{ 
+                                  maxWidth: {xs:'100%', sm:420},
+                                  marginTop:'0.5em' 
+                                }}
                                 renderInput={(params) => <TextField 
                                   {...params}
                                   label="Aggiungi utente" 

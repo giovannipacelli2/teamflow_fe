@@ -15,6 +15,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { CommentResponse } from './comment-response';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { TodoResponseSharedWithInner } from './todo-response-shared-with-inner';
 
 /**
@@ -89,5 +92,11 @@ export interface TodoResponse {
      * @memberof TodoResponse
      */
     'isShared'?: boolean;
+    /**
+     * 
+     * @type {Array<CommentResponse>}
+     * @memberof TodoResponse
+     */
+    'comments'?: Array<CommentResponse>;
 }
 

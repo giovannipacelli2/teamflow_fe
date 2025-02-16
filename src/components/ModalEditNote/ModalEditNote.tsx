@@ -1,38 +1,42 @@
-import React, {useCallback, useContext, useEffect} from 'react';
+import React, {useCallback, useContext, useEffect, useRef} from 'react';
 import {Box, Modal, Button, FormControl, FormLabel, TextField, Checkbox} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import Textarea from '../TextArea/Textarea';
 import "./style.scss";
-import { TodoResponse } from '../../api';
 import { AppContext } from '../../context/context';
-import { addSignature } from '../../library/library';
-import { CheckBox } from '@mui/icons-material';
 import CloseBtn from '../CloseBtn/CloseBtn';
+import CommentList from '../CommentList/CommentList';
+import useTodos from '../../hooks/useTodos';
+import { createCommentI } from '../../interfaces/TodosInterfaces';
+import SendIcon from '@mui/icons-material/Send';
+import Divider from '@mui/material/Divider';
+import CommentIcon from '@mui/icons-material/Comment';
+import ModalEditSkeleton from '../ModalEditSkeleton/ModalEditSkeleton';
+import { formatDate } from '../../library/library';
 
 interface ModalProps {
     children?: React.ReactNode;
+    id ?: string,
     title ?: string,
+    isOpen ?: boolean,
     diplayFooter ?: boolean,
     confirmText ?: string,
+    setIsOpen : React.Dispatch<React.SetStateAction<boolean>>,
     onConfirm ?: (event: FieldValues)=>void,
-    defaults ?: TodoResponse
     permissions ?: "full" | "limitated";
   }
 
 const defaultProps : ModalProps= {
     children : <></>,
+    id: '',
     title : 'Text',
+    isOpen : false,
     diplayFooter : true,
     confirmText : 'Conferma',
+    setIsOpen : ()=>{},
     onConfirm : (event: FieldValues)=>{},
-    defaults: {
-      title:'',
-      description:'',
-      note:'',
-      checked:false
-    },
     permissions: 'full',
 }
 
@@ -41,27 +45,20 @@ function useModalEditNote () {
   const theme = useTheme();
 
   const style = {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      bgcolor: 'background.paper',
-      boxShadow: 24,
-      p: 4,
-      display:'flex',
-      gap:'1em',
-      flexDirection:'column',
-      width: '95%',
-      [theme.breakpoints.up('sm')]: {
-        width: '70%',
-      },
-      [theme.breakpoints.up('md')]: {
-        width: '60%',
-      },
-      [theme.breakpoints.up('lg')]: {
-        width: '700px',
-      },
-    };
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    padding: {xs:'1.5em 0.7em', sm:'2em'},
+    display:'flex',
+    gap:'1em',
+    flexDirection:'column',
+    borderRadius:'0.5em',
+    width:{xs:'98%', sm:'70%', md:'60%', lg:'700px'},
+    maxHeight:{xs:'100%', sm:'98%', xl:'80%'},
+  };
   
   const elemStyle = {
     width: '100%',
@@ -77,7 +74,17 @@ function useModalEditNote () {
     alignItems:'flex-start',
     justifyContent:'flex-start',
     gap:'0.5em',
-    height: '100%',
+    height:'100%',
+    overflowY: 'hidden',
+  }
+  const commentInputContainer = {
+    ...elemStyle,
+    display:'flex',
+    flexDirection:{xs:'column', sm:'row'},
+    alignItems:{xs:'flex-start', sm:'center'},
+    justifyContent:'center',
+    height: 'fit-content',
+    gap:'1em',
   }
   const buttonContaier = {
     ...elemStyle,
@@ -85,71 +92,127 @@ function useModalEditNote () {
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'flex-end',
+    height: 'fit-content',
     gap:'1em',
   }
 
-  const descriptionStyle = {
+  const descriptionColor = {
     color: theme.palette.text.secondary,
+  };
+
+  const descriptionStyle = {
+    ...descriptionColor,
     marginLeft:'0.5em'
   };
-     
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = useCallback(() => setOpen(true), []);
-    const handleClose = useCallback(() => setOpen(false), []);
-    const { usernames, accountState } = useContext(AppContext)
+    const { usernames } = useContext(AppContext)
 
-    const { control, handleSubmit, setValue } = useForm();
+    const {createComment, deleteComment, useGetTodo} = useTodos(false);
 
-    const ModalComponent = React.memo((props: ModalProps)=>{
+    const { 
+      control,
+      handleSubmit,
+      register,
+      reset,
+      setValue,
+      formState:{errors},
+      setError 
+    } = useForm({
+        defaultValues:{
+          title:'',
+          description:'',
+          checked: false,
+        }, 
+        mode:"onSubmit",
+    });
+
+    const { 
+      control:commentCtr,
+      handleSubmit: addComment,
+      setValue: setComment,
+      formState:{errors:commentErrors},
+      setError: setCommentError 
+    } = useForm({defaultValues:{
+        comment:'',
+      }});
+
+    const ModalComponent = (props: ModalProps)=>{
 
       props = {
         ...props,
+        id : props.id ?? defaultProps.id,
+        isOpen : props.isOpen ?? defaultProps.isOpen,
         children : props.children ?? defaultProps.children,
         title : props.title ?? defaultProps.title,
         diplayFooter : props.diplayFooter ?? defaultProps.diplayFooter,
         confirmText : props.confirmText ?? defaultProps.confirmText,
-        defaults : props.defaults ?? defaultProps.defaults,
         permissions : props.permissions ?? defaultProps.permissions,
         onConfirm : props.onConfirm ?? defaultProps.onConfirm,
       }
 
+      //const queryClient = useQueryClient()
+      const {data:todoData, status, refetch, isLoading} = useGetTodo(props.id ?? '');
+      const firstRender = useRef(false);
+
       useEffect(()=>{
-        setValue('title', props.defaults?.title);
-        setValue('description', props.defaults?.description);
-        setValue('note', props.defaults?.note);
-        setValue('checked', props.defaults?.checked);
-      },[
-        props.defaults
-      ])
 
-      const handleConfirm = useCallback((event: FieldValues)=>{
-        handleClose();
+        // Clean up after closing
+        return ()=>{
+          if (firstRender.current){
+            reset();
+          }
+        }
+      }, []);
 
-        if (props.defaults?.isShared && event.note){
-          
-          let note = addSignature(event.note, String(accountState.username));
+      useEffect(()=>{
 
-          event = {
-            ...event,
-            note,
-          };
+        if (props.id && status === 'success'){
+          setValue('title', todoData?.data.data?.title ?? '');
+          setValue('description', todoData?.data.data?.description ?? '');
+          setValue('checked', todoData?.data.data?.checked ?? false);
         }
 
+      },[props.id, status, todoData?.data.data])
+
+
+      const handleConfirm = useCallback((event: FieldValues)=>{
+        
         props.onConfirm && props.onConfirm(event);
 
-        resetForm();
+        firstRender.current = true;
+        
+        //refetch();
+        props.setIsOpen(false);
 
       }, [props, props.onConfirm]);
 
-      const resetForm = ()=>{
-        setValue('title',"");
-        setValue('description',"");
-        setValue('note',"");
-        setValue('checked', false);
-      }
+      const handleComment = async (event: FieldValues)=>{
+        
+        let body : createCommentI = {
+          todoId: todoData?.data.data?.id ?? '',
+          body:{
+            content: event.comment ?? ''
+          }
+        }
+
+        let created = await createComment.mutateAsync(body);
+
+        if (created.status === 201){
+          setComment('comment', '');
+          refetch();
+        }
+
+      };
+
+      const onDeleteComment = async (id:string)=>{
+        let deleted = await deleteComment.mutateAsync({commentId: id})
+
+        if (deleted.status === 200){
+          refetch();
+        }
+      };
 
       const findUser = () =>{
-        let user = usernames.find((user)=> user.id === props.defaults?.account_id);
+        let user = usernames.find((user)=> user.id === todoData?.data.data?.account_id);
 
         return user ? user.username : '';
       };
@@ -159,145 +222,248 @@ function useModalEditNote () {
             <div>
               <Modal
                 disableAutoFocus={false}
-                open={open}
-                onClose={handleClose}
+                open={todoData?.data.data?.id ? status === 'success' : true}
+                onClose={()=>{
+                  firstRender.current = true;
+                  props.setIsOpen(false);
+                }}
                 aria-labelledby="modal-modal-title"
               >
-                <Box sx={style}>
-                  <Box sx={elemStyle}>
-                    <Typography id="modal-modal-title" variant="h5" component="h2"
-                      sx={{
-                        fontWeight: 500,
-                        color: theme.palette.primary.dark
-                      }}
-                    >
-                      {props.title}
-                    </Typography>
-                    <CloseBtn action={handleClose}/>
-                  </Box>
-                  <Box sx={bodyContaier}>
-                    <form 
-                      className='modalForm'
-                      onSubmit={handleSubmit((e)=>handleConfirm(e))}
-                    >
-                      <Box 
-                        className='modalFormControl hide-scrollbar-back'
+                  <Box sx={style}>
+                    <Box sx={elemStyle}>
+                      <Typography id="modal-modal-title" variant="h5" component="h2"
+                        sx={{
+                          fontWeight: 500,
+                          color: theme.palette.primary.dark
+                        }}
                       >
-                        {props.permissions === 'limitated' && 
-                          <div className="row">
-                            <Typography variant="h6" component="h3">Titolo</Typography>
-                            <Typography variant="subtitle1" component="h6"
-                              sx={descriptionStyle}
-                            >{props.defaults?.title}</Typography>
-                          </div>
-                        }
-                        {props.permissions === 'limitated' && 
-                          <div className="row">
-                          <Typography variant="h6" component="h3">Descrizione</Typography>
-                          <Typography variant="subtitle1" component="h6"
-                            sx={descriptionStyle}
-                          >{props.defaults?.description?.split('\n').map((text)=>{
-                            return <p>{text}</p>
-                          })}</Typography>
-                        </div>
-                        }
-                        {props.permissions === 'full' && 
-                          <FormControl>
-                            <FormLabel htmlFor="title">Titolo</FormLabel>
-                            <Controller
-                              name="title"
-                              control={control}
-                              defaultValue=""
-                              rules={{ required: true }}
-                              render={({ field }) => (
-                                <TextField
-                                  {...field}
-                                  type="text"
-                                  fullWidth
-                                  variant="outlined"
+                        {props.title}
+                      </Typography>
+                      <CloseBtn action={()=>{
+                        firstRender.current = true;
+                        props.setIsOpen(false);
+                      }}/>
+                    </Box>
+                    <Divider component='div'></Divider>
+                    {
+                      !isLoading ?
+                        <Box 
+                          sx={bodyContaier}
+                          className='modalForm hide-scrollbar-back hide-scrollbar'
+                        > 
+                          <Box 
+                            className='modalFormControl hide-scrollbar-back hide-scrollbar'
+                          >                         
+                            <Box sx={{
+                              margin:0,
+                              display:'flex',
+                              flexDirection:'row',
+                              flexWrap : 'wrap',
+                              alignItems:'center',
+                              gap:'1em',
+                              width:'100%',
+                              justifyContent:'space-between',
+                            }}>
+                              {
+                                todoData?.data.data?.created_at &&
+                                <Typography variant="subtitle2" component="h6"
+                                  sx={descriptionColor}
+                                >Creato il: {formatDate(String(todoData?.data.data?.created_at))}</Typography>
+                              }
+                              {
+                                todoData?.data.data?.updated_at &&
+                                <Typography variant="subtitle2" component="h6"
+                                  sx={descriptionColor}
+                                >Ultima modifica: {formatDate(String(todoData?.data.data?.updated_at))}</Typography>
+                              }
+                            </Box>
+                            {props.permissions === 'limitated' && 
+                              <div className="row">
+                                <Typography variant="h6" component="h3">Titolo</Typography>
+                                <Typography variant="subtitle1" component="h6"
+                                  sx={descriptionStyle}
+                                >{todoData?.data.data?.title}</Typography>
+                              </div>
+                            }
+                            {props.permissions === 'limitated' && 
+                              <div className="row">
+                              <Typography variant="h6" component="h3">Descrizione</Typography>
+
+                              <Typography variant="subtitle1" component="h6"
+                                sx={descriptionStyle}
+                              >
+                                {
+                                  todoData?.data.data?.description ?
+                                    todoData?.data.data?.description?.split('\n').map((text, index)=>{
+                                      return <p key={index}>{text}</p>
+                                    }) :
+                                    <>Nessuna descrizione</>
+                                }
+                              </Typography>
+                            </div>
+                            }
+                            {props.permissions === 'full' && 
+                              <FormControl>
+                                <FormLabel htmlFor="title">Titolo</FormLabel>
+                                <Controller
+                                  name="title"
+                                  control={control}
+                                  defaultValue=""
+                                  rules={{ required: true }}
+                                  render={({ field }) => (
+                                    <TextField
+                                      {...field}
+                                      id={field.name}
+                                      {...register("title",{
+                                        required:false
+                                      })}
+                                      type="text"
+                                      fullWidth
+                                      variant="outlined"
+                                    />
+                                  )}
                                 />
-                              )}
-                            />
-                          </FormControl>
-                        }
-                        {props.permissions === 'limitated' && 
-                          <div className="row">
-                          <Typography variant="h6" component="h3">Condivisa da</Typography>
-                          <Typography variant="subtitle1" component="h6"
-                            sx={descriptionStyle}
-                          >{props.defaults?.account_id && findUser()}</Typography>
-                        </div>
-                        }
-                        {props.permissions === 'full' && 
-                          <FormControl>
-                            <FormLabel htmlFor="description">Descrizione</FormLabel>
-                            <Controller
-                              name="description"
-                              control={control}
-                              defaultValue=""
-                              rules={{ required: true }}
-                              render={({ field }) => (
-                                <Textarea
-                                  {...field}
-                                  sx={{width:"100%", fontSize:'1em'}}
-                                  minRows={3}
+                              </FormControl>
+                            }
+                            {props.permissions === 'limitated' && 
+                              <div className="row">
+                              <Typography variant="h6" component="h3">Condivisa da</Typography>
+                              <Typography variant="subtitle1" component="h6"
+                                sx={descriptionStyle}
+                              >{todoData?.data.data?.account_id && findUser()}</Typography>
+                            </div>
+                            }
+                            {props.permissions === 'full' && 
+                              <FormControl>
+                                <FormLabel htmlFor="description">Descrizione</FormLabel>
+                                <Controller
+                                  name="description"
+                                  control={control}
+                                  defaultValue=""
+                                  rules={{ required: true }}
+                                  render={({ field }) => (
+                                    <Textarea
+                                      {...field}
+                                      id={field.name}
+                                      {...register("description",{
+                                        required:false
+                                      })}
+                                      sx={{minWidth:"100%", maxWidth:'100%', fontSize:'1em'}}
+                                      minRows={3}
+                                      maxRows={10}
+                                    />
+                                  )}
                                 />
-                              )}
+                              </FormControl>
+                            }
+                            {todoData && <FormControl sx={{
+                              width:'100%',
+                              display:'flex',
+                              flexDirection:'row',
+                              alignItems:'center',
+                              justifyContent:'flex-start',
+                              gap:'0.5em',
+                            }}>
+                              <FormLabel htmlFor="checked">Completato</FormLabel>
+                              <Controller
+                                name="checked"
+                                control={control}
+                                defaultValue={false}
+                                rules={{ required: false }}
+                                render={({ field: { onChange, value, ...field } }) => (
+                                  <Checkbox
+                                    {...field}
+                                    id={field.name}
+                                    {...register("checked",{
+                                      required:false
+                                    })}
+                                    checked={value}
+                                    onChange={(e) => onChange(e.target.checked)}
+                                  />
+                                )}
+                              />
+                            </FormControl>}
+                            <CommentList 
+                              comments={todoData?.data.data?.comments ?? []}
+                              onDelete={onDeleteComment}
                             />
-                          </FormControl>
+
+                            { todoData && <Box sx={commentInputContainer}>
+                              <Box sx={{
+                                  width:'3.7em',
+                                  display:{xs:'none', sm:'flex'},
+                                  alignItems:'center',
+                                  justifyContent:'center',
+                                  color: theme.palette.grey['600']
+                                }}
+                              >
+                                <CommentIcon></CommentIcon>
+                              </Box>
+                              <FormControl
+                                sx={{
+                                  width:'100%',
+                                }}
+                              >
+                                <Controller
+                                  name="comment"
+                                  control={commentCtr}
+                                  defaultValue=""
+                                  rules={{ required: false }}
+                                  render={({ field: { onChange, value, ...field }  }) => (
+                                    <TextField
+                                      {...field}
+                                      id={field.name}
+                                      size='small'
+                                      placeholder='Commenta'
+                                      type="text"
+                                      fullWidth
+                                      variant="outlined"
+                                      onChange={(e) => onChange(e.target.value)}
+                                      value={value}
+                                    />
+                                  )}
+                                />
+                              </FormControl>
+                              <Button 
+                                variant='text'
+                                sx={{
+                                  width:'5%',
+                                  display:{xs:'none', sm:'block'}
+                                }}
+                                onClick={addComment((e)=>handleComment(e))}
+                              >
+                                <SendIcon></SendIcon>
+                              </Button>
+
+                              <Button 
+                                variant='outlined'
+                                sx={{
+                                  width:'max-content',
+                                  display:{xs:'block', sm:'none'}
+                                }}
+                                onClick={addComment((e)=>handleComment(e))}
+                              >
+                                Aggiungi
+                              </Button>
+                            </Box>}
+                            
+                          </Box>
+                        </Box>
+                      : <ModalEditSkeleton permissions='full'></ModalEditSkeleton>
+                    }
+                      <Divider component='div'></Divider>
+                        { props.diplayFooter && 
+                          <Box sx={buttonContaier}>
+                            <Button onClick={handleSubmit((e)=>handleConfirm(e))}>{props.confirmText}</Button>
+                          </Box>
                         }
-                        <FormControl>
-                          <FormLabel htmlFor="note">Note</FormLabel>
-                          <Controller
-                            name="note"
-                            control={control}
-                            defaultValue=""
-                            rules={{ required: false }}
-                            render={({ field }) => (
-                              <Textarea
-                                {...field}
-                                sx={{width:"100%", fontSize:'1em'}}
-                                minRows={5}
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        <FormControl sx={{
-                          width:'100%',
-                          display:'flex',
-                          flexDirection:'row',
-                          alignItems:'center',
-                          justifyContent:'flex-start',
-                          gap:'0.5em',
-                        }}>
-                          <FormLabel htmlFor="checked">Completato</FormLabel>
-                          <Controller
-                            name="checked"
-                            control={control}
-                            defaultValue={false}
-                            rules={{ required: false }}
-                            render={({ field: { onChange, value, ...field } }) => (
-                              <Checkbox
-                                {...field}
-                                checked={value}
-                                onChange={(e) => onChange(e.target.checked)}
-                              />
-                            )}
-                          />
-                        </FormControl>
-                      </Box>
-                      { props.diplayFooter && <Box sx={buttonContaier}>
-                          <Button type='submit'>{props.confirmText}</Button>
-                      </Box>}
-                    </form>
                   </Box>
-                </Box>
               </Modal>
             </div>
           );
-    })
+    }
   
-    return {ModalComponent, open, handleOpen, handleClose}
+    return {ModalComponent}
   }
 
 export default useModalEditNote

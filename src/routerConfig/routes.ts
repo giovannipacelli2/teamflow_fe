@@ -4,9 +4,9 @@ export enum BaseRoutes {
     LOGIN = "/login",
     DASHBOARD = "/dashboard",
     HOME = "home",
-    MY_TODOS = "todos",
-    SHARED_TODOS = "shared",
-    CHECKED_TODOS = "checked",
+    MY_TASKS = "tasks",
+    SHARED_TASKS = "shared",
+    CHECKED_TASKS = "checked",
     PROFILE = "profile",
 }
 
@@ -14,8 +14,8 @@ export const Routes = {
     SIGNUP : BaseRoutes.SIGNUP,
     LOGIN : BaseRoutes.LOGIN,
     HOME : BaseRoutes.DASHBOARD + "/" +BaseRoutes.HOME,
-    MY_TODOS : BaseRoutes.DASHBOARD + "/" +BaseRoutes.MY_TODOS,
-    SHARED_TODOS : BaseRoutes.DASHBOARD + "/" +BaseRoutes.SHARED_TODOS,
-    CHECKED_TODOS : BaseRoutes.DASHBOARD + "/" +BaseRoutes.CHECKED_TODOS,
+    MY_TASKS : BaseRoutes.DASHBOARD + "/" +BaseRoutes.MY_TASKS,
+    SHARED_TASKS : BaseRoutes.DASHBOARD + "/" +BaseRoutes.SHARED_TASKS,
+    CHECKED_TASKS : BaseRoutes.DASHBOARD + "/" +BaseRoutes.CHECKED_TASKS,
     PROFILE : BaseRoutes.DASHBOARD + "/" +BaseRoutes.PROFILE,
 }
