@@ -10,7 +10,7 @@
 
 * Installare tutte le dipendenze tramite `npm`
 * Creare e compilare adeguatamente il file `.env` seguendo le indicazione del file `.env.develompment`
-* Per il back-end info a questo [link](https://github.com/giovannipacelli2/backend_s2i_final)
+* Per il back-end info a questo [link](https://github.com/giovannipacelli2/teamflow_be)
 
 Comando di installazione:
 
@@ -218,7 +218,8 @@ Gli altri utenti non potranno più visualizzarli
 ### 23. Alert di Successo
 ![Step 23 screenshot](https://images.tango.us/workflows/b24040f1-248f-4edb-97e7-4584ddfb66ad/steps/ee91929a-4bb9-451e-8139-9eb3714de632/2c22062b-a1b4-49f7-ba84-73b170539749.png?crop=focalpoint&fit=crop&fp-x=0.8394&fp-y=0.0578&fp-z=2.6519&w=1200&border=2%2CF4F2F7&border-radius=8%2C8%2C8%2C8&border-radius-inner=8%2C8%2C8%2C8&blend-align=bottom&blend-mode=normal&blend-x=0&blend-w=1200&blend64=aHR0cHM6Ly9pbWFnZXMudGFuZ28udXMvc3RhdGljL21hZGUtd2l0aC10YW5nby13YXRlcm1hcmstdjIucG5n&mark-x=465&mark-y=37&m64=aHR0cHM6Ly9pbWFnZXMudGFuZ28udXMvc3RhdGljL2JsYW5rLnBuZz9tYXNrPWNvcm5lcnMmYm9yZGVyPTQlMkNGRjc0NDImdz00NDgmaD0xNDkmZml0PWNyb3AmY29ybmVyLXJhZGl1cz0xMA%3D%3D)
 
-<br/>
+## **Link utili:**
 
-***
-Created with [Tango.ai](https://tango.ai?utm_source=markdown&utm_medium=markdown&utm_campaign=workflow%20export%20links)
+### - [Link alla web app](https://teamflow.gplans.it)
+
+### - [Breve presentazione](./presentation/teamflow_presentation.pdf)
