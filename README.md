@@ -9,7 +9,7 @@
 ### - Per lo sviluppo, richiede npm:
 
 * Installare tutte le dipendenze tramite `npm`
-* Creare e compilare adeguatamente il file `.env` seguendo le indicazione del file `.env.develompment`
+* Creare e compilare adeguatamente il file `.env` seguendo le indicazioni del file `.env.development`
 * Per il back-end info a questo [link](https://github.com/giovannipacelli2/teamflow_be)
 
 Comando di installazione:
