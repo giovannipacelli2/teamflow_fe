@@ -101,7 +101,7 @@ Indicare in package.json il percorso dove risiede il file swagger di input.
 </br>
 
 
-## # [Team Flow](https://teamflow.gplans.it/login)
+## # [Team Flow](https://teamflow.gapp.uno/login)
 
 
 ### 1. Clicca su "registrati" per creare un nuovo utente
@@ -220,6 +220,6 @@ Gli altri utenti non potranno più visualizzarli
 
 ## **Link utili:**
 
-### - [Link alla web app](https://teamflow.gplans.it)
+### - [Link alla web app](https://teamflow.gapp.uno)
 
 ### - [Breve presentazione](./presentation/teamflow_presentation.pdf)
